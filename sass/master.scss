@@ -1,0 +1,108 @@
+$consoleGreen: hsl(137, 81%, 25%);
+$brightGreen: hsl(137, 81%, 50%);
+
+.noPadNoMar {
+ margin: 0px;
+ padding: 0px;
+}
+
+h1,h2,h3,h4,h5,h6,p {
+  margin: 0px;
+  padding: 0px;
+  font-size: 1em;
+  font-weight: normal;
+  color: $consoleGreen;
+}
+* {
+  font-family: 'courier';
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.debug {
+  border: 2px dashed red;
+  background: rgb(222, 185, 27);
+}
+body {
+  color: $consoleGreen; //
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  padding: 0px;
+  margin: 0px;
+  background:
+  repeating-linear-gradient(180deg,
+  transparent 3px, hsl(137, 81%, 4%) 6px, transparent 9px),
+  repeating-linear-gradient(90deg,
+  hsl(137, 81%, 7%) 3px, hsl(137, 81%, 4%) 6px, hsl(137, 81%, 7%) 9px);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  & main {
+    box-sizing: border-box;;
+    flex: 1 1 auto;
+    border: 2px solid $consoleGreen;
+    margin: 10px;
+    margin-top: 5px;
+    position: relative;
+    & * {
+      z-index: 2;
+    }
+    & .background::before {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0px;
+      top: 0px;
+      background:
+      url('/asset/background/pexels-photo-311012-edit1.png');
+      background-size: cover;
+      background-position: 50% 0px;
+      background-repeat: no-repeat;
+      opacity: 0.20;
+    }
+  }
+}
+//----------PIXEL DISPLAY------------
+div.display {
+  position: fixed;
+  width: 0px;
+  height: 0px;
+  top: 50vh;
+  left: 50vw;
+  padding: 0px;
+}
+// .grid {
+//   @extend .display;
+//   position: absolute;
+//   display: flex;
+//   flex-flow: row wrap-reverse; //!!
+//   justify-content: flex-start;
+//   align-content: flex-start;
+// }
+.cell {
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  padding: 0px;
+  margin: 1px;
+  border-radius: 2px;
+  background: radial-gradient(circle,
+              hsl(137, 81%, 8%),
+              rgba(0,0,0,0.05));
+}
+.glow1 {
+  box-shadow: 0px 0px 25px 2px $consoleGreen;
+}
+.pixel {
+  @extend .cell;
+  @extend .glow1;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  background: radial-gradient(circle, hsl(137, 81%, 50%), hsl(137, 81%, 20%));
+}
+//-------------------------------------
