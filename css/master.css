@@ -52,7 +52,26 @@ body {
       background-size: cover;
       background-position: 50% 0px;
       background-repeat: no-repeat;
-      opacity: 0.20; }
+      opacity: 0.20;
+      z-index: -1; }
+    body main section.textToExplode {
+      padding: 20px 0px;
+      margin: auto;
+      width: 100%; }
+      body main section.textToExplode input {
+        display: block;
+        margin: auto;
+        width: 60%;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.2);
+        color: #18e753;
+        border: none;
+        height: 2em;
+        font-size: 1.5em; }
+        body main section.textToExplode input:focus {
+          outline: none; }
+        body main section.textToExplode input::selection {
+          background: rgba(68, 150, 24, 0.2); }
 
 div.display {
   position: fixed;

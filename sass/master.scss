@@ -63,6 +63,29 @@ body {
       background-position: 50% 0px;
       background-repeat: no-repeat;
       opacity: 0.20;
+      z-index: -1;
+    }
+    & section.textToExplode {
+      padding: 20px 0px;
+      margin: auto;
+      width: 100%;
+      & input {
+        display: block;
+        margin: auto;
+        width: 60%;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.2);
+        color: $brightGreen;
+        border: none;
+        height: 2em;
+        font-size: 1.5em;
+        &:focus {
+          outline: none;
+        }
+        &::selection {
+          background: rgba(68, 150, 24, 0.2);
+        }
+      }
     }
   }
 }
