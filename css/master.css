@@ -72,6 +72,19 @@ body {
           outline: none; }
         body main section.textToExplode input::selection {
           background: rgba(68, 150, 24, 0.2); }
+    body main .buttons {
+      position: fixed;
+      bottom: 15px;
+      width: 100%;
+      display: flex;
+      justify-content: center; }
+      body main .buttons .button {
+        width: 80px;
+        height: 40px;
+        text-align: center;
+        margin: 0px 10px; }
+        body main .buttons .button:hover {
+          cursor: pointer; }
 
 div.display {
   position: fixed;

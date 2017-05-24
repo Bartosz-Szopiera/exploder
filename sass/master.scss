@@ -87,6 +87,22 @@ body {
         }
       }
     }
+    & .buttons {
+      position: fixed;
+      bottom: 15px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      & .button {
+        width: 80px;
+        height: 40px;
+        text-align: center;
+        margin: 0px 10px;
+        &:hover {
+         cursor: pointer;
+        }
+      }
+    }
   }
 }
 //----------PIXEL DISPLAY------------

@@ -136,6 +136,7 @@ function explode(n) {
 // Relocate all pixels of given element
 // in specific number of random moves
 // and record all taken actions for each
+restore();
 pixels = document.querySelectorAll('.pixel');
 record = mkArray(n,pixels.length,2);
 var dirX = [], dirY = [];
@@ -197,11 +198,19 @@ var dirX = [], dirY = [];
     }
   }
   // Restore initial position
-  for (var i = 0; i < pixels.length; i++) {
-    x = record[0][i][0];
-    y = record[0][i][1];
-    pixels[i].style.left = x * pW + 'px';
-    pixels[i].style.bottom = y * pW + 'px';
+  restore();
+}
+// ----------------------------------------
+function restore() {
+// Restore initial position of text pixels
+  var x,y;
+  if (pixels!=undefined) {
+    for (var i = 0; i < pixels.length; i++) {
+      x = record[0][i][0];
+      y = record[0][i][1];
+      pixels[i].style.left = x * pW + 'px';
+      pixels[i].style.bottom = y * pW + 'px';
+    }
   }
 }
 // ----------------------------------------
@@ -212,13 +221,13 @@ function play(dir) {
   for (var i = 0; i < record.length; i++) {
     for (var j = 0; j < pixels.length; j++) {
       var x, y;
-      if (!dir || dir == 1 ) {
-        x = record[record.length - 1 - i][j][0];
-        y = record[record.length - 1 - i][j][1];
-      }
-      else if (dir == -1) {
+      if (dir == 1) {
         x = record[i][j][0];
         y = record[i][j][1];
+      }
+      else if (!dir || dir == -1 ) {
+        x = record[record.length - 1 - i][j][0];
+        y = record[record.length - 1 - i][j][1];
       }
       setTimeout( function(x,y,j) {
         pixels[j].style.left = x*pW + 'px';
