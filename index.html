@@ -17,21 +17,69 @@
       <section class="display">
         <div class="display"></div>
       </section>
+      <section class="tabs">
+        <section class="labels">
+          <div class="label settings" onclick="showTab('settings')">Settings</div>
+          <div class="label profile" onclick="showTab('profile')">Your Profile</div>
+          <div class="label about" onclick="showTab('about')">About</div>
+        </section>
+        <section class="panels">
+          <section class="settings hidden">
+          <!-- <section class="settings"> -->
+            <div class="input">
+              <label for="scale">Scale</label>
+              <input id="scale" type="range" min="0.5" max="2.0" name="scale" value="1.0" step="0.1">
+            </div>
+            <div class="input">
+              <label for="randomize">Random Moves</label>
+              <input id="randomize" type="range" min="0" max="100" name="rand" value="15" step="1">
+            </div>
+            <div class="input">
+              <label for="range">Range</label>
+              <input id="range" type="range" min="0.5" max="1.0" step="0.1" name="range" value="0.5">
+            </div>
+            <div class="input">
+              <label for="density">Density</label>
+              <input id="density" type="range" min="1" max="16" name="scale" value="1">
+            </div>
+            <div class="input">
+              <label for="speed">Speed</label>
+              <input id="speed" type="range" min="1" max="60" step="1" name="speed" value="15">
+            </div>
+            <!-- <div class="input">
+              <label for="acceleration">Acceleration</label>
+              <input id="acceleration" type="text" name="scale" value="1.0">
+            </div> -->
+            <!-- <div class="input">
+              <label for="direction">Direction</label>
+              <input id="direction" type="text" name="scale" value="1.0">
+            </div> -->
+            <!-- <div class="input">
+              <label for="trajectory">Trajectory</label>
+              <input id="trajectory" type="checkbox" name="trajectory" value="straight">
+              <input id="trajectory" type="checkbox" name="trajectory" value="sinusoid">
+              <input type="text" name="amplitude" value="">
+              <input id="trajectory" type="checkbox" name="trajectory" value="parabola">
+              <input id="trajectory" type="checkbox" name="trajectory" value="spiral">
+              <input type="text" name="curvature" value="">
+            </div> -->
+            <!-- <div class="input">
+              <label for="degradation">Degradation</label>
+              <input id="degradation" type="text" name="degradation" value="1.0">
+            </div> -->
+          </section>
+          <section class="profile hidden">
+
+          </section>
+          <section class="about hidden">
+
+          </section>
+        </section>
+      </section>
       <section class="buttons">
         <div class="explode button" onclick="explode(20), play(1)">Explode!</div>
         <div class="replay button" onclick="play(1)">Replay</div>
         <div class="rewind button" onclick="play(-1)">Rewind</div>
-      </section>
-      <section class="tabs">
-        <section class="settings">
-
-        </section>
-        <section class="profile">
-
-        </section>
-        <section class="contact">
-
-        </section>
       </section>
     </main>
   </body>
@@ -41,5 +89,32 @@
     aggregate();
     layout(batch,centerX - Math.floor(textLen/2),
                   centerY - 2);
+
+    function showTab(string) {
+      var panels = document.querySelector('.panels').children;
+      var labels = document.querySelector('.labels').children;
+      var tabs = document.querySelector('section.tabs');
+      for (var i = 0; i < panels.length; i++) {
+        if (panels[i].classList.contains(string)) {
+          // Toggle state of tab that was clicked
+          if (labels[i].classList.contains('active')) {
+            // If clicked label was active, deactivate
+            // all tabs
+            tabs.classList.remove('active');
+          }
+          else {
+            tabs.classList.add('active');
+          }
+          panels[i].classList.toggle('hidden');
+          labels[i].classList.toggle('active');
+        }
+        else {
+          // Hide tabs that were not clicked
+          panels[i].classList.add('hidden');
+          labels[i].classList.remove('active');
+        }
+      }
+    }
+
   </script>
 </html>

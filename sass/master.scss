@@ -74,7 +74,7 @@ body {
         margin: auto;
         width: 60%;
         text-align: center;
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0.35);
         color: $brightGreen;
         border: none;
         height: 2em;
@@ -89,17 +89,99 @@ body {
     }
     & .buttons {
       position: fixed;
-      bottom: 15px;
+      bottom: 50px;
       width: 100%;
       display: flex;
       justify-content: center;
+      align-items: center;
       & .button {
-        width: 80px;
-        height: 40px;
+        width: auto;
+        height: 1em;
         text-align: center;
         margin: 0px 10px;
+        font-size: 1.25em;
         &:hover {
          cursor: pointer;
+         color: $brightGreen;
+        }
+      }
+    }
+    & .tabs.active~.buttons {
+      bottom: 20px;
+    }
+    & .tabs {
+      position: absolute;
+      width: 100%;
+      bottom: 0px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      & .labels {
+        height: 1em;
+        display: flex;
+        & .label {
+          padding: 0px 12px;
+          background: rgba(0, 0, 0, 0.15);
+          &:hover, &.active {
+            color: $brightGreen;
+            background: rgba(0, 0, 0, 0.45);
+          }
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+      & .panels {
+        height: auto;
+        overflow: hidden;
+        width: 100%;
+        &>section.hidden {
+          display: none;
+        }
+        &>section {
+          padding: 15px;
+          background: rgba(0, 0, 0, 0.45);
+        }
+        &>section.settings:not(.hidden) {
+          height: 150px;
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          align-content: flex-start;
+          &>div.input {
+            width: 30%;
+            margin: 5px 10px;
+            box-sizing: border-box;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: nowrap;
+            & label {
+              flex: 1 0 auto;
+              box-sizing: border-box;
+              display: inline-block;
+              min-width: 50%;
+              // height: 100%;
+              height: auto;
+              margin: 0px;
+              padding: 0px 7px;
+              vertical-align: middle;
+            }
+            & input[type="range"] {
+              flex: 0 1 auto;
+              height: 2px;
+              width: 50%;
+              background: rgba(39, 117, 35, 0.25);
+              -webkit-appearance: none;
+              &:focus {
+                outline: none;
+              }
+            }
+          }
         }
       }
     }

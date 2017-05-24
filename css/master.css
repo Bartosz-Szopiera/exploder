@@ -63,7 +63,7 @@ body {
         margin: auto;
         width: 60%;
         text-align: center;
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0.35);
         color: #18e753;
         border: none;
         height: 2em;
@@ -74,17 +74,84 @@ body {
           background: rgba(68, 150, 24, 0.2); }
     body main .buttons {
       position: fixed;
-      bottom: 15px;
+      bottom: 50px;
       width: 100%;
       display: flex;
-      justify-content: center; }
+      justify-content: center;
+      align-items: center; }
       body main .buttons .button {
-        width: 80px;
-        height: 40px;
+        width: auto;
+        height: 1em;
         text-align: center;
-        margin: 0px 10px; }
+        margin: 0px 10px;
+        font-size: 1.25em; }
         body main .buttons .button:hover {
-          cursor: pointer; }
+          cursor: pointer;
+          color: #18e753; }
+    body main .tabs.active ~ .buttons {
+      bottom: 20px; }
+    body main .tabs {
+      position: absolute;
+      width: 100%;
+      bottom: 0px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-wrap: wrap; }
+      body main .tabs .labels {
+        height: 1em;
+        display: flex; }
+        body main .tabs .labels .label {
+          padding: 0px 12px;
+          background: rgba(0, 0, 0, 0.15); }
+          body main .tabs .labels .label:hover, body main .tabs .labels .label.active {
+            color: #18e753;
+            background: rgba(0, 0, 0, 0.45); }
+          body main .tabs .labels .label:hover {
+            cursor: pointer; }
+      body main .tabs .panels {
+        height: auto;
+        overflow: hidden;
+        width: 100%; }
+        body main .tabs .panels > section.hidden {
+          display: none; }
+        body main .tabs .panels > section {
+          padding: 15px;
+          background: rgba(0, 0, 0, 0.45); }
+        body main .tabs .panels > section.settings:not(.hidden) {
+          height: 150px;
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          align-content: flex-start; }
+          body main .tabs .panels > section.settings:not(.hidden) > div.input {
+            width: 30%;
+            margin: 5px 10px;
+            box-sizing: border-box;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.25);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: nowrap; }
+            body main .tabs .panels > section.settings:not(.hidden) > div.input label {
+              flex: 1 0 auto;
+              box-sizing: border-box;
+              display: inline-block;
+              min-width: 50%;
+              height: auto;
+              margin: 0px;
+              padding: 0px 7px;
+              vertical-align: middle; }
+            body main .tabs .panels > section.settings:not(.hidden) > div.input input[type="range"] {
+              flex: 0 1 auto;
+              height: 2px;
+              width: 50%;
+              background: rgba(39, 117, 35, 0.25);
+              -webkit-appearance: none; }
+              body main .tabs .panels > section.settings:not(.hidden) > div.input input[type="range"]:focus {
+                outline: none; }
 
 div.display {
   position: fixed;
