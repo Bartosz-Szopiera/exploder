@@ -32,7 +32,7 @@ body {
   flex-flow: column nowrap;
   justify-content: flex-start; }
   body main {
-    box-sizing: border-box;
+    box-sizing: content-box;
     flex: 1 1 auto;
     border: 2px solid #0c7329;
     margin: 10px;
@@ -54,40 +54,125 @@ body {
       background-repeat: no-repeat;
       opacity: 0.20;
       z-index: -1; }
-    body main section.textToExplode {
+    body main input[type="text"], body main input[type="password"] {
+      box-sizing: content-box;
+      background: rgba(0, 0, 0, 0.35);
+      color: #0c7329;
+      border: none;
+      margin: 4px 0px;
+      padding: 2px 5px;
+      font-size: 1em; }
+      body main input[type="text"]:focus, body main input[type="password"]:focus {
+        outline: none; }
+    body main input[type="submit"] {
+      background: none;
+      color: #0c7329;
+      border: none;
+      border: 1px solid #0c7329;
+      padding: 2px 5px;
+      margin: 5px 10px;
+      margin-left: 0px; }
+      body main input[type="submit"]:focus {
+        outline: none; }
+      body main input[type="submit"]:hover {
+        cursor: pointer;
+        color: #18e753; }
+    body main div.input {
+      display: flex; }
+    body main .explosionsDB .tableHeader th {
+      border-bottom: 1px solid #0c7329; }
+      body main .explosionsDB .tableHeader th:first-of-type {
+        width: 40px; }
+        body main .explosionsDB .tableHeader th:first-of-type + th {
+          width: 120px; }
+    body main .explosionsDB .table {
+      overflow-y: scroll;
+      max-height: 120px; }
+    body main .explosionsDB table {
+      width: 100%;
+      text-align: center;
+      border-collapse: collapse;
+      font-size: 0.8em; }
+      body main .explosionsDB table tr {
+        background: rgba(0, 0, 0, 0.35); }
+        body main .explosionsDB table tr td:first-of-type {
+          width: 40px; }
+          body main .explosionsDB table tr td:first-of-type + td {
+            width: 120px; }
+      body main .explosionsDB table tr:nth-child(even) {
+        background: rgba(0, 0, 0, 0.15); }
+    body main > .database {
+      box-sizing: border-box;
+      padding: 15px;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      width: 300px;
+      background: rgba(0, 0, 0, 0.3);
+      height: 70%; }
+      body main > .database.hidden {
+        display: none; }
+      body main > .database > .filterExpDB input[type="text"] {
+        width: 100%; }
+      body main > .database > .filterExpDB::after {
+        content: "";
+        display: block;
+        height: 0px;
+        width: 100%;
+        border-top: 1px solid #0c7329;
+        margin-bottom: 10px; }
+      body main > .database .button {
+        width: 100px;
+        margin: 5px;
+        margin-bottom: 10px;
+        margin-left: 0px;
+        padding: 2px;
+        font-size: 1em;
+        line-height: 1em; }
+    body main div.textToExplode {
       padding: 20px 0px;
       margin: auto;
       width: 100%; }
-      body main section.textToExplode input {
+      body main div.textToExplode input {
         display: block;
         margin: auto;
         width: 60%;
+        min-width: 150px;
+        max-width: 300px;
         text-align: center;
         background: rgba(0, 0, 0, 0.35);
         color: #18e753;
         border: none;
         height: 2em;
         font-size: 1.5em; }
-        body main section.textToExplode input:focus {
+        body main div.textToExplode input:focus {
           outline: none; }
-        body main section.textToExplode input::selection {
+        body main div.textToExplode input::selection {
           background: rgba(68, 150, 24, 0.2); }
     body main .buttons {
       position: fixed;
       bottom: 50px;
+      left: 0px;
       width: 100%;
+      height: 0px;
       display: flex;
       justify-content: center;
-      align-items: center; }
+      align-items: center;
+      font-size: 1.15em; }
       body main .buttons .button {
-        width: auto;
-        height: 1em;
-        text-align: center;
-        margin: 0px 10px;
-        font-size: 1.25em; }
-        body main .buttons .button:hover {
-          cursor: pointer;
-          color: #18e753; }
+        width: 70px; }
+      body main .buttons .explode {
+        width: 90px; }
+    body main .button {
+      width: auto;
+      height: 1em;
+      text-align: center;
+      margin: 0px 10px;
+      padding: 3px;
+      border: 1px solid #0c7329; }
+      body main .button:hover {
+        cursor: pointer;
+        color: #18e753; }
     body main .tabs.active ~ .buttons {
       bottom: 20px; }
     body main .tabs {
@@ -99,33 +184,48 @@ body {
       align-items: flex-start;
       flex-wrap: wrap; }
       body main .tabs .labels {
+        width: 100%;
         height: 1em;
         display: flex; }
+        body main .tabs .labels.active::after {
+          content: "";
+          width: 100%;
+          flex: 0 1 auto;
+          border-bottom: 1px solid #0c7329; }
+        body main .tabs .labels:not(.active) .label {
+          border-bottom: none; }
         body main .tabs .labels .label {
+          flex: 0 0 auto;
           padding: 0px 12px;
-          background: rgba(0, 0, 0, 0.15); }
-          body main .tabs .labels .label:hover, body main .tabs .labels .label.active {
+          background: rgba(0, 0, 0, 0.15);
+          border: 1px solid #0c7329;
+          border-left: none; }
+          body main .tabs .labels .label.active {
             color: #18e753;
-            background: rgba(0, 0, 0, 0.45); }
+            background: rgba(0, 0, 0, 0.45);
+            border-bottom: none; }
           body main .tabs .labels .label:hover {
+            color: #18e753;
+            background: rgba(0, 0, 0, 0.45);
             cursor: pointer; }
       body main .tabs .panels {
         height: auto;
         overflow: hidden;
         width: 100%; }
-        body main .tabs .panels > section.hidden {
+        body main .tabs .panels > div.hidden {
           display: none; }
-        body main .tabs .panels > section {
+        body main .tabs .panels > div.tab {
+          box-sizing: padding-box;
           padding: 15px;
-          background: rgba(0, 0, 0, 0.45); }
-        body main .tabs .panels > section.settings:not(.hidden) {
-          height: 150px;
+          background: rgba(0, 0, 0, 0.45);
+          height: 150px; }
+        body main .tabs .panels > div.settings:not(.hidden) {
           display: flex;
           flex-direction: column;
           flex-wrap: wrap;
           justify-content: flex-start;
           align-content: flex-start; }
-          body main .tabs .panels > section.settings:not(.hidden) > div.input {
+          body main .tabs .panels > div.settings:not(.hidden) > div.input {
             width: 30%;
             margin: 5px 10px;
             box-sizing: border-box;
@@ -135,7 +235,7 @@ body {
             justify-content: space-around;
             align-items: center;
             flex-wrap: nowrap; }
-            body main .tabs .panels > section.settings:not(.hidden) > div.input label {
+            body main .tabs .panels > div.settings:not(.hidden) > div.input label {
               flex: 1 0 auto;
               box-sizing: border-box;
               display: inline-block;
@@ -144,14 +244,28 @@ body {
               margin: 0px;
               padding: 0px 7px;
               vertical-align: middle; }
-            body main .tabs .panels > section.settings:not(.hidden) > div.input input[type="range"] {
+            body main .tabs .panels > div.settings:not(.hidden) > div.input input[type="range"] {
               flex: 0 1 auto;
               height: 2px;
               width: 50%;
               background: rgba(39, 117, 35, 0.25);
               -webkit-appearance: none; }
-              body main .tabs .panels > section.settings:not(.hidden) > div.input input[type="range"]:focus {
+              body main .tabs .panels > div.settings:not(.hidden) > div.input input[type="range"]:focus {
                 outline: none; }
+        body main .tabs .panels > div.profile:not(.hidden) {
+          display: flex;
+          flex-flow: column wrap; }
+          body main .tabs .panels > div.profile:not(.hidden) > div {
+            height: 100%;
+            width: 30%; }
+            body main .tabs .panels > div.profile:not(.hidden) > div > .userName {
+              margin-bottom: 10px; }
+            body main .tabs .panels > div.profile:not(.hidden) > div:not(.logged) .submit [name="logout"] {
+              display: none; }
+            body main .tabs .panels > div.profile:not(.hidden) > div.logged > .login, body main .tabs .panels > div.profile:not(.hidden) > div.logged > .password {
+              display: none; }
+            body main .tabs .panels > div.profile:not(.hidden) > div.saveExplosion > p {
+              margin-bottom: 10px; }
 
 div.display {
   position: fixed;
@@ -178,5 +292,13 @@ div.display {
   left: 0px;
   bottom: 0px;
   background: radial-gradient(circle, #18e753, #0a5c21); }
+
+.centerLine {
+  position: fixed;
+  height: 100vh;
+  width: 0px;
+  border: 1px solid red;
+  left: 50vw;
+  top: 0px; }
 
 /*# sourceMappingURL=master.css.map */

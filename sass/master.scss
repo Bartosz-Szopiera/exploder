@@ -40,7 +40,8 @@ body {
   flex-flow: column nowrap;
   justify-content: flex-start;
   & main {
-    box-sizing: border-box;;
+    // box-sizing: border-box;;
+    box-sizing: content-box;;
     flex: 1 1 auto;
     border: 2px solid $consoleGreen;
     margin: 10px;
@@ -65,7 +66,111 @@ body {
       opacity: 0.20;
       z-index: -1;
     }
-    & section.textToExplode {
+    // Standard type of textual input field
+    & input {
+      &[type="text"], &[type="password"] {
+        box-sizing: content-box;
+        background: rgba(0, 0, 0, 0.35);
+        color: $consoleGreen;
+        border: none;
+        margin: 4px 0px;
+        padding: 2px 5px;
+        font-size: 1em;
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+    // Standard type of submit button
+    & input[type="submit"] {
+      background: none;
+      color: $consoleGreen;
+      border: none;
+      border: 1px solid $consoleGreen;
+      padding: 2px 5px;
+      margin: 5px 10px;
+      margin-left: 0px;
+      &:focus {
+        outline: none;
+      }
+      &:hover {
+        cursor: pointer;
+        color: $brightGreen;
+      }
+    }
+    & div.input {
+      display: flex;
+    }
+    // Dtabase table
+    & .explosionsDB .tableHeader th {
+      border-bottom: 1px solid $consoleGreen;
+      &:first-of-type {
+        width: 40px;
+        &+th {
+          width: 120px;
+        }
+      }
+    }
+    & .explosionsDB .table {
+      overflow-y: scroll;
+      max-height: 120px;
+    }
+    & .explosionsDB table {
+      width: 100%;
+      text-align: center;
+      border-collapse: collapse;
+      font-size: 0.8em;
+      & tr {
+        background: rgba(0, 0, 0, 0.35);
+        & td:first-of-type {
+          width: 40px;
+          &+td {
+            width: 120px;
+          }
+        }
+      }
+      & tr:nth-child(even){
+        background: rgba(0, 0, 0, 0.15);
+      }
+    }
+    // ======================================
+    &>.database {
+      box-sizing: border-box;
+      padding: 15px;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      width: 300px;
+      background: rgba(0,0,0,0.30);
+      height: 70%;
+      &.hidden {
+        display: none;
+      }
+      &>.filterExpDB {
+        & input[type="text"] {
+          width: 100%;
+        }
+        &::after {
+          content: "";
+          display: block;
+          height: 0px;
+          width: 100%;
+          border-top: 1px solid $consoleGreen;
+          margin-bottom: 10px;
+        }
+      }
+      & .button {
+        width: 100px;
+        margin: 5px;
+        margin-bottom: 10px;
+        margin-left: 0px;
+        padding: 2px;
+        font-size: 1em;
+        line-height: 1em;
+      }
+    }
+    // ======================================
+    & div.textToExplode {
       padding: 20px 0px;
       margin: auto;
       width: 100%;
@@ -73,6 +178,8 @@ body {
         display: block;
         margin: auto;
         width: 60%;
+        min-width: 150px;
+        max-width: 300px;
         text-align: center;
         background: rgba(0, 0, 0, 0.35);
         color: $brightGreen;
@@ -90,20 +197,30 @@ body {
     & .buttons {
       position: fixed;
       bottom: 50px;
+      left: 0px;
       width: 100%;
+      height: 0px;
       display: flex;
       justify-content: center;
       align-items: center;
+      font-size: 1.15em;
       & .button {
-        width: auto;
-        height: 1em;
-        text-align: center;
-        margin: 0px 10px;
-        font-size: 1.25em;
-        &:hover {
-         cursor: pointer;
-         color: $brightGreen;
-        }
+        width: 70px;
+      }
+      & .explode {
+        width: 90px;
+      }
+    }
+    & .button {
+      width: auto;
+      height: 1em;
+      text-align: center;
+      margin: 0px 10px;
+      padding: 3px;
+      border: 1px solid $consoleGreen;
+      &:hover {
+        cursor: pointer;
+        color: $brightGreen;
       }
     }
     & .tabs.active~.buttons {
@@ -118,16 +235,32 @@ body {
       align-items: flex-start;
       flex-wrap: wrap;
       & .labels {
+        width: 100%;
         height: 1em;
         display: flex;
+        &.active::after {
+          content: "";
+          width: 100%;
+          flex: 0 1 auto;
+          border-bottom: 1px solid $consoleGreen;
+        }
+        &:not(.active) .label {
+          border-bottom: none;
+        }
         & .label {
+          flex: 0 0 auto;
           padding: 0px 12px;
           background: rgba(0, 0, 0, 0.15);
-          &:hover, &.active {
+          border: 1px solid $consoleGreen;
+          border-left: none;
+          &.active {
             color: $brightGreen;
             background: rgba(0, 0, 0, 0.45);
+            border-bottom: none;
           }
           &:hover {
+            color: $brightGreen;
+            background: rgba(0, 0, 0, 0.45);
             cursor: pointer;
           }
         }
@@ -136,15 +269,20 @@ body {
         height: auto;
         overflow: hidden;
         width: 100%;
-        &>section.hidden {
+        &>div.hidden {
           display: none;
         }
-        &>section {
+        // ======================================
+        // Style for all panel
+        &>div.tab {
+          box-sizing: padding-box;
           padding: 15px;
           background: rgba(0, 0, 0, 0.45);
-        }
-        &>section.settings:not(.hidden) {
           height: 150px;
+        }
+        // ======================================
+        // Settings Panel
+        &>div.settings:not(.hidden) {
           display: flex;
           flex-direction: column;
           flex-wrap: wrap;
@@ -165,7 +303,6 @@ body {
               box-sizing: border-box;
               display: inline-block;
               min-width: 50%;
-              // height: 100%;
               height: auto;
               margin: 0px;
               padding: 0px 7px;
@@ -183,6 +320,33 @@ body {
             }
           }
         }
+        // ======================================
+        // User Profile panel
+        &>div.profile:not(.hidden) {
+          display: flex;
+          flex-flow: column wrap;
+          &>div {
+            height: 100%;
+            width: 30%;
+            &>.userName {
+              margin-bottom: 10px;
+            }
+            &:not(.logged) .submit [name="logout"] {
+              display: none;
+            }
+            &.logged {
+              &>.login, &>.password {
+                display: none;
+              }
+            }
+            &.saveExplosion>p {
+              margin-bottom: 10px;
+            }
+          }
+        }
+        &>div.about:not(.hidden) {
+
+        }
       }
     }
   }
@@ -196,14 +360,6 @@ div.display {
   left: 50vw;
   padding: 0px;
 }
-// .grid {
-//   @extend .display;
-//   position: absolute;
-//   display: flex;
-//   flex-flow: row wrap-reverse; //!!
-//   justify-content: flex-start;
-//   align-content: flex-start;
-// }
 .cell {
   box-sizing: border-box;
   width: 12px;
@@ -227,3 +383,11 @@ div.display {
   background: radial-gradient(circle, hsl(137, 81%, 50%), hsl(137, 81%, 20%));
 }
 //-------------------------------------
+.centerLine {
+  position: fixed;
+  height: 100vh;
+  width: 0px;
+  border: 1px solid red;
+  left: 50vw;
+  top: 0px;
+}

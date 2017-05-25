@@ -8,24 +8,23 @@
   </head>
   <body class="body">
     <main>
-      <section class="textToExplode">
+      <div class="textToExplode">
         <form class="textToExplode" action="index.html" method="post">
           <input type="text" name="text" value="HELLO!">
         </form>
-      </section>
+      </div>
       <div class="background"></div>
-      <section class="display">
+      <div class="display">
         <div class="display"></div>
-      </section>
-      <section class="tabs">
-        <section class="labels">
-          <div class="label settings" onclick="showTab('settings')">Settings</div>
+      </div>
+      <div class="tabs">
+        <div class="labels">
+          <div class="label settings" onclick="showTab('settings')">Explosion Settings</div>
           <div class="label profile" onclick="showTab('profile')">Your Profile</div>
           <div class="label about" onclick="showTab('about')">About</div>
-        </section>
-        <section class="panels">
-          <section class="settings hidden">
-          <!-- <section class="settings"> -->
+        </div>
+        <div class="panels">
+          <div class="tab settings hidden">
             <div class="input">
               <label for="scale">Scale</label>
               <input id="scale" type="range" min="0.5" max="2.0" name="scale" value="1.0" step="0.1">
@@ -67,53 +66,152 @@
               <label for="degradation">Degradation</label>
               <input id="degradation" type="text" name="degradation" value="1.0">
             </div> -->
-          </section>
-          <section class="profile hidden">
+            <div class="button" onclick="showDatabase()">
+              Show Database
+            </div>
+          </div>
+          <div class="tab profile hidden">
+            <div class="identification">
+              <div class="userName">
+                <p>Hello Nameless</p>
+              </div>
+              <div class="input login">
+                <input type="text" name="" value="" placeholder="User Name">
+              </div>
+              <div class="input password">
+                <input type="password" placeholder="Password" name="" value="">
+              </div>
+              <div class="input submit">
+                <input type="submit" name="login" value="Login">
+                <input type="submit" name="register" value="Register">
+                <input type="submit" name="logout" value="Logout">
+              </div>
+            </div>
+            <div class="saveExplosion">
+              <p>Save current explosion</p>
+              <input type="text" name="exName" placeholder="Explosion Name" value="">
+              <input type="submit" name="" value="Save">
+            </div>
+            <div class="explosionsDB">
+              <div class="tableHeader">
+                <table>
+                  <tr>
+                    <th>No</th>
+                    <th>By</th>
+                    <th>Name</th>
+                  </tr>
+                </table>
+              </div>
+              <div class="table">
+                <table>
+                  <tr>
+                    <td>1</td>
+                    <td>Admin</td>
+                    <td>Default</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="tab about hidden">
 
-          </section>
-          <section class="about hidden">
-
-          </section>
-        </section>
-      </section>
-      <section class="buttons">
+          </div>
+        </div>
+      </div>
+      <div class="database hidden">
+        <div class="filterExpDB">
+          <div data-filter="" class="filter">
+            <label for="filter">Filter:</label>
+            User <input type="checkbox" name="filter" value="user">
+            Settings <input type="checkbox" name="filter" value="expl">
+          </div>
+          <div class="filter">
+            <div class="input user">
+              <input type="text" placeholder="User Name" name="user" value="">
+            </div>
+            <div class="input explosion">
+              <input type="text" placeholder="Settings Name" name="explosion" value="">
+            </div>
+          </div>
+          <div class="button">
+            Filter
+          </div>
+        </div>
+        <div class="explosionsDB">
+          <div class="tableHeader">
+            <table>
+              <tr>
+                <th>No</th>
+                <th>By</th>
+                <th>Name</th>
+              </tr>
+            </table>
+          </div>
+          <div class="table">
+            <table>
+              <tr>
+                <td>1</td>
+                <td>Admin</td>
+                <td>Default</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="buttons">
+        <div class="rewind button" onclick="play(-1)">Rewind</div>
         <div class="explode button" onclick="explode(20), play(1)">Explode!</div>
         <div class="replay button" onclick="play(1)">Replay</div>
-        <div class="rewind button" onclick="play(-1)">Rewind</div>
-      </section>
+      </div>
+      <!-- <div class="centerLine debuggingStuff"></div> -->
     </main>
   </body>
   <script type="text/javascript" src="js/pixelDisplay.js"></script>
   <script type="text/javascript">
     createGrid();
     aggregate();
-    layout(batch,centerX - Math.floor(textLen/2),
-                  centerY - 2);
+    // letters currently have always 4 pixels in height
+    // So 2 is half on the height of the text
+    layout(batch, -textLen/2,-2);
 
     function showTab(string) {
-      var panels = document.querySelector('.panels').children;
-      var labels = document.querySelector('.labels').children;
-      var tabs = document.querySelector('section.tabs');
+      var panels = document.querySelectorAll('.panels .tab');
+      var labels = document.querySelectorAll('.label');
+      var labelsSection = document.querySelector('.labels');
       for (var i = 0; i < panels.length; i++) {
         if (panels[i].classList.contains(string)) {
-          // Toggle state of tab that was clicked
+          // Toggle state of label that was clicked
           if (labels[i].classList.contains('active')) {
             // If clicked label was active, deactivate
             // all tabs
-            tabs.classList.remove('active');
+            labelsSection.classList.remove('active');
           }
           else {
-            tabs.classList.add('active');
+            labelsSection.classList.add('active');
           }
           panels[i].classList.toggle('hidden');
           labels[i].classList.toggle('active');
         }
         else {
-          // Hide tabs that were not clicked
+          // Hide tabs of labels that were not clicked
           panels[i].classList.add('hidden');
           labels[i].classList.remove('active');
         }
       }
+    }
+
+    function dbWidnowHeight() {
+      var main = document.querySelector('main');
+      var panels = document.querySelector('div.panels .tab');
+      var mainHeight = parseInt(getComputedStyle(main).height);
+      var height = mainHeight - panels.offsetHeight;
+      var databaseWindow = document.querySelector('div.database');
+      databaseWindow.style.height = height - 1 + 'px';
+    }
+    function showDatabase() {
+      var el = document.querySelector('div.database');
+      el.classList.toggle('hidden');
+      dbWidnowHeight();
     }
 
   </script>
