@@ -16,26 +16,22 @@ var pixels; // Array of all the pixels
 var record; // Array of past movements
 var coeX = [];
 //-------------------------------------
+// SETTINGS
+var get = {
+  'rand'    : 0.15, // Probability of random movements
+  'range'   : 0.6, // How much moves pixels make
+  'density' : 1, // Pixels number multiplier
+  'speed'   : 30 // Pixel movements per second
+}
+
+//-------------------------------------
 function createGrid() { //outdated name
   var displayWidth = display.offsetWidth;
   var displayHeight = display.offsetHeight;
   rows = Math.floor(displayHeight/pixelWidth);
   columns = Math.floor(displayWidth/pixelWidth);
-  centerX = Math.floor(columns/2);
-  centerY = Math.floor(rows/2);
   centerX = 0;
   centerY = 0;
-  // Adjust the size of display
-  // display.style.width = columns * pixelWidth + 'px';
-  // display.style.height = rows * pixelWidth + 'px';
-  // size =  rows * columns;
-  // Create pixels
-  // for (var i = 0; i < size; i++) {
-    // var cell = document.createElement('div');
-    // cell.className = "cell";
-    // grid.appendChild(cell);
-    // cell.dataset.index = i;
-  // }
 }
 // ----------------------------------------
 // Example symbols
@@ -132,10 +128,15 @@ function mkArray(a,b,c) {
   return array;
 }
 // ----------------------------------------
-function explode(n) {
+function explode() {
 // Relocate all pixels of given element
 // in specific number of random moves
-// and record all taken actions for each
+// and record all taken actions for each.
+
+// Define number of movements
+var vpSize = Math.max(window.innerHeight, window.innerWidth);
+var n = Math.floor((vpSize/2)/pW * get.range)
+// Restore default positions of pixels
 restore();
 pixels = document.querySelectorAll('.pixel');
 record = mkArray(n,pixels.length,2);
@@ -157,16 +158,16 @@ var dirX = [], dirY = [];
         // Exact direction:
         var dX = Math.abs(centerX - x);
         var dY = Math.abs(centerY - y);
-        // Coeafficient telling how much
-        // pixel ic eccentric on x axis relative
-        // to total eccentricity
+        // Coeafficient telling how much given
+        // pixel is eccentric on x axis relative
+        // to its total eccentricity
         coeX[j] = dX/(dX + dY);
       }
       // Define new position:
       var dX = Math.abs(centerX - x);
       var dY = Math.abs(centerY - y);
 
-      if (Math.random()<0.85) {
+      if (Math.random()<(1-get.rand)) {
         if (dX/(dX + dY) < coeX[j]) {
           x = x + dirX[j];
         }
@@ -232,7 +233,7 @@ function play(dir) {
       setTimeout( function(x,y,j) {
         pixels[j].style.left = x*pW + 'px';
         pixels[j].style.bottom = y*pW + 'px';
-      },10*i,x,y,j);
+      },1000/get.speed*i,x,y,j);
     }
   }
 }
