@@ -1,11 +1,7 @@
 //------------------------------
 //CREATE PIXELS GRID
-// var grid = document.querySelector('.grid');
-// var rows; //number of grid rows
-// var columns; //number of grid columns
-// var size; //number of pixels on the grid
-var centerX;
-var centerY;
+var centerX = 0;
+var centerY = 0;
 // var pixelWidth = 26; //px, with margin
 var pixelWidth = 13; //px, with margin
 var pW = pixelWidth; //for shortcut
@@ -17,21 +13,15 @@ var record; // Array of past movements
 var coeX = [];
 //-------------------------------------
 // SETTINGS
-var get = {
+// var setupAr = [1,0.15,0.6,1,30];
+var keys = ['scale','rand','range','density','speed']
+// function getSetup(index) {return setupAr[index]};
+var setup = {
+  'scale'   : 1, //
   'rand'    : 0.15, // Probability of random movements
   'range'   : 0.6, // How much moves pixels make
   'density' : 1, // Pixels number multiplier
   'speed'   : 30 // Pixel movements per second
-}
-
-//-------------------------------------
-function createGrid() { //outdated name
-  var displayWidth = display.offsetWidth;
-  var displayHeight = display.offsetHeight;
-  rows = Math.floor(displayHeight/pixelWidth);
-  columns = Math.floor(displayWidth/pixelWidth);
-  centerX = 0;
-  centerY = 0;
 }
 // ----------------------------------------
 // Example symbols
@@ -45,7 +35,7 @@ var letterA = {
 }
 var space = {
   'coords' : [],
-  'width' : 1
+  'width' : 0.5
 }
 // ----------------------------------------
 // list of symbols to query for symbol index
@@ -53,7 +43,7 @@ var symbolIndex = 'AT '; // <-- DATABASE
 // list of symbols to query for the data
 var symbols = [letterA, letterT, space]; // <-- DATABASE
 // Text to create
-var text = "AAAAAAA" // <-- INPUT
+var text = "A A A ATA  A" // <-- INPUT
 // ----------------------------------------
 function aggregate() {
 // Compile all the letters into one
@@ -135,7 +125,7 @@ function explode() {
 
 // Define number of movements
 var vpSize = Math.max(window.innerHeight, window.innerWidth);
-var n = Math.floor((vpSize/2)/pW * get.range)
+var n = Math.floor((vpSize/2)/pW * setup.range)
 // Restore default positions of pixels
 restore();
 pixels = document.querySelectorAll('.pixel');
@@ -167,7 +157,7 @@ var dirX = [], dirY = [];
       var dX = Math.abs(centerX - x);
       var dY = Math.abs(centerY - y);
 
-      if (Math.random()<(1-get.rand)) {
+      if (Math.random()<(1-setup.rand)) {
         if (dX/(dX + dY) < coeX[j]) {
           x = x + dirX[j];
         }
@@ -233,7 +223,7 @@ function play(dir) {
       setTimeout( function(x,y,j) {
         pixels[j].style.left = x*pW + 'px';
         pixels[j].style.bottom = y*pW + 'px';
-      },1000/get.speed*i,x,y,j);
+      },1000/setup.speed*i,x,y,j);
     }
   }
 }
