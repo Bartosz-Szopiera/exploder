@@ -128,9 +128,20 @@ body {
             width: 120px;
           }
         }
+        &:hover {
+          color: $brightGreen;
+          cursor: pointer;
+        }
+        & td {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
       & tr:nth-child(even){
         background: rgba(0, 0, 0, 0.15);
+      }
+      & #row {
+        display: none;
       }
     }
     // ======================================
@@ -328,14 +339,14 @@ body {
           &>div {
             height: 100%;
             width: 30%;
-            &>.userName {
-              margin-bottom: 10px;
-            }
-            &:not(.logged) .submit [name="logout"] {
-              display: none;
-            }
-            &.logged {
-              &>.login, &>.password {
+            &.userProfile {
+              &>.userName {
+                margin-bottom: 10px;
+              }
+              &:not(.logged) input[name="logout"] {
+                display: none;
+              }
+              &.logged #userForm{
                 display: none;
               }
             }

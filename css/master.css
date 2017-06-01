@@ -99,8 +99,16 @@ body {
           width: 40px; }
           body main .explosionsDB table tr td:first-of-type + td {
             width: 120px; }
+        body main .explosionsDB table tr:hover {
+          color: #18e753;
+          cursor: pointer; }
+        body main .explosionsDB table tr td {
+          text-overflow: ellipsis;
+          white-space: nowrap; }
       body main .explosionsDB table tr:nth-child(even) {
         background: rgba(0, 0, 0, 0.15); }
+      body main .explosionsDB table #row {
+        display: none; }
     body main > .database {
       box-sizing: border-box;
       padding: 15px;
@@ -258,11 +266,11 @@ body {
           body main .tabs .panels > div.profile:not(.hidden) > div {
             height: 100%;
             width: 30%; }
-            body main .tabs .panels > div.profile:not(.hidden) > div > .userName {
+            body main .tabs .panels > div.profile:not(.hidden) > div.userProfile > .userName {
               margin-bottom: 10px; }
-            body main .tabs .panels > div.profile:not(.hidden) > div:not(.logged) .submit [name="logout"] {
+            body main .tabs .panels > div.profile:not(.hidden) > div.userProfile:not(.logged) input[name="logout"] {
               display: none; }
-            body main .tabs .panels > div.profile:not(.hidden) > div.logged > .login, body main .tabs .panels > div.profile:not(.hidden) > div.logged > .password {
+            body main .tabs .panels > div.profile:not(.hidden) > div.userProfile.logged #userForm {
               display: none; }
             body main .tabs .panels > div.profile:not(.hidden) > div.saveExplosion > p {
               margin-bottom: 10px; }
