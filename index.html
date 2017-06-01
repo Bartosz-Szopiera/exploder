@@ -21,61 +21,63 @@
         <div class="labels">
           <div class="label settings" onclick="showTab('settings')">Explosion Settings</div>
           <div class="label profile" onclick="showTab('profile')">Your Profile</div>
+          <div class="label profile" onclick="showTab('profile')">Your Profile</div>
           <div class="label about" onclick="showTab('about')">About</div>
         </div>
         <div class="panels">
           <div class="tab settings hidden">
-            <div class="input">
-              <label for="scale">Scale</label>
-              <input id="scale" type="range" min="0.5" max="2.0" name="scale" value="1.0" step="0.1">
-            </div>
-            <div class="input">
-              <label for="rand">Random Moves</label>
-              <input id="rand" type="range" min="0" max="1" name="rand" value="0.15" step="0.01" oninput="takeInput(this)">
-            </div>
-            <div class="input">
-              <label for="range">Range</label>
-              <input id="range" type="range" min="0.3" max="1.2" step="0.1" name="range" value="0.5" oninput="takeInput(this)">
-            </div>
-            <div class="input">
-              <label for="density">Density</label>
-              <input id="density" type="range" min="1" max="16" name="scale" value="1" oninput="takeInput(this)">
-            </div>
-            <div class="input">
-              <label for="speed">Speed</label>
-              <input id="speed" type="range" min="1" max="90" step="1" name="speed" value="30" oninput="takeInput(this)">
-            </div>
-            <!-- <div class="input">
-              <label for="acceleration">Acceleration</label>
-              <input id="acceleration" type="text" name="scale" value="1.0">
-            </div> -->
-            <!-- <div class="input">
-              <label for="direction">Direction</label>
-              <input id="direction" type="text" name="scale" value="1.0">
-            </div> -->
-            <!-- <div class="input">
-              <label for="trajectory">Trajectory</label>
-              <input id="trajectory" type="checkbox" name="trajectory" value="straight">
-              <input id="trajectory" type="checkbox" name="trajectory" value="sinusoid">
-              <input type="text" name="amplitude" value="">
-              <input id="trajectory" type="checkbox" name="trajectory" value="parabola">
-              <input id="trajectory" type="checkbox" name="trajectory" value="spiral">
-              <input type="text" name="curvature" value="">
-            </div> -->
-            <!-- <div class="input">
-              <label for="degradation">Degradation</label>
-              <input id="degradation" type="text" name="degradation" value="1.0">
-            </div> -->
+              <div class="input">
+                <label for="scale">Scale</label>
+                <input id="scale" form="settingsForm" type="range" min="0.5" max="2.0" name="scale" value="1.0" step="0.1">
+              </div>
+              <div class="input">
+                <label for="rand">Random Moves</label>
+                <input id="rand" form="settingsForm" type="range" min="0" max="1" name="rand" value="0.15" step="0.01" oninput="takeInput(this)">
+              </div>
+              <div class="input">
+                <label for="range">Range</label>
+                <input id="range" form="settingsForm" type="range" min="0.3" max="1.2" step="0.1" name="range" value="0.6" oninput="takeInput(this)">
+              </div>
+              <div class="input">
+                <label for="density">Density</label>
+                <input id="density" form="settingsForm" type="range" min="1" max="16" name="density" value="1" oninput="takeInput(this)">
+              </div>
+              <div class="input">
+                <label for="speed">Speed</label>
+                <input id="speed" form="settingsForm" type="range" min="1" max="90" step="1" name="speed" value="30" oninput="takeInput(this)">
+              </div>
+              <!-- <div class="input">
+                <label for="acceleration">Acceleration</label>
+                <input id="acceleration" type="text" name="scale" value="1.0">
+              </div> -->
+              <!-- <div class="input">
+                <label for="direction">Direction</label>
+                <input id="direction" type="text" name="scale" value="1.0">
+              </div> -->
+              <!-- <div class="input">
+                <label for="trajectory">Trajectory</label>
+                <input id="trajectory" type="checkbox" name="trajectory" value="straight">
+                <input id="trajectory" type="checkbox" name="trajectory" value="sinusoid">
+                <input type="text" name="amplitude" value="">
+                <input id="trajectory" type="checkbox" name="trajectory" value="parabola">
+                <input id="trajectory" type="checkbox" name="trajectory" value="spiral">
+                <input type="text" name="curvature" value="">
+              </div> -->
+              <!-- <div class="input">
+                <label for="degradation">Degradation</label>
+                <input id="degradation" type="text" name="degradation" value="1.0">
+              </div> -->
             <div class="button" onclick="showDatabase()">
-              Show Database
+              Settings Database
             </div>
+            <form id="settingsForm" action="javascript:postSettings()" method="POST"></form>
           </div>
           <div class="tab profile hidden">
-            <div class="identification">
+            <div class="userProfile">
+              <div class="userName">
+                <p>Hello <span id="userName">Nameless</span></p>
+              </div>
               <form id="userForm" class="" action="javascript:register()" method="POST">
-                <div class="userName">
-                  <p>Hello Nameless</p>
-                </div>
                 <div class="input login">
                   <input type="text" name="user_name" value="" placeholder="User Name">
                 </div>
@@ -87,12 +89,12 @@
                   <input type="submit" name="register" onclick="userForm(this)" value="Register">
                 </div>
               </form>
-              <input type="submit" name="logout" value="Logout">
+              <input id="logout" type="submit" name="logout" value="Logout" onclick="logout()">
             </div>
             <div class="saveExplosion">
               <p>Save current explosion</p>
-              <input type="text" name="exName" placeholder="Explosion Name" value="">
-              <input type="submit" name="" value="Save">
+              <input type="text" form="settingsForm" name="expl_name" placeholder="Explosion Name" value="">
+              <input form="settingsForm" type="submit" name="" value="Save">
             </div>
             <div class="explosionsDB">
               <div class="tableHeader">
@@ -105,12 +107,9 @@
                 </table>
               </div>
               <div class="table">
-                <table>
-                  <tr>
-                    <td>1</td>
-                    <td>Admin</td>
-                    <td>Default</td>
-                  </tr>
+                <table id="userTable">
+                  <tbody>
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -120,12 +119,12 @@
             <p>This website was created as a small project for making something fun while learning PHP and AJAX on the way.It could certainly use some polishing but main functionalities I wanted to implement work as planned.</p><br>
             <p>I am currently on a lookout for a job as a junior front-end developer.</p>
             <p>If you are interested you can contact me through <a href="#">e-mail</a> or social media: </p>
-            <p>Checkout my GitHub if you like.</p>
+            <p>Also checkout my GitHub if you like.</p>
           </div>
         </div>
       </div>
       <div class="database hidden">
-        <div class="filterExpDB">
+        <!-- <div class="filterExpDB">
           <div data-filter="" class="filter">
             <label for="filter">Filter:</label>
             User <input type="checkbox" name="filter" value="user">
@@ -142,7 +141,7 @@
           <div class="button">
             Filter
           </div>
-        </div>
+        </div> -->
         <div class="explosionsDB">
           <div class="tableHeader">
             <table>
@@ -154,12 +153,14 @@
             </table>
           </div>
           <div class="table">
-            <table>
-              <tr>
-                <td>1</td>
-                <td>Admin</td>
-                <td>Default</td>
-              </tr>
+            <table id="mainTable">
+              <tbody>
+                <tr id="row" onclick="loadFromTable(this)" onmouseenter="loadFromTable(this)" onmouseleave="loadFromTable(this)">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
