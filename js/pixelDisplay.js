@@ -1,21 +1,16 @@
 //------------------------------
-//CREATE PIXELS GRID
 var centerX = 0;
 var centerY = 0;
-// var pixelWidth = 26; //px, with margin
 var pixelWidth = 13; //px, with margin
 var pW = pixelWidth; //for shortcut
 var display = document.querySelector('div.display');
 var batch = []; //array of coordinates
-var textLen = 0; //length of the text
 var pixels; // Array of all the pixels
 var record; // Array of past movements
 var coeX = [];
 //-------------------------------------
 // SETTINGS
-// var setupAr = [1,0.15,0.6,1,30];
 var keys = ['scale','rand','range','density','speed']
-// function getSetup(index) {return setupAr[index]};
 var setup = {
   'scale'   : 1, //
   'rand'    : 0.15, // Probability of random movements
@@ -45,10 +40,11 @@ var symbols = [letterA, letterT, space]; // <-- DATABASE
 // Text to create
 var text = "A A A ATA  A" // <-- INPUT
 // ----------------------------------------
-function aggregate() {
+function createBatch(text) {
 // Compile all the letters into one
 // set of coordinates and calculate
 // length of the text
+  var textLen = 0;
   // Iterate through each letter
   for (var i = 0; i < text.length; i++) {
     // Index of 'i' letter in the array of all
@@ -69,20 +65,30 @@ function aggregate() {
   }
 }
 // ----------------------------------------
-function textHeight(el) {
+function textHeight(array) {
 // Go through 'y' coordinates and find
 // and compare their extreme values
-  var maxY = 0, minY = 0;
-  for (var i = 0; i < el.length; i++) {
-    var y = el[i][1];
+  var maxY, minY;
+  for (var i = 0; i < array.length; i++) {
+    var y = array[i][1]; //First pixel, second coordinate
     if (i == 0) {maxY = y; minY = y}
     if (maxY < y) maxY = y
     if (minY > y) minY = y
   }
-  var height;
-  if (minY >= 0) height = maxY - minY
-  else height = Math.abs(minY) + maxY
+  var height = maxY - minY;
   return height + 1; //y = 0 gives 1 in height
+}
+// ----------------------------------------
+function textWidth(array) {
+  var maxX, minX;
+  for (var i = 0; i < array.length; i++) {
+    var x = array[i][0]; //First pixel, first coordinate
+    if (i == 0) {maxX = x; minX = x}
+    if (maxX < x) maxX = x
+    if (minX > x) minX = x
+  }
+  var width = maxX - minX;
+  return width + 1; //x = 0 gives 1 in height
 }
 // ----------------------------------------
 function layout(el,shift_x,shift_y) {
@@ -104,7 +110,12 @@ function layout(el,shift_x,shift_y) {
 }
 // ----------------------------------------
 function mkArray(a,b,c) {
-// Create multidimensional array
+// Create multidimensional array.
+// It makes easier process fo working with multidimensional
+// arrays by constructing whole array beforehand.
+// It is required as it is not possible to create arrays
+// in javascript in implicit way just by referencing desired
+// dimension.
 // a x b x c
   var array = [];
   for (var i = 0; i < a; i++) {
