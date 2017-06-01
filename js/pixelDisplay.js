@@ -8,6 +8,8 @@ var batch = []; //array of coordinates
 var pixels; // Array of all the pixels
 var record; // Array of past movements
 var coeX = [];
+var coordinates = {}; // Object for all symbols coordinates
+var widths = {}; // Object for all symbols widths
 //-------------------------------------
 // SETTINGS
 var keys = ['scale','rand','range','density','speed']
@@ -19,38 +21,87 @@ var setup = {
   'speed'   : 30 // Pixel movements per second
 }
 // ----------------------------------------
-// Example symbols
-var letterT = {
-  'coords' : [[1,0],[1,1],[1,2],[1,3],[0,3],[2,3]],
-  'width' : 3
+// Convert server response to more convenient format
+// and aggregate it in appropariate variables.
+function adaptServerData(data) {
+  for (var i = 0; i < data.length; i + 2) {
+    var coords = [];
+    var symbolCode = data[i][0];
+    // Insert 'X' coordinates
+    for (var j = 1; j < data[i].length; j++) {
+      coords[j] = [];
+      coords[j][0] = data[i][j];
+    }
+    // Insert 'Y' coordinates
+    for (var j = 1; j < data[i+1].length; j++) {
+      coords[j] = [];
+      coords[j][1] = data[i+1][j];
+    }
+    // Define symbol width
+    var width = textWidth(coords)
+    // Append symbol to the dictionary
+    dictionary.push(symbolCode);
+    // Append symbol with its coordinates to aggregate list
+    Object.defineProperty(coordinates, symbolCode, {
+      value: coords
+    });
+    // Append symbol with its width value to aggregate list
+    Object.defineProperty(widths, symbolCode, {
+      value: width
+    });
+  }
 }
-var letterA = {
-  'coords' : [[0,0],[0,1],[0,2],[0,3],[1,1],[1,3],[2,0],[2,1],[2,2],[2,3]],
-  'width' : 3
+
+// ========================================
+// Scan text for known codenames of symbols
+function evaluateInputText(text) {
+  for (var i = 0; i < text.length; i++) {
+    var symbol = text[i];
+    if (symbol = '<') {
+      var codeStart = i;
+      var codeEnd = text.indexOf('>',codeStart);
+      var code = text.substring(codeStart,codeEnd);
+      dictionary.indexOf(code);
+    }
+    else {
+      dictionary.indexOf(text[i])
+
+    }
+  }
 }
-var space = {
-  'coords' : [],
-  'width' : 0.5
+
+// ----------------------------------------
+// Example Data and input
+var dictionary = ['A','T',' ','<special>'];
+var coordinates = {
+  'T' : [[1,0],[1,1],[1,2],[1,3],[0,3],[2,3]],
+  'A' : [[0,0],[0,1],[0,2],[0,3],[1,1],[1,3],[2,0],[2,1],[2,2],[2,3]],
+  ' ' : [],
+}
+var widths = {
+  'T' : 3,
+  'A' : 3,
+  ' ' : 0.5
 }
 // ----------------------------------------
-// list of symbols to query for symbol index
-var symbolIndex = 'AT '; // <-- DATABASE
-// list of symbols to query for the data
-var symbols = [letterA, letterT, space]; // <-- DATABASE
+// Reference for all existing symbols
+// Reference for symbols codenames
+// var symbols = [letterA, letterT, space];
+var symbolsCodes = [letterA, letterT, space];
 // Text to create
-var text = "A A A ATA  A" // <-- INPUT
+var inputText = "A A A ATA  A";
 // ----------------------------------------
-function createBatch(text) {
 // Compile all the letters into one
 // set of coordinates and calculate
 // length of the text
+function createBatch(text) {
   var textLen = 0;
-  // Iterate through each letter
+  // Iterate through each symbol
   for (var i = 0; i < text.length; i++) {
     // Index of 'i' letter in the array of all
     // known symbols
     var id = symbolIndex.indexOf(text.charAt(i));
-    // Iterate through pixels
+    // Iterate through pixels of current symbol
     for (var k = 0; k < symbols[id].coords.length; k++) {
       var coords = []; //temporary container
       var x = symbols[id].coords[k][0];
@@ -120,7 +171,7 @@ function mkArray(a,b,c) {
   var array = [];
   for (var i = 0; i < a; i++) {
     array[i] = [];
-    if (c && c > 1) {
+    if (c > 1) {
       for (var j = 0; j < b; j++) {
         array[i][j] = [];
       }
@@ -135,8 +186,8 @@ function explode() {
 // and record all taken actions for each.
 
 // Define number of movements
-var vpSize = Math.max(window.innerHeight, window.innerWidth);
-var n = Math.floor((vpSize/2)/pW * setup.range)
+  var vpSize = Math.max(window.innerHeight, window.innerWidth);
+  var n = Math.floor((vpSize/2)/pW * setup.range);
 // Restore default positions of pixels
 restore();
 pixels = document.querySelectorAll('.pixel');
