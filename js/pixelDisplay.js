@@ -10,6 +10,7 @@ var record; // Array of past movements
 var coeX = [];
 var coordinates = {}; // Object for all symbols coordinates
 var widths = {}; // Object for all symbols widths
+var readyInput = []; // List of symbols to display
 //-------------------------------------
 // SETTINGS
 var keys = ['scale','rand','range','density','speed']
@@ -51,28 +52,43 @@ function adaptServerData(data) {
     });
   }
 }
-
 // ========================================
 // Scan text for known codenames of symbols
 function evaluateInputText(text) {
+  readyInput = [];
   for (var i = 0; i < text.length; i++) {
     var symbol = text[i];
-    if (symbol = '<') {
+    // '<' indicate code for special symbol if
+    // unescaped with '<'
+    if (symbol == '<') { //Special symbol case
       var codeStart = i;
       var codeEnd = text.indexOf('>',codeStart);
-      var code = text.substring(codeStart,codeEnd);
-      dictionary.indexOf(code);
+      var code = text.substring(codeStart + 1,codeEnd);
+      // If '>' was not found code == '', and also
+      // code for special symbol can't have ' ' in it
+      // so in this case '<' is just regular symbol
+      if (code == '' || code.indexOf(' ') != -1) {
+        var fail = true;
+        break
+      }
+      var index = dictionary.indexOf(code);
+      readyInput[i] = code;
+      i = i + code.length + 1; //skip next few symbols
     }
-    else {
-      dictionary.indexOf(text[i])
-
+    else if (true || fail) { //Regular symbol case
+      var index = dictionary.indexOf(symbol);
+      readyInput[i] = symbol;
+    }
+    if (index == -1) { //Invalid input case
+      var msg = (code == 'undefined' ? symbol : code);
+      return console.log('Unrecognized symbol/code: '+ msg +'.');
     }
   }
 }
 
 // ----------------------------------------
 // Example Data and input
-var dictionary = ['A','T',' ','<special>'];
+var dictionary = ['A','T',' ','special'];
 var coordinates = {
   'T' : [[1,0],[1,1],[1,2],[1,3],[0,3],[2,3]],
   'A' : [[0,0],[0,1],[0,2],[0,3],[1,1],[1,3],[2,0],[2,1],[2,2],[2,3]],
@@ -84,11 +100,7 @@ var widths = {
   ' ' : 0.5
 }
 // ----------------------------------------
-// Reference for all existing symbols
-// Reference for symbols codenames
-// var symbols = [letterA, letterT, space];
-var symbolsCodes = [letterA, letterT, space];
-// Text to create
+// Example text to create
 var inputText = "A A A ATA  A";
 // ----------------------------------------
 // Compile all the letters into one
