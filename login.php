@@ -3,23 +3,39 @@ require_once('mysqli_connect.php');
 if (!session_id()) {
     session_start();
 }
-if(isset($_POST['user_name']) && isset($_POST['password'])) {
+if (isset($_SESSION['logged'])) {
+  $response['success'] = false;
+  $response['msg'] = 'User already logged-in.';
+}
+else {
+  if(isset($_POST['user_name'], $_POST['password'])) {
 
-  $user_name = mysqli_real_escape_string($dbc, $_POST['user_name']);
-  $password = mysqli_real_escape_string($dbc, $_POST['password']);
-  $query = "SELECT user_name FROM users WHERE
-          user_name='$user_name'
-          and password='$password'";
-  $result = mysqli_query($dbc, $sql);
-  $count = mysqli_num_rows($query);
-  $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    $user_name = mysqli_real_escape_string($dbc, $_POST['user_name']);
+    $password = mysqli_real_escape_string($dbc, $_POST['password']);
+    $query = "SELECT user_name FROM users WHERE
+        user_name='$user_name'
+        and password='$password'";
+    $result = mysqli_query($dbc, $query);
 
-  if ($count == 1) {
-    $_SESSION['user_name'] = $row['user_name'];
-    echo $row['user_name'];
-  }
-  else {
-    echo "Login and Password don't match";
+    if (!$result) {
+      die('Error: ' . mysqli_error($dbc));
+    }
+
+    $count = mysqli_num_rows($result); //number of affected rows
+    if ($count == 1) {
+      $_SESSION['logged'] = true;
+      $_SESSION['user_name'] = $_POST['user_name'];
+      $_SESSION['password'] = $_POST['password'];
+      $response['success'] = true;
+      $response['msg'] = 'User logged-in.';
+      $response['userName'] = $_POST['user_name'];
+    }
+    else {
+      $response['success'] = false;
+      $response['msg'] = 'User Name and Password don\'t match.';
+    }
   }
 }
+header('Content-type: application/json');
+echo json_encode($response);
 ?>
