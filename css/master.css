@@ -37,7 +37,10 @@ body {
     border: 2px solid #0c7329;
     margin: 10px;
     margin-top: 5px;
-    position: relative; }
+    position: relative;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none; }
     body main * {
       z-index: 2; }
     body main .background::before {
@@ -159,7 +162,7 @@ body {
           background: rgba(68, 150, 24, 0.2); }
     body main .buttons {
       position: fixed;
-      bottom: 50px;
+      top: 95px;
       left: 0px;
       width: 100%;
       height: 0px;
@@ -223,14 +226,13 @@ body {
         body main .tabs .panels > div.hidden {
           display: none; }
         body main .tabs .panels > div.tab {
-          box-sizing: padding-box;
+          box-sizing: border-box;
           padding: 15px;
           background: rgba(0, 0, 0, 0.45);
-          height: 150px; }
+          height: 175px; }
         body main .tabs .panels > div.settings:not(.hidden) {
           display: flex;
-          flex-direction: column;
-          flex-wrap: wrap;
+          flex-flow: column wrap;
           justify-content: flex-start;
           align-content: flex-start; }
           body main .tabs .panels > div.settings:not(.hidden) > div.input {
@@ -282,8 +284,50 @@ div.display {
   top: 50vh;
   left: 50vw;
   padding: 0px; }
+  div.display .gridWrapper {
+    height: 0px;
+    width: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    div.display .gridWrapper .grid {
+      box-sizing: content-box;
+      width: auto;
+      height: auto;
+      flex: 1 0 auto;
+      display: flex;
+      flex-flow: row wrap;
+      border: 1px solid #0c7329;
+      overflow: visible; }
+      div.display .gridWrapper .grid.hidden {
+        display: none; }
+      div.display .gridWrapper .grid:hover {
+        cursor: pointer; }
+      div.display .gridWrapper .grid .baseWrapper {
+        width: 100%;
+        height: 0px;
+        position: relative; }
+        div.display .gridWrapper .grid .baseWrapper .base {
+          box-sizing: content-box;
+          position: absolute;
+          top: 0px;
+          right: -14px;
+          border-right: 14px solid #0c7329;
+          width: 0px;
+          height: 14px;
+          background: rgba(0, 0, 0, 0.3);
+          background-clip: content-box;
+          opacity: 0.5;
+          z-index: 0;
+          user-select: none;
+          -moz-user-select: none;
+          -webkit-user-select: none; }
+          div.display .gridWrapper .grid .baseWrapper .base:hover, div.display .gridWrapper .grid .baseWrapper .base.active {
+            opacity: 1;
+            width: 100%; }
 
 .cell, .pixel {
+  flex: 0 0 auto;
   box-sizing: border-box;
   width: 12px;
   height: 12px;
@@ -291,8 +335,16 @@ div.display {
   margin: 1px;
   border-radius: 2px;
   background: radial-gradient(circle, #04250d, rgba(0, 0, 0, 0.05)); }
+  .cell:hover, .pixel:hover {
+    background: radial-gradient(circle, #18e753, #0a5c21);
+    opacity: 0.5; }
+  .cell.active, .active.pixel {
+    background: radial-gradient(circle, #18e753, #0a5c21); }
+  .cell.active:hover, .active.pixel:hover, .cell.active:active, .active.pixel:active {
+    opacity: 0.15;
+    box-shadow: none; }
 
-.glow1, .pixel {
+.glow1, .cell:hover, .pixel:hover, .cell.active, .active.pixel, .pixel {
   box-shadow: 0px 0px 25px 2px #0c7329; }
 
 .pixel {
@@ -300,6 +352,8 @@ div.display {
   left: 0px;
   bottom: 0px;
   background: radial-gradient(circle, #18e753, #0a5c21); }
+  .pixel.hidden {
+    display: none; }
 
 .centerLine {
   position: fixed;

@@ -44,6 +44,7 @@ function showTab(labelName) {
     }
   }
   adjustDBWindow();
+  showGrid();
 }
 // ========================================
 // Adjust height of the database window
@@ -191,13 +192,30 @@ function removePixels() {
   }
 }
 // ========================================
+function hidePixels() {
+  var pixels = document.querySelectorAll('.pixel');
+  for (var i = 0; i < pixels.length; i++) {
+    pixels[i].classList.remove('hidden');
+  }
+}
+// ========================================
+function showPixels() {
+  var pixels = document.querySelectorAll('.pixel');
+  for (var i = 0; i < pixels.length; i++) {
+    pixels[i].classList.add('hidden');
+  }
+}
+// ========================================
 // Display grid for creating and editing symbols
 function buildGrid(width,height) {
   var grid = document.querySelector('.grid');
   var cell = document.querySelector('.cell');
+  var base = document.querySelector('.base');
   var cellWidth = pixelWidth;
+  base.style.height = pixelWidth + 'px';
   var cellsInRow = Math.floor(width/cellWidth);
   var cellsInColumn = Math.floor(height/cellWidth);
+  base.style.top = (cellsInColumn - 2) * pixelWidth + 'px';
   grid.style.maxWidth = cellsInRow * cellWidth + 'px';
   grid.style.maxHeight = cellsInColumn * cellWidth + 'px';
   for (var i = 1; i < cellsInRow*cellsInColumn; i++) {
@@ -205,14 +223,48 @@ function buildGrid(width,height) {
   }
 }
 function showGrid() {
-  removePixels();
   var grid = document.querySelector('.grid');
-  grid.classList.toggle('hidden');
+  var editor = document.querySelector('.label.editor');
+  if (editor.classList.contains('active')) {
+    hidePixels();
+    grid.classList.remove('hidden');
+  }
+  else {
+    showPixels();
+    grid.classList.add('hidden');
+  }
 }
 // ========================================
 function selectCell(target) {
   target.classList.toggle('active');
   //New symbol defined in database friendly format
+  // target.offsetTop
   // newSymbolX
   // newSymbolY
 }
+// ========================================
+var mousePositionY;
+var realDelta = 0;
+function startDrag(target, evt) {
+  var base = document.querySelector('.base');
+  base.classList.add('active');
+  window.addEventListener('mousemove', dragBase);
+  window.addEventListener('mouseup', stopDrag);
+  mousePositionY = evt.clientY;
+}
+function stopDrag() {
+  var base = document.querySelector('.base');
+  base.classList.remove('active');
+  window.removeEventListener('mousemove', dragBase);
+}
+function dragBase(evt) {
+  var base = document.querySelector('.base');
+  realDelta = realDelta + mousePositionY - evt.clientY;
+  var delta = Math.round(realDelta / 14) * 14;
+  baseTop = parseInt(getComputedStyle(base).top);
+  newTop = Math.max(baseTop - delta, -14);
+  base.style.top = newTop + 'px';
+  realDelta = realDelta - delta;
+  mousePositionY = evt.clientY;
+}
+// ========================================

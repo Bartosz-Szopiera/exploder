@@ -47,6 +47,9 @@ body {
     margin: 10px;
     margin-top: 5px;
     position: relative;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
     & * {
       z-index: 2;
     }
@@ -207,7 +210,8 @@ body {
     }
     & .buttons {
       position: fixed;
-      bottom: 50px;
+      // bottom: 50px;
+      top: 95px;
       left: 0px;
       width: 100%;
       height: 0px;
@@ -286,17 +290,19 @@ body {
         // ======================================
         // Style for all panel
         &>div.tab {
-          box-sizing: padding-box;
+          box-sizing: border-box;
           padding: 15px;
           background: rgba(0, 0, 0, 0.45);
-          height: 150px;
+          height: 175px;
+          .edtior {
+
+          }
         }
         // ======================================
         // Settings Panel
         &>div.settings:not(.hidden) {
           display: flex;
-          flex-direction: column;
-          flex-wrap: wrap;
+          flex-flow: column wrap;
           justify-content: flex-start;
           align-content: flex-start;
           &>div.input {
@@ -356,7 +362,6 @@ body {
           }
         }
         &>div.about:not(.hidden) {
-
         }
       }
     }
@@ -370,9 +375,59 @@ div.display {
   top: 50vh;
   left: 50vw;
   padding: 0px;
+  .gridWrapper {
+    height: 0px;
+    width: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .grid {
+      box-sizing: content-box;
+      width: auto;
+      height: auto;
+      flex: 1 0 auto;
+      display: flex;
+      flex-flow: row wrap;
+      border: 1px solid $consoleGreen;
+      overflow: visible;
+      &.hidden {
+        display: none;
+      }
+      &:hover {
+        cursor: pointer;
+      }
+      & .baseWrapper {
+        width: 100%;
+        height: 0px;
+        position: relative;
+        & .base {
+          box-sizing: content-box;
+          position: absolute;
+          top: 0px;
+          right: -14px;
+          border-right: 14px solid $consoleGreen;
+          width: 0px;
+          height: 14px;
+          background: rgba(0,0,0,0.3);
+          background-clip: content-box;
+          opacity: 0.5;
+          z-index: 0;
+          user-select: none;
+          -moz-user-select: none;
+          -webkit-user-select: none;
+          &:hover, &.active {
+            opacity: 1;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
 }
 .cell {
+  flex: 0 0 auto;
   box-sizing: border-box;
+  // box-sizing: content-box;
   width: 12px;
   height: 12px;
   padding: 0px;
@@ -381,6 +436,19 @@ div.display {
   background: radial-gradient(circle,
               hsl(137, 81%, 8%),
               rgba(0,0,0,0.05));
+  &:hover {
+    background: radial-gradient(circle, hsl(137, 81%, 50%), hsl(137, 81%, 20%));
+    opacity: 0.5;
+    @extend .glow1;
+  }
+  &.active {
+    background: radial-gradient(circle, hsl(137, 81%, 50%), hsl(137, 81%, 20%));
+    @extend .glow1;
+  }
+  &.active:hover, &.active:active {
+    opacity: 0.15;
+    box-shadow: none;
+  }
 }
 .glow1 {
   box-shadow: 0px 0px 25px 2px $consoleGreen;
@@ -392,6 +460,9 @@ div.display {
   left: 0px;
   bottom: 0px;
   background: radial-gradient(circle, hsl(137, 81%, 50%), hsl(137, 81%, 20%));
+  &.hidden {
+    display: none;
+  }
 }
 //-------------------------------------
 .centerLine {
