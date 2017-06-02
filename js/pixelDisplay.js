@@ -1,7 +1,7 @@
 // ==========================================
 var centerX = 0;
 var centerY = 0;
-var pixelWidth = 13; //px, with margin
+var pixelWidth = 14; //px, with margin
 var pW = pixelWidth; //for shortcut
 var display = document.querySelector('div.display');
 var batch = []; //array of coordinates
@@ -11,6 +11,8 @@ var coeX = [];
 var coordinates = {}; // Object for all symbols coordinates
 var widths = {}; // Object for all symbols widths
 var readyInput = []; // List of symbols to display
+var newSymbolX = [];
+var newSymbolY = [];
 // ==========================================
 // SETTINGS
 var keys = ['scale','rand','range','density','speed']
@@ -22,7 +24,7 @@ var setup = {
   'speed'   : 30 // Pixel movements per second
 }
 // ==========================================
-// Convert server response to more convenient format
+// Convert server response to a more convenient format
 // and aggregate it in appropariate variables.
 function adaptServerData(data) {
   for (var i = 0; i < data.length; i + 2) {

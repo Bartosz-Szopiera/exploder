@@ -1,8 +1,12 @@
-createGrid();
-aggregate();
+// =========================================
+// Routines providing general functionality
+// =========================================
+buildGrid(500,200);
+// createBatch(inputText);
 // letters currently have always 4 pixels in height
 // So 2 is half on the height of the text
-layout(batch, -textLen/2,-2);
+// layout(batch, -textLen/2,-textHeight(batch)/2);
+// layout(batch, -textWidth(batch)/2,-textHeight(batch)/2);
 isLogged();
 // ========================================
 // Show or hide tabs acoording to which one
@@ -139,9 +143,10 @@ function updateTable(response) {
   }
 }
 // ========================================
-//
+// Load explosion settings from 'settings' variable
+// to the settingsForm based on user selection
+// from the Settings Database table.
 var setupBuffer = []; //temporary container for settings
-
 function loadFromTable(target) {
   var settingsForm = document.querySelector('div.settings.tab');
   var inputs = settingsForm.querySelectorAll('input');
@@ -175,4 +180,39 @@ function loadFromTable(target) {
       inputs[i].value = setupBuffer[i];
     }
   }
+}
+// ========================================
+function removePixels() {
+// Remove all pixels from the display
+// (They are easy to recover from 'batch')
+  var pixels = document.querySelectorAll('.pixel');
+  for (var i = 0; i < pixels.length; i++) {
+    pixels[i].remove();
+  }
+}
+// ========================================
+// Display grid for creating and editing symbols
+function buildGrid(width,height) {
+  var grid = document.querySelector('.grid');
+  var cell = document.querySelector('.cell');
+  var cellWidth = pixelWidth;
+  var cellsInRow = Math.floor(width/cellWidth);
+  var cellsInColumn = Math.floor(height/cellWidth);
+  grid.style.maxWidth = cellsInRow * cellWidth + 'px';
+  grid.style.maxHeight = cellsInColumn * cellWidth + 'px';
+  for (var i = 1; i < cellsInRow*cellsInColumn; i++) {
+    grid.appendChild(cell.cloneNode());
+  }
+}
+function showGrid() {
+  removePixels();
+  var grid = document.querySelector('.grid');
+  grid.classList.toggle('hidden');
+}
+// ========================================
+function selectCell(target) {
+  target.classList.toggle('active');
+  //New symbol defined in database friendly format
+  // newSymbolX
+  // newSymbolY
 }
