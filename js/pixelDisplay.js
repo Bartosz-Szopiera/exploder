@@ -1,4 +1,4 @@
-//------------------------------
+// ==========================================
 var centerX = 0;
 var centerY = 0;
 var pixelWidth = 13; //px, with margin
@@ -11,7 +11,7 @@ var coeX = [];
 var coordinates = {}; // Object for all symbols coordinates
 var widths = {}; // Object for all symbols widths
 var readyInput = []; // List of symbols to display
-//-------------------------------------
+// ==========================================
 // SETTINGS
 var keys = ['scale','rand','range','density','speed']
 var setup = {
@@ -21,7 +21,7 @@ var setup = {
   'density' : 1, // Pixels number multiplier
   'speed'   : 30 // Pixel movements per second
 }
-// ----------------------------------------
+// ==========================================
 // Convert server response to more convenient format
 // and aggregate it in appropariate variables.
 function adaptServerData(data) {
@@ -85,8 +85,7 @@ function evaluateInputText(text) {
     }
   }
 }
-
-// ----------------------------------------
+// ==========================================
 // Example Data and input
 var dictionary = ['A','T',' ','special'];
 var coordinates = {
@@ -127,7 +126,7 @@ function createBatch(text) {
     textLen += symbols[id].width;
   }
 }
-// ----------------------------------------
+// ==========================================
 function textHeight(array) {
 // Go through 'y' coordinates and find
 // and compare their extreme values
@@ -141,7 +140,7 @@ function textHeight(array) {
   var height = maxY - minY;
   return height + 1; //y = 0 gives 1 in height
 }
-// ----------------------------------------
+// ==========================================
 function textWidth(array) {
   var maxX, minX;
   for (var i = 0; i < array.length; i++) {
@@ -153,7 +152,7 @@ function textWidth(array) {
   var width = maxX - minX;
   return width + 1; //x = 0 gives 1 in height
 }
-// ----------------------------------------
+// ==========================================
 function layout(el,shift_x,shift_y) {
 // Create pixels for given element according
 // to the batch and move them all to
@@ -171,7 +170,7 @@ function layout(el,shift_x,shift_y) {
     pixel.style.bottom = y*pW + 'px';
   }
 }
-// ----------------------------------------
+// ==========================================
 function mkArray(a,b,c) {
 // Create multidimensional array.
 // It makes easier process fo working with multidimensional
@@ -191,72 +190,80 @@ function mkArray(a,b,c) {
   }
   return array;
 }
-// ----------------------------------------
+// ========================================
 function explode() {
 // Relocate all pixels of given element
 // in specific number of random moves
 // and record all taken actions for each.
 
-// Define number of movements
+// Define number of movements based on minimal
+// number of them required to reach viewport edge.
   var vpSize = Math.max(window.innerHeight, window.innerWidth);
   var n = Math.floor((vpSize/2)/pW * setup.range);
-// Restore default positions of pixels
-restore();
-pixels = document.querySelectorAll('.pixel');
-record = mkArray(n,pixels.length,2);
+restore(); //Restore pixels default positions
+pixels = document.querySelectorAll('.pixel'); // All pixl elements
+record = mkArray(n,pixels.length,2); // Prepare array
 var dirX = [], dirY = [];
-  for (var i = 0; i < n; i++) {
-    // Record n-th frame
-    for (var j = 0; j < pixels.length; j++) {
+//----------------------------------------
+// Define direction of movement for each pixel
+// as if they would spread in a radial pattern:
+// pixel to the right from center - moves to the right
+// pixel below the center - moves down etc.
+  for (var i = 0; i < pixels.length; i++) {
+    // Orthogonal direction:
+    if (x > centerX) dirX[i] = 1; //Go right
+    else dirX[i] = -1;            //Go left
+    if (y > centerY) dirY[i] = 1; //Go up
+    else dirY[i] = -1;            //Go down
+    // Exact direction
+    // Offset from the system's 0,0 (or text center)
+    var dX = Math.abs(centerX - x); //Offset on X
+    var dY = Math.abs(centerY - y); //Offset on Y
+    // What part of total offset falls on the side of X.
+    // You can read it as probability of moving on X axis:
+    // coeX < 0.5 - movements will be mostly vertical
+    // coeX > 0.5 - movements will be mostly lateral
+      coeX[i] = dX/(dX + dY);
+  }
+  for (var i = 0; i < n; i++) { // i Frame
+    for (var j = 0; j < pixels.length; j++) { // j Pixel
       // Record current position:
       var x = parseInt(pixels[j].style.left)/pW;
       var y = parseInt(pixels[j].style.bottom)/pW;
       record[i][j] = [x,y]; //in normalized units
-      // Define average direction:
-      if (i == 0) {
-        // Orthogonal direction:
-        if (x > centerX) dirX[j] = 1;
-        else dirX[j] = -1;
-        if (y > centerY) dirY[j] = 1;
-        else dirY[j] = -1;
-        // Exact direction:
+      // -------------------------------
+      // Define new position:
         var dX = Math.abs(centerX - x);
         var dY = Math.abs(centerY - y);
-        // Coeafficient telling how much given
-        // pixel is eccentric on x axis relative
-        // to its total eccentricity
-        coeX[j] = dX/(dX + dY);
-      }
-      // Define new position:
-      var dX = Math.abs(centerX - x);
-      var dY = Math.abs(centerY - y);
-
-      if (Math.random()<(1-setup.rand)) {
-        if (dX/(dX + dY) < coeX[j]) {
+        // ----Not random move----
+        if (Math.random()<(1-setup.rand)) {
+          if (dX/(dX + dY) < coeX[j]) {
+            x = x + dirX[j];
+          }
+          else if (dX/(dX + dY) > coeX[j]) {
+            y = y + dirY[j];
+          }
+          else if (dX/(dX + dY) > 0.5) {
+            x = x + dirX[j];
+          }
+          else if (dX/(dX + dY) < 0.5) {
+            y = y + dirY[j];
+          }
+          else if (Math.random() > 0.5) {
+            x = x + dirX[j];
+          }
+          else {
+            y = y + dirY[j];
+          }
+        }
+        // ----Random move----
+        else if (Math.random() > 0.5) { //T: random on X
           x = x + dirX[j];
         }
-        else if (dX/(dX + dY) > coeX[j]) {
+        else { //T: random on Y
           y = y + dirY[j];
         }
-        else if (dX/(dX + dY) > 0.5) {
-          x = x + dirX[j];
-        }
-        else if (dX/(dX + dY) < 0.5) {
-          y = y + dirY[j];
-        }
-        else if (Math.random() > 0.5) {
-          x = x + dirX[j];
-        }
-        else {
-          y = y + dirY[j];
-        }
-      }
-      else if (Math.random() > 0.5) {
-        x = x + dirX[j];
-      }
-      else {
-        y = y + dirY[j];
-      }
+      //------------------------------------
       // Apply new position:
       pixels[j].style.left = x * pW + 'px';
       pixels[j].style.bottom = y * pW + 'px';
@@ -265,9 +272,9 @@ var dirX = [], dirY = [];
   // Restore initial position
   restore();
 }
-// ----------------------------------------
+// ==========================================
 function restore() {
-// Restore initial position of text pixels
+// Restore initial position of pixels
   var x,y;
   if (pixels!=undefined) {
     for (var i = 0; i < pixels.length; i++) {
@@ -278,11 +285,11 @@ function restore() {
     }
   }
 }
-// ----------------------------------------
+// ==========================================
 function play(dir) {
 // Move all pixels of given element
-// according to their recorder movement
-// patterns
+// according to their recorded movement
+// patterns forwards (dir = 1) or backwards (-1)
   for (var i = 0; i < record.length; i++) {
     for (var j = 0; j < pixels.length; j++) {
       var x, y;
@@ -301,7 +308,7 @@ function play(dir) {
     }
   }
 }
-// ----------------------------------------
+// ==========================================
 function transform(el) {
 // Transform element by:
 // *increasing its number of pixels and
