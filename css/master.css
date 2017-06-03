@@ -295,8 +295,6 @@ div.display {
       width: auto;
       height: auto;
       flex: 1 0 auto;
-      display: flex;
-      flex-flow: row wrap;
       border: 1px solid #0c7329;
       overflow: visible; }
       div.display .gridWrapper .grid.hidden {
@@ -325,6 +323,12 @@ div.display {
           div.display .gridWrapper .grid .baseWrapper .base:hover, div.display .gridWrapper .grid .baseWrapper .base.active {
             opacity: 1;
             width: 100%; }
+      div.display .gridWrapper .grid .cellsWrapper {
+        position: relative;
+        flex: 1 0 auto;
+        display: flex;
+        flex-flow: row wrap;
+        transform: rotateX(180deg); }
 
 .cell, .pixel {
   flex: 0 0 auto;

@@ -386,8 +386,6 @@ div.display {
       width: auto;
       height: auto;
       flex: 1 0 auto;
-      display: flex;
-      flex-flow: row wrap;
       border: 1px solid $consoleGreen;
       overflow: visible;
       &.hidden {
@@ -421,13 +419,20 @@ div.display {
           }
         }
       }
+      & .cellsWrapper {
+        position: relative;
+        flex: 1 0 auto;
+        display: flex;
+        flex-flow: row wrap;
+        transform: rotateX(180deg);
+        // transform: rotateY(180deg);
+      }
     }
   }
 }
 .cell {
   flex: 0 0 auto;
   box-sizing: border-box;
-  // box-sizing: content-box;
   width: 12px;
   height: 12px;
   padding: 0px;

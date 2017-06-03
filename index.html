@@ -15,12 +15,21 @@
       </div>
       <div class="background"></div>
       <div class="display">
-        <div class="display"></div>
+        <div class="gridWrapper">
+          <div class="grid hidden">
+            <div class="baseWrapper">
+              <div class="base" title="Level of alignment with other symbols." onmousedown="startDrag(event)"></div>
+            </div>
+            <div class="cellsWrapper">
+              <div class="cell" onclick="selectCell(this)"></div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="tabs">
         <div class="labels">
           <div class="label settings" onclick="showTab('settings')">Explosion Settings</div>
-          <div class="label profile" onclick="showTab('profile')">Your Profile</div>
+          <div class="label editor" onclick="showTab('editor')">Symbols Editor</div>
           <div class="label profile" onclick="showTab('profile')">Your Profile</div>
           <div class="label about" onclick="showTab('about')">About</div>
         </div>
@@ -71,6 +80,11 @@
               Settings Database
             </div>
             <form id="settingsForm" action="javascript:postSettings()" method="POST"></form>
+          </div>
+          <div class="tab editor hidden">
+            <div class="">
+
+            </div>
           </div>
           <div class="tab profile hidden">
             <div class="userProfile">
