@@ -209,6 +209,7 @@ function showPixels() {
 // Display grid for creating and editing symbols
 function buildGrid(width,height) {
   var grid = document.querySelector('.grid');
+  var cellsWrapper = document.querySelector('.cellsWrapper');
   var cell = document.querySelector('.cell');
   var base = document.querySelector('.base');
   var cellWidth = pixelWidth;
@@ -216,10 +217,10 @@ function buildGrid(width,height) {
   var cellsInRow = Math.floor(width/cellWidth);
   var cellsInColumn = Math.floor(height/cellWidth);
   base.style.top = (cellsInColumn - 2) * pixelWidth + 'px';
-  grid.style.maxWidth = cellsInRow * cellWidth + 'px';
-  grid.style.maxHeight = cellsInColumn * cellWidth + 'px';
+  cellsWrapper.style.maxWidth = cellsInRow * cellWidth + 'px';
+  cellsWrapper.style.maxHeight = cellsInColumn * cellWidth + 'px';
   for (var i = 1; i < cellsInRow*cellsInColumn; i++) {
-    grid.appendChild(cell.cloneNode());
+    cellsWrapper.appendChild(cell.cloneNode());
   }
 }
 function showGrid() {
@@ -237,15 +238,13 @@ function showGrid() {
 // ========================================
 function selectCell(target) {
   target.classList.toggle('active');
-  //New symbol defined in database friendly format
-  // target.offsetTop
-  // newSymbolX
-  // newSymbolY
 }
 // ========================================
+// Below three function serve the action of
+// sliding '.base'-level slider
 var mousePositionY;
 var realDelta = 0;
-function startDrag(target, evt) {
+function startDrag(evt) {
   var base = document.querySelector('.base');
   base.classList.add('active');
   window.addEventListener('mousemove', dragBase);
@@ -259,12 +258,40 @@ function stopDrag() {
 }
 function dragBase(evt) {
   var base = document.querySelector('.base');
+  // 'realDelta = realDelta +..' - increase value with
+  // each event instance until amounts for the whole pixelWidth
   realDelta = realDelta + mousePositionY - evt.clientY;
-  var delta = Math.round(realDelta / 14) * 14;
+  // '.../ pixelWidth) * p.W. ' - quantify move to thole cell
+  var delta = Math.round(realDelta / pixelWidth) * pixelWidth;
   baseTop = parseInt(getComputedStyle(base).top);
-  newTop = Math.max(baseTop - delta, -14);
+  var gridHeight = document.querySelector('.grid').offsetHeight - 2;
+  // Math.min/max - restrict location to the grid height
+  newTop = Math.min(Math.max(baseTop - delta, 0), gridHeight - pixelWidth);
   base.style.top = newTop + 'px';
-  realDelta = realDelta - delta;
+  realDelta = realDelta - delta; // subtract any whole move
   mousePositionY = evt.clientY;
+  console.log(base.offsetTop);
 }
 // ========================================
+var newSymbolX = [];
+var newSymbolY = [];
+function loadFromEditor() {
+  var activeCells = document.querySelectorAll('.cell.active');
+  var base = document.querySelector('.base');
+  var grid = document.querySelector('.grid');
+  var gridHeight = grid.offsetHeight - 2; // 2 - grid border
+  var baseY = Math.abs(base.offsetTop + pixelWidth - gridHeight);
+  for (var i = 0; i < activeCells.length; i++) {
+    var cellY = activeCells[i].offsetTop - 1; // 1 - Cell margin
+    newSymbolY[i] = (cellY - baseY)/pixelWidth;
+    var cellX = (activeCells[i].offsetLeft - 1)/pixelWidth;
+    newSymbolX[i] = cellX;
+  }
+  // Normalize X coordinates
+  var cacheX = [];
+  cacheX.push.apply(cacheX, newSymbolX);
+  minX = cacheX.sort(function(a,b){return a-b;})[0];
+  for (var i = 0; i < newSymbolX.length; i++) {
+    newSymbolX[i] -= minX;
+  }
+}
