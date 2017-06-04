@@ -11,8 +11,15 @@ var coeX = [];
 var coordinates = {}; // Object for all symbols coordinates
 var widths = {}; // Object for all symbols widths
 var readyInput = []; // List of symbols to display
-var newSymbolX = [];
-var newSymbolY = [];
+var localData = {
+  'settings'  : null,
+  'symbols'   : null,
+  'symbolsParsed' : null
+}
+var dictionary = [];
+var coordinates = {};
+var widths = {};
+
 // ==========================================
 // SETTINGS
 var keys = ['scale','rand','range','density','speed']
@@ -26,22 +33,21 @@ var setup = {
 // ==========================================
 // Convert server response to a more convenient format
 // and aggregate it in appropariate variables.
-function adaptServerData(data) {
-  for (var i = 0; i < data.length; i + 2) {
+function adaptServerData() {
+  dictionary = []; // Clear dictionary
+  coordinates = {}; //Clear coordinates
+  var data = localData.symbols;
+  for (var i = 0; i < data.length; i++) {
+    var coordsX = JSON.parse('[' + data[i][2] + ']');
+    var coordsY = JSON.parse('[' + data[i][3] + ']');
     var coords = [];
-    var symbolCode = data[i][0];
-    // Insert 'X' coordinates
-    for (var j = 1; j < data[i].length; j++) {
-      coords[j] = [];
-      coords[j][0] = data[i][j];
+    for (var j = 0; j < coordsX.length; j++) {
+      cache = [coordsX[j],coordsY[j]];
+      coords.push(cache);
     }
-    // Insert 'Y' coordinates
-    for (var j = 1; j < data[i+1].length; j++) {
-      coords[j] = [];
-      coords[j][1] = data[i+1][j];
-    }
-    // Define symbol width
-    var width = textWidth(coords)
+    var symbolCode = data[i][1];
+    console.log(symbolCode);
+    var width = textWidth(coords);
     // Append symbol to the dictionary
     dictionary.push(symbolCode);
     // Append symbol with its coordinates to aggregate list
@@ -89,17 +95,17 @@ function evaluateInputText(text) {
 }
 // ==========================================
 // Example Data and input
-var dictionary = ['A','T',' ','special'];
-var coordinates = {
-  'T' : [[1,0],[1,1],[1,2],[1,3],[0,3],[2,3]],
-  'A' : [[0,0],[0,1],[0,2],[0,3],[1,1],[1,3],[2,0],[2,1],[2,2],[2,3]],
-  ' ' : [],
-}
-var widths = {
-  'T' : 3,
-  'A' : 3,
-  ' ' : 0.5
-}
+// var dictionary = ['A','T',' ','special'];
+// var coordinates = {
+//   'T' : [[1,0],[1,1],[1,2],[1,3],[0,3],[2,3]],
+//   'A' : [[0,0],[0,1],[0,2],[0,3],[1,1],[1,3],[2,0],[2,1],[2,2],[2,3]],
+//   ' ' : [],
+// }
+// var widths = {
+//   'T' : 3,
+//   'A' : 3,
+//   ' ' : 0.5
+// }
 // ----------------------------------------
 // Example text to create
 var inputText = "A A A ATA  A";
@@ -107,7 +113,7 @@ var inputText = "A A A ATA  A";
 // Compile all the letters into one
 // set of coordinates and calculate
 // length of the text
-function createBatch(text) {
+function createBatch(text) { // KINDA OBSOLETE!!!!!!!!!!!!!!!
   var textLen = 0;
   // Iterate through each symbol
   for (var i = 0; i < text.length; i++) {

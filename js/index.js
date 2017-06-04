@@ -187,8 +187,29 @@ function loadSettings(target) {
 }
 // ========================================
 // Load symbol to editor grid from the table
-function loadSymbol() {
+function loadSymbol(target) {
+  resetEditor();
+  var symbolCode = target.children[2].innerHTML;
+  var coords = coordinates[symbolCode];
+  var symbolWidth = widths[symbolCode];
+  var symbolHeight = textHeight(coords);
+  // now find cells based on the coordinates.. gl&hf
+  var cells = document.querySelectorAll('.cell');
+  var grid = document.querySelector('.grid');
+  var gridWidth = grid.offsetWidth;
+  var gridHeight = grid.offsetHeight;
+  var rows = Math.round(gridHeight/pixelWidth);
+  var columns = Math.round(gridWidth/pixelWidth);
+  var zeroX = Math.round((columns - symbolWidth)/2 - 1);
+  var zeroY = Math.round((rows - symbolHeight)/2)*columns;
+  // to go x+1 - add 1
+  // to go y+1 - add 'columns'
+  for (var i = 0; i < coords.length; i++) {
+    var j = coords[i][0] + zeroX + coords[i][1]*columns + zeroY;
+    cells[j].classList.add('active');
+  }
 
+  //adjust base level indicator
 
 }
 // ========================================
