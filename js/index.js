@@ -1,7 +1,7 @@
 // =========================================
 // Routines providing general functionality
 // =========================================
-buildGrid(500,200);
+buildGrid(400,200);
 // createBatch(inputText);
 // letters currently have always 4 pixels in height
 // So 2 is half on the height of the text
@@ -47,19 +47,20 @@ function showTab(labelName) {
   showGrid();
 }
 // ========================================
-// Adjust height of the database window
+// Adjust height of the symbols and settings table window
 function adjustDBWindow() {
   var main = document.querySelector('main');
   var panels = document.querySelector('div.panels');
   var mainHeight = parseInt(getComputedStyle(main).height);
   var height = mainHeight - panels.offsetHeight;
-  var databaseWindow = document.querySelector('div.database');
-  databaseWindow.style.height = height - 1 + 'px';
+  var databaseWindow = document.querySelectorAll('div.database');
+  databaseWindow[0].style.height = height - 1 + 'px';
+  databaseWindow[1].style.height = height - 1 + 'px';
 }
 // ========================================
 // Show the window with settings database
-function showDatabase() {
-  var el = document.querySelector('div.database');
+function showDatabase(target) {
+  var el = document.querySelector('div.' + target + '.database');
   el.classList.toggle('hidden');
   adjustDBWindow();
 }
@@ -100,31 +101,31 @@ function toggleUserForm(response) {
 }
 // ========================================
 // Load downloaded settings to the table
-var settings;
 function updateTable(response) {
-  var mainTable = document.querySelector('#mainTable tbody');
-  var userTable = document.querySelector('#userTable tbody');
+  if (typeof(response.data) == 'undefined') return;
 
-  if (typeof(response.data) != 'undefined') {
-    settings = response.data; //array
-    // Remove previously inserted rows
-    var clones = mainTable.querySelectorAll('.clone');
-    for (var i = 0; i < clones.length; i++) {
-      mainTable.removeChild(clones[i]);
+  var subject = response.subject; //'settings'/'symbols'
+  var mainTable = document.querySelector('.' + subject +' .mainTable tbody');
+  var userTable = document.querySelector('.' + subject +' .userTable tbody');
+  localData[subject] = response.data; //Store as local data
+
+  // Remove previously inserted rows
+  var clones = mainTable.querySelectorAll('.clone');
+  for (var i = 0; i < clones.length; i++) {
+    mainTable.removeChild(clones[i]);
+  }
+  var row = document.querySelector('.' + subject + ' .row.prototype');
+  row.classList.remove('prototype');
+  // Insert rows to the mainTable
+  for (var i = 0; i < localData[subject].length; i++) {
+    var clone = row.cloneNode(true);
+    clone.classList.add('clone');
+    mainTable.appendChild(clone);
+    clone.children[0].innerHTML = i;
+    // Populate 'i' row starting from second column (j=1)
+    for (var j = 1; j < clone.children.length; j++) {
+      clone.children[j].innerHTML = localData[subject][i][j-1];
     }
-    var row = document.getElementById('row');
-    row.removeAttribute('id');
-    // Insert rows
-    for (var i = 0; i < settings.length; i++) {
-      var clone = row.cloneNode(true);
-      clone.classList.add('clone');
-      mainTable.appendChild(clone);
-      clone.children[0].innerHTML = i;
-      for (var j = 1; j < clone.children.length; j++) {
-        clone.children[j].innerHTML = settings[i][j-1];
-      }
-    }
-    row.id = 'row';
   }
   // Remove rows form the user table
   var userTableClones = userTable.querySelectorAll('.clone');
@@ -142,13 +143,15 @@ function updateTable(response) {
       clone.removeAttribute('onmouseleave');
     }
   }
+  row.classList.add('prototype');
 }
 // ========================================
 // Load explosion settings from 'settings' variable
 // to the settingsForm based on user selection
 // from the Settings Database table.
 var setupBuffer = []; //temporary container for settings
-function loadFromTable(target) {
+function loadSettings(target) {
+  var settings = localData.settings;
   var settingsForm = document.querySelector('div.settings.tab');
   var inputs = settingsForm.querySelectorAll('input');
   if (event.type == 'mouseenter' || event.type == 'click') {
@@ -183,6 +186,12 @@ function loadFromTable(target) {
   }
 }
 // ========================================
+// Load symbol to editor grid from the table
+function loadSymbol() {
+
+
+}
+// ========================================
 function removePixels() {
 // Remove all pixels from the display
 // (They are easy to recover from 'batch')
@@ -192,17 +201,19 @@ function removePixels() {
   }
 }
 // ========================================
+// It's used to hide pixels from display
+// when entering Symbols Editor
 function hidePixels() {
   var pixels = document.querySelectorAll('.pixel');
   for (var i = 0; i < pixels.length; i++) {
-    pixels[i].classList.remove('hidden');
+    pixels[i].classList.add('hidden');
   }
 }
 // ========================================
 function showPixels() {
   var pixels = document.querySelectorAll('.pixel');
   for (var i = 0; i < pixels.length; i++) {
-    pixels[i].classList.add('hidden');
+    pixels[i].classList.remove('hidden');
   }
 }
 // ========================================
@@ -227,11 +238,11 @@ function showGrid() {
   var grid = document.querySelector('.grid');
   var editor = document.querySelector('.label.editor');
   if (editor.classList.contains('active')) {
-    hidePixels();
+    showPixels();
     grid.classList.remove('hidden');
   }
   else {
-    showPixels();
+    hidePixels();
     grid.classList.add('hidden');
   }
 }
@@ -261,7 +272,7 @@ function dragBase(evt) {
   // 'realDelta = realDelta +..' - increase value with
   // each event instance until amounts for the whole pixelWidth
   realDelta = realDelta + mousePositionY - evt.clientY;
-  // '.../ pixelWidth) * p.W. ' - quantify move to thole cell
+  // '.../ pixelWidth) * p.W. ' - quantify move to whole cell
   var delta = Math.round(realDelta / pixelWidth) * pixelWidth;
   baseTop = parseInt(getComputedStyle(base).top);
   var gridHeight = document.querySelector('.grid').offsetHeight - 2;
@@ -270,7 +281,6 @@ function dragBase(evt) {
   base.style.top = newTop + 'px';
   realDelta = realDelta - delta; // subtract any whole move
   mousePositionY = evt.clientY;
-  console.log(base.offsetTop);
 }
 // ========================================
 var newSymbolX = [];
@@ -293,5 +303,12 @@ function loadFromEditor() {
   minX = cacheX.sort(function(a,b){return a-b;})[0];
   for (var i = 0; i < newSymbolX.length; i++) {
     newSymbolX[i] -= minX;
+  }
+}
+// ========================================
+function resetEditor() {
+  var activeCells = document.querySelectorAll('.cell.active');
+  for (var i = 0; i < activeCells.length; i++) {
+    activeCells[i].classList.remove('active');
   }
 }
