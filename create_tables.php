@@ -34,4 +34,19 @@ if ($result = mysqli_query($dbc, $query)) {
 else {
   echo mysqli_error($dbc);
 }
+
+// Create symbols table
+$query = "CREATE TABLE IF NOT EXISTS symbols(
+      user_name VARCHAR(255) NOT NULL,
+      symbol_code VARCHAR(255) NOT NULL,
+      coordsX VARCHAR(1020) NOT NULL,
+      coordsY VARCHAR(1020) NOT NULL
+)";
+
+if ($result = mysqli_query($dbc, $query)) {
+  echo "Table 'coords' successfully created" . "<br>";
+}
+else {
+  echo mysqli_error($dbc);
+}
 ?>
