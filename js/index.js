@@ -259,11 +259,11 @@ function showGrid() {
   var grid = document.querySelector('.grid');
   var editor = document.querySelector('.label.editor');
   if (editor.classList.contains('active')) {
-    showPixels();
+    hidePixels();
     grid.classList.remove('hidden');
   }
   else {
-    hidePixels();
+    showPixels();
     grid.classList.add('hidden');
   }
 }

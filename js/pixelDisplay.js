@@ -46,7 +46,6 @@ function adaptServerData() {
       coords.push(cache);
     }
     var symbolCode = data[i][1];
-    console.log(symbolCode);
     var width = textWidth(coords);
     // Append symbol to the dictionary
     dictionary.push(symbolCode);
@@ -62,7 +61,9 @@ function adaptServerData() {
 }
 // ========================================
 // Scan text for known codenames of symbols
-function evaluateInputText(text) {
+function evaluateInputText() {
+  target = document.querySelector('#textInput');
+  var text = target.value;
   readyInput = [];
   for (var i = 0; i < text.length; i++) {
     var symbol = text[i];
@@ -92,6 +93,7 @@ function evaluateInputText(text) {
       return console.log('Unrecognized symbol/code: '+ msg +'.');
     }
   }
+  createBatch(readyInput);
 }
 // ==========================================
 // Example Data and input
@@ -113,26 +115,22 @@ var inputText = "A A A ATA  A";
 // Compile all the letters into one
 // set of coordinates and calculate
 // length of the text
-function createBatch(text) { // KINDA OBSOLETE!!!!!!!!!!!!!!!
+// text = readyInput
+
+function createBatch(text) {
+  batch = []; //Clear batch
   var textLen = 0;
-  // Iterate through each symbol
-  for (var i = 0; i < text.length; i++) {
-    // Index of 'i' letter in the array of all
-    // known symbols
-    var id = symbolIndex.indexOf(text.charAt(i));
-    // Iterate through pixels of current symbol
-    for (var k = 0; k < symbols[id].coords.length; k++) {
-      var coords = []; //temporary container
-      var x = symbols[id].coords[k][0];
-      var y = symbols[id].coords[k][1];
-      // save coords and bump-up x by the width
-      // of the previous symbols
-      coords.push(x + textLen, y);
-      // push coordinate points to aggregate array
-      batch.push(coords);
+  for (var i = 0; i < text.length; i++) { //Each symbol
+    var coords = []
+    var symbol = coordinates[text[i]];
+    for (var j = 0; j < symbol.length; j++) { //Each pixel
+      coords.push([symbol[j][0],symbol[j][1]]);
+      coords[j][0] += textLen;
     }
-    textLen += symbols[id].width;
+    batch.push.apply(batch, coords); //Append batch
+    textLen += widths[text[i]]; //Bump up total width
   }
+  layout(batch,-textWidth(batch)/2,-textHeight(batch)/2);
 }
 // ==========================================
 function textHeight(array) {
