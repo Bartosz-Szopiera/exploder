@@ -2,6 +2,9 @@
   margin: 0px;
   padding: 0px; }
 
+input[type=submit] {
+  font-size: 1em; }
+
 h1, h2, h3, h4, h5, h6, p {
   margin: 0px;
   padding: 0px;
@@ -81,7 +84,8 @@ body {
         cursor: pointer;
         color: #18e753; }
     body main div.input {
-      display: flex; }
+      display: flex;
+      align-items: center; }
     body main .tableWrapper .tableHeader th {
       border-bottom: 1px solid #0c7329; }
       body main .tableWrapper .tableHeader th:first-of-type {
@@ -227,7 +231,7 @@ body {
         height: auto;
         overflow: hidden;
         width: 100%; }
-        body main .tabs .panels > div.hidden {
+        body main .tabs .panels > div.tab.hidden {
           display: none; }
         body main .tabs .panels > div.tab {
           box-sizing: border-box;
@@ -266,6 +270,41 @@ body {
               -webkit-appearance: none; }
               body main .tabs .panels > div.settings:not(.hidden) > div.input input[type="range"]:focus {
                 outline: none; }
+        body main .tabs .panels > div.editor {
+          display: flex;
+          justify-content: flex-start;
+          flex-flow: row nowrap; }
+          body main .tabs .panels > div.editor > * {
+            box-sizing: border-box;
+            width: 33%;
+            display: flex;
+            flex-flow: row wrap;
+            padding: 5px;
+            align-content: flex-start;
+            justify-content: center; }
+            body main .tabs .panels > div.editor > * > * {
+              margin: 2px 10px;
+              height: 20px;
+              padding: 0px;
+              font-size: 1em; }
+          body main .tabs .panels > div.editor .symbol > * {
+            width: 100%; }
+            body main .tabs .panels > div.editor .symbol > * input {
+              width: 100%;
+              padding: 0px;
+              margin: 0px;
+              height: 20px; }
+          body main .tabs .panels > div.editor .symbol label {
+            width: 50%;
+            max-width: 250px;
+            min-width: 160px;
+            line-height: 1em; }
+          body main .tabs .panels > div.editor .widgets {
+            border-left: 1px solid #0c7329;
+            border-right: 1px solid #0c7329; }
+            body main .tabs .panels > div.editor .widgets > .button {
+              height: 18px;
+              width: 100%; }
         body main .tabs .panels > div.profile:not(.hidden) {
           display: flex;
           flex-flow: column wrap; }
