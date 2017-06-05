@@ -105,20 +105,21 @@ body {
       display: flex;
     }
     // Dtabase table
-    & .explosionsDB .tableHeader th {
+    & .tableWrapper .tableHeader th {
       border-bottom: 1px solid $consoleGreen;
       &:first-of-type {
         width: 40px;
+        display: none;
         &+th {
           width: 120px;
         }
       }
     }
-    & .explosionsDB .table {
+    & .tableWrapper .table {
       overflow-y: scroll;
-      max-height: 120px;
+      max-height: 100vh;
     }
-    & .explosionsDB table {
+    & .tableWrapper table {
       width: 100%;
       text-align: center;
       border-collapse: collapse;
@@ -127,6 +128,7 @@ body {
         background: rgba(0, 0, 0, 0.35);
         & td:first-of-type {
           width: 40px;
+          display: none;
           &+td {
             width: 120px;
           }
@@ -143,12 +145,12 @@ body {
       & tr:nth-child(even){
         background: rgba(0, 0, 0, 0.15);
       }
-      & #row {
+      & .row.prototype {
         display: none;
       }
     }
     // ======================================
-    &>.database {
+    & .database {
       box-sizing: border-box;
       padding: 15px;
       position: absolute;
@@ -156,7 +158,7 @@ body {
       top: 0px;
       width: 300px;
       background: rgba(0,0,0,0.30);
-      height: 70%;
+      height: auto;
       &.hidden {
         display: none;
       }
@@ -181,6 +183,9 @@ body {
         padding: 2px;
         font-size: 1em;
         line-height: 1em;
+      }
+      &.tabHidden {
+        display: none;
       }
     }
     // ======================================

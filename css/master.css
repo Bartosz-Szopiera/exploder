@@ -82,37 +82,39 @@ body {
         color: #18e753; }
     body main div.input {
       display: flex; }
-    body main .explosionsDB .tableHeader th {
+    body main .tableWrapper .tableHeader th {
       border-bottom: 1px solid #0c7329; }
-      body main .explosionsDB .tableHeader th:first-of-type {
-        width: 40px; }
-        body main .explosionsDB .tableHeader th:first-of-type + th {
+      body main .tableWrapper .tableHeader th:first-of-type {
+        width: 40px;
+        display: none; }
+        body main .tableWrapper .tableHeader th:first-of-type + th {
           width: 120px; }
-    body main .explosionsDB .table {
+    body main .tableWrapper .table {
       overflow-y: scroll;
-      max-height: 120px; }
-    body main .explosionsDB table {
+      max-height: 100vh; }
+    body main .tableWrapper table {
       width: 100%;
       text-align: center;
       border-collapse: collapse;
       font-size: 0.8em; }
-      body main .explosionsDB table tr {
+      body main .tableWrapper table tr {
         background: rgba(0, 0, 0, 0.35); }
-        body main .explosionsDB table tr td:first-of-type {
-          width: 40px; }
-          body main .explosionsDB table tr td:first-of-type + td {
+        body main .tableWrapper table tr td:first-of-type {
+          width: 40px;
+          display: none; }
+          body main .tableWrapper table tr td:first-of-type + td {
             width: 120px; }
-        body main .explosionsDB table tr:hover {
+        body main .tableWrapper table tr:hover {
           color: #18e753;
           cursor: pointer; }
-        body main .explosionsDB table tr td {
+        body main .tableWrapper table tr td {
           text-overflow: ellipsis;
           white-space: nowrap; }
-      body main .explosionsDB table tr:nth-child(even) {
+      body main .tableWrapper table tr:nth-child(even) {
         background: rgba(0, 0, 0, 0.15); }
-      body main .explosionsDB table #row {
+      body main .tableWrapper table .row.prototype {
         display: none; }
-    body main > .database {
+    body main .database {
       box-sizing: border-box;
       padding: 15px;
       position: absolute;
@@ -120,19 +122,19 @@ body {
       top: 0px;
       width: 300px;
       background: rgba(0, 0, 0, 0.3);
-      height: 70%; }
-      body main > .database.hidden {
+      height: auto; }
+      body main .database.hidden {
         display: none; }
-      body main > .database > .filterExpDB input[type="text"] {
+      body main .database > .filterExpDB input[type="text"] {
         width: 100%; }
-      body main > .database > .filterExpDB::after {
+      body main .database > .filterExpDB::after {
         content: "";
         display: block;
         height: 0px;
         width: 100%;
         border-top: 1px solid #0c7329;
         margin-bottom: 10px; }
-      body main > .database .button {
+      body main .database .button {
         width: 100px;
         margin: 5px;
         margin-bottom: 10px;
@@ -140,6 +142,8 @@ body {
         padding: 2px;
         font-size: 1em;
         line-height: 1em; }
+      body main .database.tabHidden {
+        display: none; }
     body main div.textToExplode {
       padding: 20px 0px;
       margin: auto;

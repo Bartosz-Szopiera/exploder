@@ -9,8 +9,8 @@
   <body class="body">
     <main>
       <div class="textToExplode">
-        <form class="textToExplode" action="index.html" method="post">
-          <input type="text" name="text" value="HELLO!">
+        <form class="textToExplode" action="javascript:evaluateInputText()" method="post">
+          <input id="textInput" type="text" name="text" value="HELLO!">
         </form>
       </div>
       <div class="background"></div>
@@ -76,15 +76,27 @@
                 <label for="degradation">Degradation</label>
                 <input id="degradation" type="text" name="degradation" value="1.0">
               </div> -->
-            <div class="button" onclick="showDatabase()">
+            <div class="button" onclick="showDatabase('settings')">
               Settings Database
             </div>
             <form id="settingsForm" action="javascript:postSettings()" method="POST"></form>
-          </div>
-          <div class="tab editor hidden">
-            <div class="">
-
             </div>
+          <div class="tab editor hidden">
+            <div class="input">
+              <input id="symbolCode" form="newSymbolForm" type="text" name="symbol_code" required placeholder="Symbol Code" value="">
+            </div>
+            <div class="input submit">
+              <input form="newSymbolForm" type="submit" name="" value="Save Symbol">
+            </div>
+            <div class="button" onclick="resetEditor()">
+              Reset Editor
+            </div>
+            <div class="button" onclick="showDatabase('symbols')">
+              Symbols Database
+            </div>
+            <input form="newSymbolForm" id="newSymbolX" hidden type="text" name="coordsX" value="">
+            <input form="newSymbolForm" id="newSymbolY" hidden type="text" name="coordsY" value="">
+            <form id="newSymbolForm" class="" action="javascript:addSymbol()" method="POST"></form>
           </div>
           <div class="tab profile hidden">
             <div class="userProfile">
@@ -110,7 +122,7 @@
               <input type="text" form="settingsForm" name="expl_name" placeholder="Explosion Name" value="">
               <input form="settingsForm" type="submit" name="" value="Save">
             </div>
-            <div class="explosionsDB">
+            <div class="settings tableWrapper">
               <div class="tableHeader">
                 <table>
                   <tr>
@@ -121,7 +133,24 @@
                 </table>
               </div>
               <div class="table">
-                <table id="userTable">
+                <table class="userTable">
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="symbols tableWrapper">
+              <div class="tableHeader">
+                <table>
+                  <tr>
+                    <th>No</th>
+                    <th>By</th>
+                    <th>Name</th>
+                  </tr>
+                </table>
+              </div>
+              <div class="table">
+                <table class="userTable">
                   <tbody>
                   </tbody>
                 </table>
@@ -137,7 +166,32 @@
           </div>
         </div>
       </div>
-      <div class="database hidden">
+      <div class="symbols database hidden">
+        <div class="tableWrapper">
+          <div class="tableHeader">
+            <table>
+              <tr>
+                <th>No</th>
+                <th>By</th>
+                <th>Code</th>
+              </tr>
+            </table>
+          </div>
+          <div class="table">
+            <table class="mainTable">
+              <tbody>
+                <!-- <tr class="row prototype" onclick="loadSettings(this)" onmouseenter="loadSettings(this)" onmouseleave="loadSettings(this)"> -->
+                <tr class="row prototype" onclick="loadSymbol(this)">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="settings database hidden">
         <!-- <div class="filterExpDB">
           <div data-filter="" class="filter">
             <label for="filter">Filter:</label>
@@ -156,7 +210,7 @@
             Filter
           </div>
         </div> -->
-        <div class="explosionsDB">
+        <div class="tableWrapper">
           <div class="tableHeader">
             <table>
               <tr>
@@ -167,9 +221,9 @@
             </table>
           </div>
           <div class="table">
-            <table id="mainTable">
+            <table class="mainTable">
               <tbody>
-                <tr id="row" onclick="loadFromTable(this)" onmouseenter="loadFromTable(this)" onmouseleave="loadFromTable(this)">
+                <tr class="row prototype" onclick="loadSettings(this)" onmouseenter="loadSettings(this)" onmouseleave="loadSettings(this)">
                   <td></td>
                   <td></td>
                   <td></td>

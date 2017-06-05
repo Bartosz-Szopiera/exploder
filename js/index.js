@@ -43,6 +43,18 @@ function showTab(labelName) {
       labels[i].classList.remove('active');
     }
   }
+  // ---Hide or show tables---
+  var el = document.querySelector('.settings.database');
+  if (!labels[0].classList.contains('active')) {
+    el.classList.add('tabHidden');
+  }
+  else el.classList.remove('tabHidden')
+  var el = document.querySelector('.symbols.database');
+  if (!labels[1].classList.contains('active')) {
+    el.classList.add('tabHidden');
+  }
+  else el.classList.remove('tabHidden')
+  //-------------------------
   adjustDBWindow();
   showGrid();
 }
