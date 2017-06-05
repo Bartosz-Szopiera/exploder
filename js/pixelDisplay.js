@@ -81,12 +81,12 @@ function evaluateInputText() {
         break
       }
       var index = dictionary.indexOf(code);
-      readyInput[i] = code;
+      readyInput.push(code);
       i = i + code.length + 1; //skip next few symbols
     }
     else if (true || fail) { //Regular symbol case
       var index = dictionary.indexOf(symbol);
-      readyInput[i] = symbol;
+      readyInput.push(symbol);
     }
     if (index == -1) { //Invalid input case
       var msg = (code == 'undefined' ? symbol : code);
@@ -108,15 +108,10 @@ function evaluateInputText() {
 //   'A' : 3,
 //   ' ' : 0.5
 // }
-// ----------------------------------------
-// Example text to create
-var inputText = "A A A ATA  A";
-// ----------------------------------------
-// Compile all the letters into one
-// set of coordinates and calculate
-// length of the text
+// ==========================================
+// Compile all the letters into one set of
+// coordinates and calculate length of the text.
 // text = readyInput
-
 function createBatch(text) {
   batch = []; //Clear batch
   var textLen = 0;
@@ -124,12 +119,13 @@ function createBatch(text) {
     var coords = []
     var symbol = coordinates[text[i]];
     for (var j = 0; j < symbol.length; j++) { //Each pixel
-      coords.push([symbol[j][0],symbol[j][1]]);
-      coords[j][0] += textLen;
+      coords.push([symbol[j][0],symbol[j][1]]); //save coords
+      coords[j][0] += textLen; //push symbol to the end of text
     }
     batch.push.apply(batch, coords); //Append batch
     textLen += widths[text[i]]; //Bump up total width
   }
+  // Call function to draw pixels
   layout(batch,-textWidth(batch)/2,-textHeight(batch)/2);
 }
 // ==========================================
@@ -163,6 +159,7 @@ function layout(el,shift_x,shift_y) {
 // Create pixels for given element according
 // to the batch and move them all to
 // proper location defined in global coordinates.
+  removePixels();
   for (var i = 0; i < el.length; i++) {
     // Create pixels:
     var pixel = document.createElement('div');
