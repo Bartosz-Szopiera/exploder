@@ -35,6 +35,7 @@
         </div>
         <div class="panels">
           <div class="tab settings hidden">
+            <div class="sliders">
               <div class="input">
                 <label for="scale">Scale</label>
                 <input id="scale" form="settingsForm" type="range" min="0.5" max="2.0" name="scale" value="1.0" step="0.1">
@@ -56,31 +57,42 @@
                 <input id="speed" form="settingsForm" type="range" min="1" max="90" step="1" name="speed" value="30" oninput="takeInput(this)">
               </div>
               <!-- <div class="input">
-                <label for="acceleration">Acceleration</label>
-                <input id="acceleration" type="text" name="scale" value="1.0">
+              <label for="acceleration">Acceleration</label>
+              <input id="acceleration" type="text" name="scale" value="1.0">
               </div> -->
               <!-- <div class="input">
-                <label for="direction">Direction</label>
-                <input id="direction" type="text" name="scale" value="1.0">
+              <label for="direction">Direction</label>
+              <input id="direction" type="text" name="scale" value="1.0">
               </div> -->
               <!-- <div class="input">
-                <label for="trajectory">Trajectory</label>
-                <input id="trajectory" type="checkbox" name="trajectory" value="straight">
-                <input id="trajectory" type="checkbox" name="trajectory" value="sinusoid">
-                <input type="text" name="amplitude" value="">
-                <input id="trajectory" type="checkbox" name="trajectory" value="parabola">
-                <input id="trajectory" type="checkbox" name="trajectory" value="spiral">
-                <input type="text" name="curvature" value="">
+              <label for="trajectory">Trajectory</label>
+              <input id="trajectory" type="checkbox" name="trajectory" value="straight">
+              <input id="trajectory" type="checkbox" name="trajectory" value="sinusoid">
+              <input type="text" name="amplitude" value="">
+              <input id="trajectory" type="checkbox" name="trajectory" value="parabola">
+              <input id="trajectory" type="checkbox" name="trajectory" value="spiral">
+              <input type="text" name="curvature" value="">
               </div> -->
               <!-- <div class="input">
-                <label for="degradation">Degradation</label>
-                <input id="degradation" type="text" name="degradation" value="1.0">
+              <label for="degradation">Degradation</label>
+              <input id="degradation" type="text" name="degradation" value="1.0">
               </div> -->
-            <div class="button" onclick="showDatabase('settings')">
-              Settings Database
+              <form id="settingsForm" action="javascript:postSettings()" method="POST"></form>
             </div>
-            <form id="settingsForm" action="javascript:postSettings()" method="POST"></form>
+            <div class="forces">
+              <!-- EMPTY -->
             </div>
+            <div class="widgets">
+              <!-- <div class="saveExplosion">
+                <label for=""></label>
+                <input type="text" form="settingsForm" name="expl_name" placeholder="Explosion Name" value="">
+                <input form="settingsForm" type="submit" name="" value="Save current explosion">
+              </div> -->
+              <div class="button" onclick="showDatabase('settings')">
+                Settings Database
+              </div>
+            </div>
+          </div>
           <!-- <div class="tab editor hidden"> -->
           <div class="tab editor">
             <div class="symbol">
@@ -136,52 +148,53 @@
               </form>
               <input id="logout" type="submit" name="logout" value="Logout" onclick="logout()">
             </div>
-            <!-- <div class="saveExplosion">
-              <p>Save current explosion</p>
-              <input type="text" form="settingsForm" name="expl_name" placeholder="Explosion Name" value="">
-              <input form="settingsForm" type="submit" name="" value="Save">
-            </div> -->
-            <div class="settings tableWrapper">
-              <div class="tableHeader">
-                <table>
-                  <tr>
-                    <th>No</th>
-                    <th>By</th>
-                    <th>Name</th>
-                  </tr>
-                </table>
-              </div>
-              <div class="table">
-                <table class="userTable">
-                  <tbody>
-                  </tbody>
-                </table>
+            <div class="userSettings">
+              <div class="settings tableWrapper">
+                <div class="tableHeader">
+                  <table>
+                    <tr>
+                      <th>No</th>
+                      <th>By</th>
+                      <th>Name</th>
+                    </tr>
+                  </table>
+                </div>
+                <div class="table">
+                  <table class="userTable">
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-            <div class="symbols tableWrapper">
-              <div class="tableHeader">
-                <table>
-                  <tr>
-                    <th>No</th>
-                    <th>By</th>
-                    <th>Name</th>
-                  </tr>
-                </table>
-              </div>
-              <div class="table">
-                <table class="userTable">
-                  <tbody>
-                  </tbody>
-                </table>
+            <div class="userSymbols">
+              <div class="symbols tableWrapper">
+                <div class="tableHeader">
+                  <table>
+                    <tr>
+                      <th>No</th>
+                      <th>By</th>
+                      <th>Name</th>
+                    </tr>
+                  </table>
+                </div>
+                <div class="table">
+                  <table class="userTable">
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
           <div class="tab about hidden">
-            <p>Hi!</p><br>
-            <p>This website was created as a small project for making something fun while learning PHP and AJAX on the way.It could certainly use some polishing but main functionalities I wanted to implement work as planned.</p><br>
-            <p>I am currently on a lookout for a job as a junior front-end developer.</p>
-            <p>If you are interested you can contact me through <a href="#">e-mail</a> or social media: </p>
-            <p>Also checkout my GitHub if you like.</p>
+            <div class="text">
+              <p>Hi!</p>
+              <p>This website was created as a small project for making something fun while learning PHP and AJAX on the way.It could certainly use some polishing but main functionalities I wanted to implement work as planned.</p><br>
+              <p>I am currently on a lookout for a job as a junior front-end developer.</p>
+              <p>If you are interested you can contact me through <a href="#">e-mail</a> or social media: </p>
+              <p>Also checkout my GitHub if you like.</p>
+            </div>
           </div>
         </div>
       </div>
