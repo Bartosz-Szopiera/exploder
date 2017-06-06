@@ -19,13 +19,13 @@ else {
 
 // Create settings table
 $query = "CREATE TABLE IF NOT EXISTS settings(
-      user_name VARCHAR(255) NOT NULL,
-      expl_name VARCHAR(255) NOT NULL,
-      _scale DECIMAL(3,2) NOT NULL,
-      _rand DECIMAL(3,2) NOT NULL,
-      _range DECIMAL(2,1) NOT NULL,
-      _density INT(2) NOT NULL,
-      _speed INT(2) NOT NULL
+      user_name VARCHAR(255) NOT NULL CHECK (user_name <> ''),
+      settings_name VARCHAR(255) NOT NULL CHECK (settings_name <> ''),
+      _scale DECIMAL(3,2) NOT NULL CHECK (_scale <> ''),
+      _rand DECIMAL(3,2) NOT NULL CHECK (_rand <> ''),
+      _range DECIMAL(2,1) NOT NULL CHECK (_range <> ''),
+      _density INT(2) NOT NULL CHECK (_density <> ''),
+      _speed INT(2) NOT NULL CHECK (_speed <> '')
 )";
 
 if ($result = mysqli_query($dbc, $query)) {
