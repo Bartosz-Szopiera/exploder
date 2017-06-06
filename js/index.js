@@ -243,6 +243,12 @@ function loadSymbol(target) {
 
   //adjust base level indicator
 
+  //
+  currentSymbolField = document.querySelector('#currentSymbol');
+  currentSymbolField.value = symbolCode;
+  symbolCodeField = document.querySelector('#symbolCode');
+  symbolCodeField.value = symbolCode;
+
 }
 // ========================================
 function removePixels() {
