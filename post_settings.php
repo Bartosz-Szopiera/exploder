@@ -7,17 +7,27 @@ if (!isset($_SESSION['logged'])) {
   die('Please log-in or create a new account.');
 }
 
+if (!isset($_SESSION['user_name'],
+          $_POST['settings_name'],
+          $_POST['scale'],
+          $_POST['rand'],
+          $_POST['range'],
+          $_POST['density'],
+          $_POST['speed'])) {
+  die('Form data incomplete.');
+}
+
 $user_name = $_SESSION['user_name'];
-$expl_name = $_POST['expl_name'];
+$settings_name = $_POST['settings_name'];
 $scale = $_POST['scale'];
 $rand = $_POST['rand'];
 $range = $_POST['range'];
 $density = $_POST['density'];
 $speed = $_POST['speed'];
 
-$query = "INSERT INTO settings (user_name, expl_name,
+$query = "INSERT INTO settings (user_name, settings_name,
           _scale, _rand, _range, _density, _speed)
-          VALUES ('$user_name', '$expl_name',
+          VALUES ('$user_name', '$settings_name',
           '$scale', '$rand', '$range', '$density', '$speed')";
 $result = mysqli_query($dbc, $query);
 
