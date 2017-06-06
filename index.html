@@ -28,10 +28,10 @@
       </div>
       <div class="tabs">
         <div class="labels">
-          <div class="label settings" onclick="showTab('settings')">Explosion Settings</div>
-          <div class="label editor" onclick="showTab('editor')">Symbols Editor</div>
-          <div class="label profile" onclick="showTab('profile')">Your Profile</div>
-          <div class="label about" onclick="showTab('about')">About</div>
+          <div class="label settings">Explosion Settings</div>
+          <div class="label editor">Symbol Editor</div>
+          <div class="label profile">Your Profile</div>
+          <div class="label about">About</div>
         </div>
         <div class="panels">
           <div class="tab settings hidden">
@@ -81,22 +81,41 @@
             </div>
             <form id="settingsForm" action="javascript:postSettings()" method="POST"></form>
             </div>
-          <div class="tab editor hidden">
-            <div class="input">
-              <input id="symbolCode" form="newSymbolForm" type="text" name="symbol_code" required placeholder="Symbol Code" value="">
+          <!-- <div class="tab editor hidden"> -->
+          <div class="tab editor">
+            <div class="symbol">
+              <div class="input">
+                <label for="currentSymbol">Current symbol</label>
+                <input id="currentSymbol" form="newSymbolForm" type="text" name="current_symbol" required disabled value="New Symbol">
+              </div>
+              <div class="input">
+                <label for="symbolCode">Symbol code</label>
+                <input id="symbolCode" form="newSymbolForm" type="text" name="symbol_code" required placeholder="Symbol Code" value="">
+              </div>
+              <div class="input submit">
+                <input form="newSymbolForm" type="submit" name="" value="Save As New">
+              </div>
+              <div class="input submit">
+                <input form="" onclick="" disabled type="submit" name="" value="Change Current">
+              </div>
+              <div class="input submit">
+                <input form="" type="submit" disabled name="" value="Delete Current">
+              </div>
+              <input form="newSymbolForm" id="newSymbolX" hidden type="text" name="coordsX" value="">
+              <input form="newSymbolForm" id="newSymbolY" hidden type="text" name="coordsY" value="">
+              <form id="newSymbolForm" class="" action="javascript:addSymbol()" method="POST"></form>
             </div>
-            <div class="input submit">
-              <input form="newSymbolForm" type="submit" name="" value="Save Symbol">
+            <div class="widgets">
+              <div class="button" onclick="resetEditor()">
+                Reset Editor
+              </div>
+              <div class="button" onclick="showDatabase('symbols')">
+                Database
+              </div>
             </div>
-            <div class="button" onclick="resetEditor()">
-              Reset Editor
+            <div class="widgets">
+              <!-- EMPTY -->
             </div>
-            <div class="button" onclick="showDatabase('symbols')">
-              Symbols Database
-            </div>
-            <input form="newSymbolForm" id="newSymbolX" hidden type="text" name="coordsX" value="">
-            <input form="newSymbolForm" id="newSymbolY" hidden type="text" name="coordsY" value="">
-            <form id="newSymbolForm" class="" action="javascript:addSymbol()" method="POST"></form>
           </div>
           <div class="tab profile hidden">
             <div class="userProfile">
@@ -117,11 +136,11 @@
               </form>
               <input id="logout" type="submit" name="logout" value="Logout" onclick="logout()">
             </div>
-            <div class="saveExplosion">
+            <!-- <div class="saveExplosion">
               <p>Save current explosion</p>
               <input type="text" form="settingsForm" name="expl_name" placeholder="Explosion Name" value="">
               <input form="settingsForm" type="submit" name="" value="Save">
-            </div>
+            </div> -->
             <div class="settings tableWrapper">
               <div class="tableHeader">
                 <table>

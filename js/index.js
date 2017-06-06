@@ -2,6 +2,7 @@
 // Routines providing general functionality
 // =========================================
 buildGrid(400,200);
+addListeners();
 // createBatch(inputText);
 // letters currently have always 4 pixels in height
 // So 2 is half on the height of the text
@@ -11,7 +12,12 @@ isLogged();
 // ========================================
 // Show or hide tabs acoording to which one
 // was clicked
-function showTab(labelName) {
+// function showTab(labelName) {
+function showTab(el) {
+  if (this != window) el = this;
+  el.removeEventListener('click',showTab);
+  el.addEventListener('click',tabListener);
+  var labelName = el.classList.item(1);
   // Panels
   var panels = document.querySelectorAll('.panels .tab');
   // Labels
@@ -57,6 +63,20 @@ function showTab(labelName) {
   //-------------------------
   adjustDBWindow();
   showGrid();
+}
+function tabListener() {
+  if (this.classList.contains('active')){
+    this.removeEventListener('click',tabListener);
+    this.addEventListener('click',showTab);
+    var el = this;
+    setTimeout(function(el){
+      el.removeEventListener('click',showTab);
+      el.addEventListener('click',tabListener);
+    },250,el);
+  }
+  else {
+    showTab(this);
+  }
 }
 // ========================================
 // Adjust height of the symbols and settings table window
@@ -343,5 +363,26 @@ function resetEditor() {
   var activeCells = document.querySelectorAll('.cell.active');
   for (var i = 0; i < activeCells.length; i++) {
     activeCells[i].classList.remove('active');
+  }
+}
+// ========================================
+function overwriteSymbol() {
+  // What symbol we edit?
+  // Check if user is authorized
+    // is logged in + is author of the symbol
+  // Check if new code is available (if is different that the old)
+  // Do you really want to overwrite?
+  // Call function to remove old symbol.
+  // Call function to add new symbol.
+}
+// ========================================
+function deleteSymbol() {
+
+}
+// ========================================
+function addListeners() {
+  var labels = document.querySelectorAll('.label');
+  for (var i = 0; i < labels.length; i++) {
+    labels[i].addEventListener('click',tabListener);
   }
 }
