@@ -3,12 +3,9 @@
 // =========================================
 buildGrid(400,200);
 addListeners();
-// createBatch(inputText);
-// letters currently have always 4 pixels in height
-// So 2 is half on the height of the text
-// layout(batch, -textLen/2,-textHeight(batch)/2);
-// layout(batch, -textWidth(batch)/2,-textHeight(batch)/2);
 isLogged();
+panelsObserver();
+windowListeners();
 // ========================================
 // Show or hide tabs acoording to which one
 // was clicked
@@ -102,18 +99,6 @@ function showDatabase(target) {
 function takeInput(target) {
   var property = target.name;
   setup[property] = parseFloat(target.value);
-}
-// ========================================
-// Change form 'action' url appropriately to the
-// submit button clicked
-function userForm(target) {
-  var form = document.querySelector('#userForm');
-  if (target.name == "login") {
-    form.action = "javascript:login()";
-  }
-  else if (target.name == "register") {
-    form.action = "javascript:register()";
-  }
 }
 // ========================================
 // Hide user form if server returned session
@@ -232,6 +217,11 @@ function loadSymbol(target) {
   var gridHeight = grid.offsetHeight;
   var rows = Math.round(gridHeight/pixelWidth);
   var columns = Math.round(gridWidth/pixelWidth);
+  // Grid is built out of the rows of cells which indices
+  // rize from left to right and from bottom to the top row.
+  // First cell bottom-most row(0): i = 0;
+  // First cell top-most row(n): i = (n-1) * columns
+  // zeroX + zeroY = cell
   var zeroX = Math.round((columns - symbolWidth)/2 - 1);
   var zeroY = Math.round((rows - symbolHeight)/2)*columns;
   // to go x+1 - add 1
@@ -391,4 +381,24 @@ function addListeners() {
   for (var i = 0; i < labels.length; i++) {
     labels[i].addEventListener('click',tabListener);
   }
+}
+// ========================================
+function adjustDisplay() {
+  panels = document.querySelector('.panels');
+  newTop = (window.innerHeight - panels.offsetHeight)/2;
+  display = document.querySelector('.display');
+  display.style.top = newTop + 'px';
+}
+// ========================================
+function panelsObserver() {
+  var observer = new MutationObserver(adjustDisplay);
+  var target = document.querySelector('.labels');
+  var config = {attributes: true, attributeFilter: ['class']};
+  observer.observe(target, config);
+}
+function windowListeners() {
+  window.addEventListener('resize', function(){
+    adjustDisplay();
+    adjustDBWindow();
+  });
 }

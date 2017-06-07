@@ -5,6 +5,23 @@
 input[type=submit] {
   font-size: 1em; }
 
+form {
+  display: none; }
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: #0c7329;
+  transition: background-color 9999s ease-in-out 9999s; }
+
+button {
+  background: none;
+  color: #0c7329;
+  border: 1px solid #0c7329;
+  font-size: 1em;
+  outline: none; }
+  button:hover {
+    cursor: pointer;
+    color: #18e753; }
+
 h1, h2, h3, h4, h5, h6, p {
   margin: 0px;
   padding: 0px;
@@ -38,8 +55,7 @@ body {
     box-sizing: content-box;
     flex: 1 1 auto;
     border: 2px solid #0c7329;
-    margin: 10px;
-    margin-top: 5px;
+    margin: 5px;
     position: relative;
     user-select: none;
     -moz-user-select: none;
@@ -149,7 +165,7 @@ body {
       body main .database.tabHidden {
         display: none; }
     body main div.textToExplode {
-      padding: 20px 0px;
+      padding: 10px 0px;
       margin: auto;
       width: 100%; }
       body main div.textToExplode input {
@@ -260,23 +276,19 @@ body {
               height: 20px;
               padding: 0px;
               font-size: 1em; }
-              body main .tabs .panels > div.tab > * > *.input label {
+              body main .tabs .panels > div.tab > * > *.input label, body main .tabs .panels > div.tab > * > *.submit label {
                 width: 50%;
                 max-width: 250px;
                 min-width: 160px;
                 line-height: 1em; }
+              body main .tabs .panels > div.tab > * > *.input input, body main .tabs .panels > div.tab > * > *.input button, body main .tabs .panels > div.tab > * > *.submit input, body main .tabs .panels > div.tab > * > *.submit button {
+                width: 100%;
+                padding: 0px;
+                margin: 0px;
+                height: 20px; }
         body main .tabs .panels > div.settings:not(.hidden) .sliders div.input {
           box-sizing: border-box;
           background: rgba(0, 0, 0, 0.25); }
-          body main .tabs .panels > div.settings:not(.hidden) .sliders div.input label {
-            flex: 1 0 auto;
-            box-sizing: border-box;
-            display: inline-block;
-            min-width: 50%;
-            height: auto;
-            margin: 0px;
-            padding: 0px 7px;
-            vertical-align: middle; }
           body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"] {
             flex: 0 1 auto;
             height: 2px;
@@ -287,24 +299,11 @@ body {
               outline: none; }
             body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"]:hover {
               cursor: pointer; }
-        body main .tabs .panels > div.editor .symbol > * input {
-          width: 100%;
-          padding: 0px;
-          margin: 0px;
-          height: 20px; }
-        body main .tabs .panels > div.editor .symbol label {
-          width: 50%;
-          max-width: 250px;
-          min-width: 160px;
-          line-height: 1em; }
-        body main .tabs .panels > div.editor .widgets > .button {
-          height: 18px;
-          width: 100%; }
         body main .tabs .panels > div.profile:not(.hidden) > div {
           height: 100%; }
-          body main .tabs .panels > div.profile:not(.hidden) > div.userProfile:not(.logged) input[name="logout"] {
+          body main .tabs .panels > div.profile:not(.hidden) > div.userProfile:not(.logged) #logout {
             display: none; }
-          body main .tabs .panels > div.profile:not(.hidden) > div.userProfile.logged #userForm {
+          body main .tabs .panels > div.profile:not(.hidden) > div.userProfile.logged .input, body main .tabs .panels > div.profile:not(.hidden) > div.userProfile.logged .login, body main .tabs .panels > div.profile:not(.hidden) > div.userProfile.logged .register {
             display: none; }
           body main .tabs .panels > div.profile:not(.hidden) > div.saveExplosion > p {
             margin-bottom: 10px; }
@@ -321,6 +320,7 @@ div.display {
   left: 50vw;
   padding: 0px; }
   div.display .gridWrapper {
+    top: 50px;
     height: 0px;
     width: 0px;
     display: flex;
