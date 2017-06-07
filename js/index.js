@@ -1,7 +1,7 @@
 // =========================================
 // Routines providing general functionality
 // =========================================
-buildGrid(400,200);
+buildGrid(400,300);
 addListeners();
 isLogged();
 panelsObserver();
@@ -222,7 +222,7 @@ function loadSymbol(target) {
   // First cell bottom-most row(0): i = 0;
   // First cell top-most row(n): i = (n-1) * columns
   // zeroX + zeroY = cell
-  var zeroX = Math.round((columns - symbolWidth)/2 - 1);
+  var zeroX = Math.round((columns - symbolWidth)/2);
   var zeroY = Math.round((rows - symbolHeight)/2)*columns;
   // to go x+1 - add 1
   // to go y+1 - add 'columns'
@@ -232,7 +232,9 @@ function loadSymbol(target) {
   }
 
   //adjust base level indicator
-
+  base = document.querySelector('.base');
+  baseTop = gridHeight - (cells[zeroY].offsetTop - 1) - pixelWidth; // 1 - margin
+  base.style.top = baseTop + 'px';
   //
   currentSymbolField = document.querySelector('#currentSymbol');
   currentSymbolField.value = symbolCode;
