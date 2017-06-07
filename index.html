@@ -9,9 +9,8 @@
   <body class="body">
     <main>
       <div class="textToExplode">
-        <form class="textToExplode" action="javascript:evaluateInputText()" method="post">
-          <input id="textInput" type="text" name="text" value="HELLO!">
-        </form>
+        <form class="textToExplode" id="textToExplode" action="javascript:evaluateInputText()" method="post"></form>
+        <input form="textToExplode" id="textInput" type="text" name="text" value="HELLO!">
       </div>
       <div class="background"></div>
       <div class="display">
@@ -35,6 +34,29 @@
         </div>
         <div class="panels">
           <div class="tab settings hidden">
+            <div class="explosion">
+              <div class="input">
+                <label for="currentSettings">Current settings</label>
+                <input id="currentSettings" form="settingsForm" type="text" name="" required disabled value="New Settings">
+              </div>
+              <div class="input">
+                <label for="settingsName">Settings name</label>
+                <input id="settingsName" form="settingsForm" type="text" name="settings_name" required placeholder="" value="">
+              </div>
+              <div class="input submit">
+                <button form="settingsForm" formaction="javascript:postSettings()">Save As New</button>
+              </div>
+              <div class="input submit">
+                <button form="settingsForm" formaction="javascript:">Change Current</button>
+              </div>
+              <div class="input submit">
+                <button form="settingsForm" formaction="javascript:">Delete Current</button>
+              </div>
+              <form id="settingsForm"></form>
+            </div>
+            <div class="forces">
+              <!-- EMPTY -->
+            </div>
             <div class="sliders">
               <div class="input">
                 <label for="scale">Scale</label>
@@ -77,21 +99,12 @@
               <label for="degradation">Degradation</label>
               <input id="degradation" type="text" name="degradation" value="1.0">
               </div> -->
-              <form id="settingsForm" action="javascript:postSettings()" method="POST"></form>
             </div>
-            <div class="forces">
-              <!-- EMPTY -->
-            </div>
-            <div class="widgets">
-              <!-- <div class="saveExplosion">
-                <label for=""></label>
-                <input type="text" form="settingsForm" name="expl_name" placeholder="Explosion Name" value="">
-                <input form="settingsForm" type="submit" name="" value="Save current explosion">
-              </div> -->
+            <!-- <div class="widgets">
               <div class="button" onclick="showDatabase('settings')">
                 Settings Database
               </div>
-            </div>
+            </div> -->
           </div>
           <!-- <div class="tab editor hidden"> -->
           <div class="tab editor">
@@ -102,28 +115,24 @@
               </div>
               <div class="input">
                 <label for="symbolCode">Symbol code</label>
-                <input id="symbolCode" form="newSymbolForm" type="text" name="symbol_code" required placeholder="Symbol Code" value="">
+                <input id="symbolCode" form="newSymbolForm" type="text" name="symbol_code" required placeholder="" value="">
               </div>
               <div class="input submit">
-                <input form="newSymbolForm" type="submit" name="" value="Save As New">
+                <button form="newSymbolForm" formaction="javascript:addSymbol()">Save As New</button>
               </div>
               <div class="input submit">
-                <input form="" onclick="" disabled type="submit" name="" value="Change Current">
+                <button form="newSymbolForm" formaction="javascript:">Change Current</button>
               </div>
               <div class="input submit">
-                <input form="" type="submit" disabled name="" value="Delete Current">
+                <button form="newSymbolForm" formaction="javascript:">Delete Current</button>
               </div>
-              <input form="newSymbolForm" id="newSymbolX" hidden type="text" name="coordsX" value="">
-              <input form="newSymbolForm" id="newSymbolY" hidden type="text" name="coordsY" value="">
-              <form id="newSymbolForm" class="" action="javascript:addSymbol()" method="POST"></form>
+              <input form="newSymbolForm" id="newSymbolX" hidden type="text" name="coordsX">
+              <input form="newSymbolForm" id="newSymbolY" hidden type="text" name="coordsY">
+              <form id="newSymbolForm"></form>
             </div>
             <div class="widgets">
-              <div class="button" onclick="resetEditor()">
-                Reset Editor
-              </div>
-              <div class="button" onclick="showDatabase('symbols')">
-                Database
-              </div>
+              <button type="button" onclick="resetEditor()">Reset Editor</button>
+              <button type="button" onclick="showDatabase('symbols')">Database</button>
             </div>
             <div class="widgets">
               <!-- EMPTY -->
@@ -134,19 +143,22 @@
               <div class="userName">
                 <p>Hello <span id="userName">Nameless</span></p>
               </div>
-              <form id="userForm" class="" action="javascript:register()" method="POST">
-                <div class="input login">
-                  <input type="text" name="user_name" value="" placeholder="User Name">
-                </div>
-                <div class="input password">
-                  <input type="password" placeholder="Password" name="password" value="">
-                </div>
-                <div class="input submit">
-                  <input type="submit" name="login" onclick="userForm(this)" value="Login">
-                  <input type="submit" name="register" onclick="userForm(this)" value="Register">
-                </div>
-              </form>
-              <input id="logout" type="submit" name="logout" value="Logout" onclick="logout()">
+              <form id="userForm" class="" action="javascript:register()" method="POST"></form>
+              <div class="input login">
+                <input type="text" form="userForm" name="user_name" value="" placeholder="User Name">
+              </div>
+              <div class="input password">
+                <input type="password" form="userForm" placeholder="Password" name="password" value="">
+              </div>
+              <div class="submit login">
+                <button form="userForm" formaction="javascript:login()">Login</button>
+              </div>
+              <div class="submit register">
+                <button form="userForm" formaction="javascript:register()">Register</button>
+              </div>
+              <div id="logout" class="submit">
+                <button form="userForm" formaction="javascript:logout()">Logout</button>
+              </div>
             </div>
             <div class="userSettings">
               <div class="settings tableWrapper">
@@ -265,10 +277,17 @@
           </div>
         </div>
       </div>
-      <div class="buttons">
+      <div id="controls" class="buttons">
         <div class="rewind button" onclick="play(-1)">Rewind</div>
         <div class="explode button" onclick="explode(20), play(1)">Explode!</div>
         <div class="replay button" onclick="play(1)">Replay</div>
+      </div>
+      <div id="alert" class="alert">
+        <div class="text"></div>
+        <div class="alert__buttons">
+          <button class="yes" type="button" onclick="closeAlert()">Yes</button>
+          <button class="no" type="button" onclick="closeAlert()">No</button>
+        </div>
       </div>
       <!-- <div class="centerLine debuggingStuff"></div> -->
     </main>

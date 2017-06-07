@@ -1,7 +1,3 @@
-.noPadNoMar {
-  margin: 0px;
-  padding: 0px; }
-
 input[type=submit] {
   font-size: 1em; }
 
@@ -39,6 +35,41 @@ a {
 .debug {
   border: 2px dashed red;
   background: #deb91b; }
+
+#alert {
+  display: none;
+  box-sizing: border-box;
+  width: 250px;
+  height: 125px;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #0c7329;
+  box-shadow: 0px 0px 0px 1000px rgba(0, 0, 0, 0.4);
+  left: 50vw;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  padding: 10px;
+  z-index: 1000; }
+  #alert::before {
+    content: '';
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    width: 100vw;
+    height: 100vh; }
+  .alert__buttons {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    right: 15px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between; }
+    .alert__buttons button {
+      width: 25%;
+      min-width: 60px; }
 
 body {
   color: #0c7329;
