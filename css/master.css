@@ -42,12 +42,12 @@ a {
   width: 250px;
   height: 125px;
   position: fixed;
-  background: rgba(0, 0, 0, 0.5);
+  background: black;
   border: 1px solid #0c7329;
   box-shadow: 0px 0px 0px 1000px rgba(0, 0, 0, 0.4);
   left: 50vw;
   top: 50vh;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -40%);
   padding: 10px;
   z-index: 1000; }
   #alert::before {
