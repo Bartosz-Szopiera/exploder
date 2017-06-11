@@ -221,7 +221,9 @@ function loadSymbol(target) {
   // rize from left to right and from bottom to the top row.
   // First cell bottom-most row(0): i = 0;
   // First cell top-most row(n): i = (n-1) * columns
-  // zeroX + zeroY = cell
+  // zeroX + zeroY = cell that corresponds with
+  // (0, minY) coordinates of symbol (minY - lowest pixel and
+  // not more that 0).
   var zeroX = Math.round((columns - symbolWidth)/2);
   var zeroY = Math.round((rows - symbolHeight)/2)*columns;
   // Adjust position of symbols with negative 'y' coordinates
@@ -234,17 +236,16 @@ function loadSymbol(target) {
     cells[j].classList.add('active');
   }
 
-  //adjust base level indicator
+  // Adjust base level indicator
   base = document.querySelector('.base');
   baseTop = gridHeight - (cells[zeroY].offsetTop - 1) - pixelWidth; // 1 - margin
   base.style.top = baseTop + 'px';
 
-  //
+  // Populate input fields with the code for the loaded symbol
   currentSymbolField = document.querySelector('#currentSymbol');
   currentSymbolField.value = symbolCode;
   symbolCodeField = document.querySelector('#symbolCode');
   symbolCodeField.value = symbolCode;
-
 }
 // ========================================
 function removePixels() {
@@ -342,6 +343,9 @@ var newSymbolX = [];
 var newSymbolY = [];
 function loadFromEditor() {
   var activeCells = document.querySelectorAll('.cell.active');
+  if (activeCells.length == 0) {
+    return console.log('Draw your symbol in the above grid.');
+  }
   var base = document.querySelector('.base');
   var grid = document.querySelector('.grid');
   var gridHeight = grid.offsetHeight - 2; // 2 - grid border
@@ -378,10 +382,6 @@ function overwriteSymbol() {
   // Call function to add new symbol.
 }
 // ========================================
-function deleteSymbol() {
-
-}
-// ========================================
 function addListeners() {
   var labels = document.querySelectorAll('.label');
   for (var i = 0; i < labels.length; i++) {
@@ -402,9 +402,55 @@ function panelsObserver() {
   var config = {attributes: true, attributeFilter: ['class']};
   observer.observe(target, config);
 }
+// ========================================
 function windowListeners() {
   window.addEventListener('resize', function(){
     adjustDisplay();
     adjustDBWindow();
   });
+}
+// ========================================
+function showAlert(text,callback) {
+  var alert = document.querySelector('#alert');
+  alert.querySelector('.text').innerHTML = text;
+  var yes = alert.querySelector('.yes');
+  yes.addEventListener('click', handler);
+
+  function handler() {
+    callback;
+    yes.removeEventListener('click', handler)
+  }
+}
+// ========================================
+function closeAlert() {
+  alert = document.querySelector('#alert');
+  alert.style.display = 'none';
+}
+// ========================================
+function changeSymbol() {
+  // Routine checks:
+  // OK! Is current symbol and Symbol code filled?
+  // Are there active cells?
+  // Is there PHPSESSID cookie?
+  currentSymbol = document.querySelector('#currentSymbol').value;
+  symbolCode = document.querySelector('#symbolCode').value;
+  if (currentSymbol == '') {
+    return console.log('Choose symbol to edit or provide its code in \'Current Symbol\' field.');
+  }
+  // activeCells
+  // Then:
+
+
+}
+// ========================================
+function deleteSymbol() {
+
+}
+// ========================================
+function changeSettings() {
+
+}
+// ========================================
+function deleteSettings() {
+
 }

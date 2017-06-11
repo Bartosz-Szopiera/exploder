@@ -1,38 +1,58 @@
 // ======================================
 // Register user
 function register() {
-  ajaxRequest('POST', 'userForm', 'add_user.php', toggleUserForm, updateTable);
+  ajaxRequest('POST', 'userForm', 'add_user.php', toggleUserForm, getData);
 }
 // ======================================
 // Login
 function login() {
-  ajaxRequest('POST', 'userForm', 'login.php', toggleUserForm, updateTable);
+  ajaxRequest('POST', 'userForm', 'login.php', toggleUserForm, getData);
 }
 // ======================================
 // Logout
 function logout() {
-  ajaxRequest('POST', '', 'logout.php', toggleUserForm, updateTable);
+  ajaxRequest('POST', '', 'logout.php', toggleUserForm, getData);
 }
 // ========================================
 // Check if user is logged-in
 function isLogged() {
-  ajaxRequest('GET', '', 'islogged.php', toggleUserForm, getSettings);
+  ajaxRequest('GET', '', 'islogged.php', toggleUserForm, getData);
 }
 // ======================================
 // Upload settings
 function postSettings() {
-  ajaxRequest('POST', 'settingsForm', 'post_settings.php', getSettings);
+  ajaxRequest('POST', 'settingsForm', 'post_settings.php', getData);
 }
 // ======================================
 // Download table with settings
 function getSettings() {
   ajaxRequest('GET','','get_settings_table.php', updateTable);
-  // ajaxRequest('GET','','get_settings_table.php');
+}
+// ======================================
+// Create new symbol
+function addSymbol() {
+  inputX = document.querySelector('#newSymbolX');
+  inputY = document.querySelector('#newSymbolY');
+  loadFromEditor();
+  inputX.value = newSymbolX.toString();
+  inputY.value = newSymbolY.toString();
+
+  ajaxRequest('POST','newSymbolForm','add_symbol.php',getSymbols);
+}
+// ======================================
+// Download data from symbols table
+function getSymbols() {
+  ajaxRequest('GET','','get_symbols_table.php',updateTable,adaptServerData);
+}
+// ======================================
+function getData() {
+  getSettings();
+  getSymbols();
 }
 // ======================================
 // Debug
 function debug() {
-  var response = ajaxRequest('GET', '', 'test.php');
+  ajaxRequest('GET', '', 'test.php');
 }
 // ======================================
 // Perform ajax request with given HTTP method
@@ -58,6 +78,7 @@ function ajaxRequest(method,formID,url,callback1, callback2) {
         console.log('AJAX performed');
         var contentType = xhr.getResponseHeader("Content-type");
         console.log(contentType);
+        // console.log(xhr.responseText);
         if (contentType == 'application/json') {
           var response = JSON.parse(xhr.responseText);
           console.log(response.success);
