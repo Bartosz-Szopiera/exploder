@@ -36,6 +36,7 @@ var setup = {
 function adaptServerData() {
   dictionary = []; // Clear dictionary
   coordinates = {}; //Clear coordinates
+  widths = {}; 
   var data = localData.symbols;
   for (var i = 0; i < data.length; i++) {
     var coordsX = JSON.parse('[' + data[i][2] + ']');
@@ -110,7 +111,7 @@ function evaluateInputText() {
 // }
 // ==========================================
 // Compile all the letters into one set of
-// coordinates and calculate length of the text.
+// coordinates.
 // text = readyInput
 function createBatch(text) {
   batch = []; //Clear batch
@@ -126,7 +127,22 @@ function createBatch(text) {
     textLen += widths[text[i]]; //Bump up total width
   }
   // Call function to draw pixels
-  layout(batch,-textWidth(batch)/2,-textHeight(batch)/2);
+  layout(batch,-textWidth(batch)/2,-overBaseTextHeight(batch)/2);
+  // layout(batch,-textWidth(batch)/2,0);
+}
+// ==========================================
+function overBaseTextHeight(array) {
+// Go through 'y' coordinates and find
+// and compare their extreme values
+  var maxY, minY;
+  for (var i = 0; i < array.length; i++) {
+    var y = array[i][1]; //First pixel, second coordinate
+    if (i == 0) {maxY = y; minY = y}
+    if (maxY < y) maxY = y
+    if (minY > y) minY = y
+  }
+  var height = maxY;
+  return height + 1; //y = 0 gives 1 in height
 }
 // ==========================================
 function textHeight(array) {
@@ -139,7 +155,7 @@ function textHeight(array) {
     if (maxY < y) maxY = y
     if (minY > y) minY = y
   }
-  var height = maxY - minY;
+  var height = maxY - Math.min(minY,0);
   return height + 1; //y = 0 gives 1 in height
 }
 // ==========================================

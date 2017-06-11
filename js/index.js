@@ -214,7 +214,8 @@ function loadSymbol(target) {
   var cells = document.querySelectorAll('.cell');
   var grid = document.querySelector('.grid');
   var gridWidth = grid.offsetWidth;
-  var gridHeight = grid.offsetHeight;
+  // var gridHeight = grid.offsetHeight - 2; // 2 - borders
+  var gridHeight = parseInt(getComputedStyle(grid).height);
   var rows = Math.round(gridHeight/pixelWidth);
   var columns = Math.round(gridWidth/pixelWidth);
   // Grid is built out of the rows of cells which indices
@@ -339,17 +340,26 @@ function dragBase(evt) {
   mousePositionY = evt.clientY;
 }
 // ========================================
+// Prepare sets of X and Y coordinates describing
+// pixels of the new symbol.
+// Coordinates are derviced from postion of .active .cell's
+// relative to the .grid element (offsetTop and offsetLeft)
+// and take into account location of .base element to determine
+// the row for which y = 0.
 var newSymbolX = [];
 var newSymbolY = [];
 function loadFromEditor() {
+  newSymbolX = [];
+  newSymbolY = [];
   var activeCells = document.querySelectorAll('.cell.active');
   if (activeCells.length == 0) {
-    return console.log('Draw your symbol in the above grid.');
+    return console.log('Draw your symbol in the above grid.')
   }
   var base = document.querySelector('.base');
   var grid = document.querySelector('.grid');
   var gridHeight = grid.offsetHeight - 2; // 2 - grid border
   var baseY = Math.abs(base.offsetTop + pixelWidth - gridHeight);
+
   for (var i = 0; i < activeCells.length; i++) {
     var cellY = activeCells[i].offsetTop - 1; // 1 - Cell margin
     newSymbolY[i] = (cellY - baseY)/pixelWidth;
@@ -370,6 +380,8 @@ function resetEditor() {
   for (var i = 0; i < activeCells.length; i++) {
     activeCells[i].classList.remove('active');
   }
+  currentSymbol = document.querySelector('#currentSymbol');
+  currentSymbol.value = '';
 }
 // ========================================
 function overwriteSymbol() {
@@ -410,15 +422,19 @@ function windowListeners() {
   });
 }
 // ========================================
+// Define text content and 'click' event handler
+// for #alert element.
 function showAlert(text,callback) {
   var alert = document.querySelector('#alert');
+  alert.style.display = 'unset';
   alert.querySelector('.text').innerHTML = text;
   var yes = alert.querySelector('.yes');
   yes.addEventListener('click', handler);
 
   function handler() {
-    callback;
+    callback();
     yes.removeEventListener('click', handler)
+    closeAlert();
   }
 }
 // ========================================
@@ -428,19 +444,30 @@ function closeAlert() {
 }
 // ========================================
 function changeSymbol() {
-  // Routine checks:
-  // OK! Is current symbol and Symbol code filled?
-  // Are there active cells?
-  // Is there PHPSESSID cookie?
+  // Do initial validation (any final vaidation takes place
+  // on the server anyway)
   currentSymbol = document.querySelector('#currentSymbol').value;
   symbolCode = document.querySelector('#symbolCode').value;
+  // Is symbol to edit defined?
   if (currentSymbol == '') {
-    return console.log('Choose symbol to edit or provide its code in \'Current Symbol\' field.');
+    return console.log('Choose symbol to edit or provide its code in \'Current Symbol\' field.')
   }
-  // activeCells
-  // Then:
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in to edit.')
+  }
+  // Try to laod symbol from the grid
+  var inputX = document.querySelector('#newSymbolX');
+  var inputY = document.querySelector('#newSymbolY');
+  loadFromEditor();
+  inputX.value = newSymbolX.toString();
+  inputY.value = newSymbolY.toString();
 
-
+  var text = "Do you really want to change current symbol?";
+  showAlert(text, function(){
+    ajaxRequest('POST','newSymbolForm','change_symbol.php', getData);
+  });
 }
 // ========================================
 function deleteSymbol() {

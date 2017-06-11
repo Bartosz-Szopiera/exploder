@@ -47,7 +47,7 @@
                 <button form="settingsForm" formaction="javascript:postSettings()">Save As New</button>
               </div>
               <div class="input submit">
-                <button form="settingsForm" formaction="javascript:">Change Current</button>
+                <button form="settingsForm" formaction="javascript:">Overwrite Current</button>
               </div>
               <div class="input submit">
                 <button form="settingsForm" formaction="javascript:">Delete Current</button>
@@ -111,7 +111,7 @@
             <div class="symbol">
               <div class="input">
                 <label for="currentSymbol">Current symbol</label>
-                <input id="currentSymbol" form="newSymbolForm" type="text" name="current_symbol" required disabled value="New Symbol">
+                <input id="currentSymbol" form="newSymbolForm" type="text" name="current_symbol" placeholder="New Symbol" value="">
               </div>
               <div class="input">
                 <label for="symbolCode">Symbol code</label>
@@ -121,7 +121,7 @@
                 <button form="newSymbolForm" formaction="javascript:addSymbol()">Save As New</button>
               </div>
               <div class="input submit">
-                <button form="newSymbolForm" formaction="javascript:">Change Current</button>
+                <button form="newSymbolForm" formaction="javascript:changeSymbol()">Overwrite Current</button>
               </div>
               <div class="input submit">
                 <button form="newSymbolForm" formaction="javascript:">Delete Current</button>
@@ -285,7 +285,7 @@
       <div id="alert" class="alert">
         <div class="text"></div>
         <div class="alert__buttons">
-          <button class="yes" type="button" onclick="closeAlert()">Yes</button>
+          <button class="yes" type="button">Yes</button>
           <button class="no" type="button" onclick="closeAlert()">No</button>
         </div>
       </div>
