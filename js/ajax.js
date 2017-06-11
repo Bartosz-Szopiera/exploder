@@ -57,8 +57,10 @@ function debug() {
 // ======================================
 // Perform ajax request with given HTTP method
 // optionally POSTing data from given form,
-// pointing the connection to a given URL, and
-// executing callback function
+// pointing the connection to a given URL,
+// and executing callback functions:
+//   callback1 for successful response and
+//   callback2 as long as it was provided.
 function ajaxRequest(method,formID,url,callback1, callback2) {
   if (method == "POST" && formID != '') {
     var formElement = document.querySelector('#' + formID);
@@ -78,12 +80,27 @@ function ajaxRequest(method,formID,url,callback1, callback2) {
         console.log('AJAX performed');
         var contentType = xhr.getResponseHeader("Content-type");
         console.log(contentType);
-        // console.log(xhr.responseText);
+        // Every response comes back in JSON but sometimes
+        // if there is and mysqli_error it will actually not
+        // be encoded yet the header will state 'application/json'
+        // and parser will throw an exception on that.
+        // So there is 'try - catch' block.
         if (contentType == 'application/json') {
-          var response = JSON.parse(xhr.responseText);
-          console.log(response.success);
-          console.log(response.msg);
+          try {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response.success);
+            console.log(response.msg);
+          }
+          catch (e) {
+            console.log(
+              'There was an error: \n -> '
+              + e + '\n'
+              + 'Complete server response: \n -->'
+              + xhr.responseText
+            );
+          }
         }
+        // If however data format was not JSON in the end..
         else {
           var response = xhr.responseText;
           console.log(response);
