@@ -169,7 +169,7 @@ function updateTable(response) {
 var setupBuffer = []; //temporary container for settings
 function loadSettings(target) {
   var settings = localData.settings;
-  var settingsForm = document.querySelector('div.settings.tab');
+  var settingsForm = document.querySelector('.settingsForm.sliders');
   var inputs = settingsForm.querySelectorAll('input');
   if (event.type == 'mouseenter' || event.type == 'click') {
     // Save settings to the buffer
@@ -189,11 +189,15 @@ function loadSettings(target) {
     // setup object and buffer
     var index = parseInt(target.children[0].innerHTML);
     for (var i = 0; i < inputs.length; i++) {
-      var value = parseFloat(settings[index][i + 2])
+      var value = parseFloat(settings[index][i + 2]);
       inputs[i].value = value;
       setup[keys[i]] = value;
       setupBuffer[i] = value;
     }
+    var currentSettings = document.querySelector('#currentSettings');
+    currentSettings.value = target.children[2].innerHTML;
+    var settingsName = document.querySelector('#settingsName');
+    settingsName.value = target.children[2].innerHTML;
   }
   if (event.type == 'mouseleave') {
     // load settings from the buffer
@@ -352,9 +356,6 @@ function loadFromEditor() {
   newSymbolX = [];
   newSymbolY = [];
   var activeCells = document.querySelectorAll('.cell.active');
-  if (activeCells.length == 0) {
-    return console.log('Draw your symbol in the above grid.')
-  }
   var base = document.querySelector('.base');
   var grid = document.querySelector('.grid');
   var gridHeight = grid.offsetHeight - 2; // 2 - grid border
@@ -382,6 +383,8 @@ function resetEditor() {
   }
   currentSymbol = document.querySelector('#currentSymbol');
   currentSymbol.value = '';
+  symbolCode = document.querySelector('#symbolCode');
+  symbolCode.value = '';
 }
 // ========================================
 function overwriteSymbol() {
@@ -444,6 +447,10 @@ function closeAlert() {
 }
 // ========================================
 function changeSymbol() {
+  var activeCells = document.querySelectorAll('.cell.active');
+  if (activeCells.length == 0) {
+    return console.log('Draw your symbol in the above grid.')
+  }
   // Do initial validation (any final vaidation takes place
   // on the server anyway)
   currentSymbol = document.querySelector('#currentSymbol').value;
@@ -457,7 +464,7 @@ function changeSymbol() {
       document.querySelector('.userProfile.logged') == null) {
       return console.log('You need to log-in to edit.')
   }
-  // Try to laod symbol from the grid
+  // Laod symbol from the grid
   var inputX = document.querySelector('#newSymbolX');
   var inputY = document.querySelector('#newSymbolY');
   loadFromEditor();
@@ -471,11 +478,43 @@ function changeSymbol() {
 }
 // ========================================
 function deleteSymbol() {
+  // Do initial validation (any final validation takes place
+  // on the server anyway)
+  currentSymbol = document.querySelector('#currentSymbol').value;
+  // Is symbol to edit defined?
+  if (currentSymbol == '') {
+    return console.log('Choose symbol to delete or provide its code in \'Current Symbol\' field.')
+  }
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in to delete.')
+  }
 
+  var text = "Do you really want to delete current symbol?";
+  showAlert(text, function(){
+    ajaxRequest('POST','newSymbolForm','delete_symbol.php', getData);
+  });
 }
 // ========================================
 function changeSettings() {
+  // Do initial validation (any final validation takes place
+  // on the server anyway)
+  currentSettings = document.querySelector('#currentSettings').value;
+  // Is symbol to edit defined?
+  if (currentSettings == '') {
+    return console.log('Choose symbol to delete or provide its code in \'Current Settings\' field.')
+  }
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in for this action.')
+  }
 
+  var text = "Do you really want to change current settings?";
+  showAlert(text, function(){
+    ajaxRequest('POST','settingsForm','change_settings.php', getData);
+  });
 }
 // ========================================
 function deleteSettings() {
