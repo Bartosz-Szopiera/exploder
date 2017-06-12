@@ -1,4 +1,12 @@
 <?php
+header('Content-type: application/json');
+// ---Distinguish parent script from includes
+if (isset($script_name)) $child_script = true;
+else {
+  $script_name = $_SERVER['PHP_SELF'];
+  $child_script = false;
+}
+// ---
 require_once('mysqli_connect.php');
 
 $query = "SELECT * FROM symbols";
@@ -12,6 +20,7 @@ $response['msg'] = 'Symbols data downloaded.';
 $response['data'] = $data;
 $response['subject'] = 'symbols';
 
-header('Content-type: application/json');
 echo json_encode($response);
+// --- Get back to parent
+$parent_script = true;
 ?>

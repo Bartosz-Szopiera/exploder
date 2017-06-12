@@ -1,5 +1,16 @@
 <?php
+header('Content-type: application/json');
+// ---Distinguish parent script from includes
+if (isset($script_name)) $parent_script = false;
+else {
+  $script_name = $_SERVER['PHP_SELF'];
+  $parent_script = true;
+}
+// ---
 require_once('mysqli_connect.php');
+if (!isset($parent_script)) {
+  # code...
+}
 if (!session_id()) {
   session_start();
 }
@@ -35,9 +46,11 @@ if (!$result) {
   die("Error: " . mysqli_error($dbc));
 }
 
-$response['success'] = true;
-$response['msg'] = 'Settings uploaded.';
-
-header('Content-type: application/json');
-echo json_encode($response);
+if ($parent_script) {
+  $response['success'] = true;
+  $response['msg'] = 'Settings uploaded.';
+  echo json_encode($response);
+}
+// --- Get back to parent
+$parent_script = true;
 ?>

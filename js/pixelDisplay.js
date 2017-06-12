@@ -36,7 +36,7 @@ var setup = {
 function adaptServerData() {
   dictionary = []; // Clear dictionary
   coordinates = {}; //Clear coordinates
-  widths = {}; 
+  widths = {};
   var data = localData.symbols;
   for (var i = 0; i < data.length; i++) {
     var coordsX = JSON.parse('[' + data[i][2] + ']');

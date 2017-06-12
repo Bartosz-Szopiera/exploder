@@ -31,13 +31,18 @@ function getSettings() {
 // ======================================
 // Create new symbol
 function addSymbol() {
-  inputX = document.querySelector('#newSymbolX');
-  inputY = document.querySelector('#newSymbolY');
+  var activeCells = document.querySelectorAll('.cell.active');
+  if (activeCells.length == 0) {
+    return console.log('Draw your symbol in the above grid.')
+  }
+
+  var inputX = document.querySelector('#newSymbolX');
+  var inputY = document.querySelector('#newSymbolY');
   loadFromEditor();
   inputX.value = newSymbolX.toString();
   inputY.value = newSymbolY.toString();
 
-  ajaxRequest('POST','newSymbolForm','add_symbol.php',getSymbols);
+  ajaxRequest('POST','newSymbolForm','add_symbol.php', getData);
 }
 // ======================================
 // Download data from symbols table
@@ -51,7 +56,7 @@ function getData() {
 }
 // ======================================
 // Debug
-function debug() {
+function test() {
   ajaxRequest('GET', '', 'test.php');
 }
 // ======================================
@@ -92,6 +97,7 @@ function ajaxRequest(method,formID,url,callback1, callback2) {
             console.log(response.msg);
           }
           catch (e) {
+            var response = xhr.responseText;
             console.log(
               'There was an error: \n -> '
               + e + '\n'

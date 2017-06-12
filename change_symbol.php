@@ -1,4 +1,11 @@
 <?php
+// ---Distinguish parent script from includes
+if (isset($script_name)) $child_script = true;
+else {
+  $script_name = $_SERVER['PHP_SELF'];
+  $child_script = false;
+}
+// ---
 require_once('mysqli_connect.php');
 header('Content-type: application/json');
 if (!session_id()) {
@@ -63,4 +70,6 @@ $response['msg'] = 'Symbol changed.';
 $response['subject'] = 'symbols';
 
 echo json_encode($response);
+// --- Get back to parent
+$parent_script = true;
 ?>

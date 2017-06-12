@@ -1,4 +1,12 @@
 <?php
+header('Content-type: application/json');
+// ---Distinguish parent script from includes
+if (isset($script_name)) $child_script = true;
+else {
+  $script_name = $_SERVER['PHP_SELF'];
+  $child_script = false;
+}
+// ---
 require_once('mysqli_connect.php');
 if (!session_id()) {
     session_start();
@@ -44,6 +52,7 @@ else {
   $response['success'] = false;
   $response['msg'] = 'Please fill all required fields.';
 }
-header('Content-type: application/json');
 echo json_encode($response);
+// --- Get back to parent
+$parent_script = true;
 ?>
