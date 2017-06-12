@@ -503,7 +503,7 @@ function changeSettings() {
   currentSettings = document.querySelector('#currentSettings').value;
   // Is symbol to edit defined?
   if (currentSettings == '') {
-    return console.log('Choose symbol to delete or provide its code in \'Current Settings\' field.')
+    return console.log('Choose settings to change or provide their name in \'Current Settings\' field.')
   }
   // Is session started?
   if (document.cookie.search('PHPSESSID') == -1 ||
@@ -518,5 +518,21 @@ function changeSettings() {
 }
 // ========================================
 function deleteSettings() {
+  // Do initial validation (any final validation takes place
+  // on the server anyway)
+  currentSettings = document.querySelector('#currentSettings').value;
+  // Is symbol to edit defined?
+  if (currentSettings == '') {
+    return console.log('Choose settings to delete or provide their name in \'Current Settings\' field.')
+  }
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in for this action.')
+  }
 
+  var text = "Do you really want to delete current settings?";
+  showAlert(text, function(){
+    ajaxRequest('POST','settingsForm','delete_settings.php', getData);
+  });
 }
