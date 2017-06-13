@@ -133,6 +133,10 @@ body {
     body main div.input {
       display: flex;
       align-items: center; }
+    body main #tableWrapper {
+      display: flex;
+      flex-flow: column nowrap;
+      height: auto; }
     body main .tableWrapper .tableHeader th {
       border-bottom: 1px solid #0c7329; }
       body main .tableWrapper .tableHeader th:first-of-type {
