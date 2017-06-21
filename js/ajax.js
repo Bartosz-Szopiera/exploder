@@ -54,6 +54,97 @@ function getData() {
   getSettings();
   getSymbols();
 }
+// ========================================
+function changeSymbol() {
+  var activeCells = document.querySelectorAll('.cell.active');
+  if (activeCells.length == 0) {
+    return console.log('Draw your symbol in the above grid.')
+  }
+  // Do initial validation (any final vaidation takes place
+  // on the server anyway)
+  currentSymbol = document.querySelector('#currentSymbol').value;
+  symbolCode = document.querySelector('#symbolCode').value;
+  // Is symbol to edit defined?
+  if (currentSymbol == '') {
+    return console.log('Choose symbol to edit or provide its code in \'Current Symbol\' field.')
+  }
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in to edit.')
+  }
+  // Laod symbol from the grid
+  var inputX = document.querySelector('#newSymbolX');
+  var inputY = document.querySelector('#newSymbolY');
+  loadFromEditor();
+  inputX.value = newSymbolX.toString();
+  inputY.value = newSymbolY.toString();
+
+  var text = "Do you really want to change current symbol?";
+  showAlert(text, function(){
+    ajaxRequest('POST','newSymbolForm','change_symbol.php', getData);
+  });
+}
+// ========================================
+function deleteSymbol() {
+  // Do initial validation (any final validation takes place
+  // on the server anyway)
+  currentSymbol = document.querySelector('#currentSymbol').value;
+  // Is symbol to edit defined?
+  if (currentSymbol == '') {
+    return console.log('Choose symbol to delete or provide its code in \'Current Symbol\' field.')
+  }
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in to delete.')
+  }
+
+  var text = "Do you really want to delete current symbol?";
+  showAlert(text, function(){
+    ajaxRequest('POST','newSymbolForm','delete_symbol.php', getData);
+  });
+}
+// ========================================
+function changeSettings() {
+  // Do initial validation (any final validation takes place
+  // on the server anyway)
+  currentSettings = document.querySelector('#currentSettings').value;
+  // Is symbol to edit defined?
+  if (currentSettings == '') {
+    return console.log('Choose settings to change or provide their name in \'Current Settings\' field.')
+  }
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in for this action.')
+  }
+
+  var text = "Do you really want to change current settings?";
+  showAlert(text, function(){
+    ajaxRequest('POST','settingsForm','change_settings.php', getData);
+  });
+}
+// ========================================
+function deleteSettings() {
+  // Do initial validation (any final validation takes place
+  // on the server anyway)
+  currentSettings = document.querySelector('#currentSettings').value;
+  // Is symbol to edit defined?
+  if (currentSettings == '') {
+    return console.log('Choose settings to delete or provide their name in \'Current Settings\' field.')
+  }
+  // Is session started?
+  if (document.cookie.search('PHPSESSID') == -1 ||
+      document.querySelector('.userProfile.logged') == null) {
+      return console.log('You need to log-in for this action.')
+  }
+
+  var text = "Do you really want to delete current settings?";
+  showAlert(text, function(){
+    ajaxRequest('POST','settingsForm','delete_settings.php', getData);
+  });
+}
 // ======================================
 // Debug
 function test() {
@@ -78,15 +169,15 @@ function ajaxRequest(method,formID,url,callback1, callback2) {
   xhr.open(method, url);
   xhr.send(data);
   xhr.onreadystatechange = function() {
-    var DONE = 4; // state 4 - request in completed.
-    var OK = 200; // status 200 is a successful return.
+    var DONE = 4; // state 4 - request completed.
+    var OK = 200; // status 200 - successful return.
     if (xhr.readyState === DONE) {
       if (xhr.status === OK ) {
         console.log('AJAX performed');
         var contentType = xhr.getResponseHeader("Content-type");
         console.log(contentType);
         // Every response comes back in JSON but sometimes
-        // if there is and mysqli_error it will actually not
+        // if there is an mysqli_error it will actually not
         // be encoded yet the header will state 'application/json'
         // and parser will throw an exception on that.
         // So there is 'try - catch' block.
