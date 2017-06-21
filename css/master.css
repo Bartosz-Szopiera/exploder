@@ -17,6 +17,8 @@ button {
   button:hover {
     cursor: pointer;
     color: #18e753; }
+  button.active {
+    color: #18e753; }
 
 h1, h2, h3, h4, h5, h6, p {
   margin: 0px;
@@ -70,6 +72,31 @@ a {
     .alert__buttons button {
       width: 25%;
       min-width: 60px; }
+
+#protoForce, .force {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  display: none; }
+  #protoForce .wrap, .force .wrap {
+    width: 0px;
+    height: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    #protoForce .wrap *, .force .wrap * {
+      flex: 0 0 auto; }
+  #protoForce canvas, .force canvas {
+    border: 1px solid;
+    border-radius: 50%;
+    background: rgba(46, 137, 210, 0.3); }
+  #protoForce .type, .force .type {
+    z-index: 3;
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(46, 137, 210, 0.3);
+    border-radius: 50%;
+    background: rgba(46, 137, 210, 0.7); }
 
 body {
   color: #0c7329;

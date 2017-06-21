@@ -387,16 +387,6 @@ function resetEditor() {
   symbolCode.value = '';
 }
 // ========================================
-function overwriteSymbol() {
-  // What symbol we edit?
-  // Check if user is authorized
-    // is logged in + is author of the symbol
-  // Check if new code is available (if is different that the old)
-  // Do you really want to overwrite?
-  // Call function to remove old symbol.
-  // Call function to add new symbol.
-}
-// ========================================
 function addListeners() {
   var labels = document.querySelectorAll('.label');
   for (var i = 0; i < labels.length; i++) {
@@ -436,7 +426,7 @@ function showAlert(text,callback) {
 
   function handler() {
     callback();
-    yes.removeEventListener('click', handler)
+    yes.removeEventListener('click', handler);
     closeAlert();
   }
 }
@@ -446,93 +436,29 @@ function closeAlert() {
   alert.style.display = 'none';
 }
 // ========================================
-function changeSymbol() {
-  var activeCells = document.querySelectorAll('.cell.active');
-  if (activeCells.length == 0) {
-    return console.log('Draw your symbol in the above grid.')
-  }
-  // Do initial validation (any final vaidation takes place
-  // on the server anyway)
-  currentSymbol = document.querySelector('#currentSymbol').value;
-  symbolCode = document.querySelector('#symbolCode').value;
-  // Is symbol to edit defined?
-  if (currentSymbol == '') {
-    return console.log('Choose symbol to edit or provide its code in \'Current Symbol\' field.')
-  }
-  // Is session started?
-  if (document.cookie.search('PHPSESSID') == -1 ||
-      document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in to edit.')
-  }
-  // Laod symbol from the grid
-  var inputX = document.querySelector('#newSymbolX');
-  var inputY = document.querySelector('#newSymbolY');
-  loadFromEditor();
-  inputX.value = newSymbolX.toString();
-  inputY.value = newSymbolY.toString();
-
-  var text = "Do you really want to change current symbol?";
-  showAlert(text, function(){
-    ajaxRequest('POST','newSymbolForm','change_symbol.php', getData);
-  });
+// Draw a basic parts for the protoForce
+function drawForce() {
+  var rangeCanv = document.querySelector('#protoForce .range');
+  var valueCanv = document.getElementById('#protoForce .value');
+  var rangeCtx = rangeCanv.getContext('2d');
+  var valueCtx = valueCanv.getContext('2d');
 }
 // ========================================
-function deleteSymbol() {
-  // Do initial validation (any final validation takes place
-  // on the server anyway)
-  currentSymbol = document.querySelector('#currentSymbol').value;
-  // Is symbol to edit defined?
-  if (currentSymbol == '') {
-    return console.log('Choose symbol to delete or provide its code in \'Current Symbol\' field.')
-  }
-  // Is session started?
-  if (document.cookie.search('PHPSESSID') == -1 ||
-      document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in to delete.')
-  }
+function updateForceGraphic(id, property) {
+  // Apply new rad3
+  if (property == direction) {
 
-  var text = "Do you really want to delete current symbol?";
-  showAlert(text, function(){
-    ajaxRequest('POST','newSymbolForm','delete_symbol.php', getData);
-  });
-}
-// ========================================
-function changeSettings() {
-  // Do initial validation (any final validation takes place
-  // on the server anyway)
-  currentSettings = document.querySelector('#currentSettings').value;
-  // Is symbol to edit defined?
-  if (currentSettings == '') {
-    return console.log('Choose settings to change or provide their name in \'Current Settings\' field.')
   }
-  // Is session started?
-  if (document.cookie.search('PHPSESSID') == -1 ||
-      document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in for this action.')
-  }
+  // Apply new rad1, rad2
+  else if (property == range) {
 
-  var text = "Do you really want to change current settings?";
-  showAlert(text, function(){
-    ajaxRequest('POST','settingsForm','change_settings.php', getData);
-  });
-}
-// ========================================
-function deleteSettings() {
-  // Do initial validation (any final validation takes place
-  // on the server anyway)
-  currentSettings = document.querySelector('#currentSettings').value;
-  // Is symbol to edit defined?
-  if (currentSettings == '') {
-    return console.log('Choose settings to delete or provide their name in \'Current Settings\' field.')
   }
-  // Is session started?
-  if (document.cookie.search('PHPSESSID') == -1 ||
-      document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in for this action.')
-  }
+  // Apply new value
+  else if (property == value) {
 
-  var text = "Do you really want to delete current settings?";
-  showAlert(text, function(){
-    ajaxRequest('POST','settingsForm','delete_settings.php', getData);
-  });
+  }
+  // Reapply all properties
+  else if (property == all) {
+
+  }
 }

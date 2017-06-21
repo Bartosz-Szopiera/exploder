@@ -24,6 +24,7 @@
             </div>
           </div>
         </div>
+        <div id="forceWrapper"></div>
       </div>
       <div class="tabs">
         <div class="labels">
@@ -36,7 +37,7 @@
           <div class="tab settings hidden">
             <div class="explosion">
               <div class="input">
-                <label for="currentSettings">Current settings</label>
+                <label for="currentSettings">Settings to edit</label>
                 <input id="currentSettings" form="settingsForm" type="text" name="current_settings" placeholder="New Settings">
               </div>
               <div class="input">
@@ -101,14 +102,16 @@
               </div> -->
             </div>
             <div class="forces">
-              <!-- EMPTY -->
+              <button id="addForce" type="button" name="button" onmouseup="addForce(this)">Add Force</button>
+              <button type="button" name="button" onclick="selectToDelete()")>Remove Force</button>
+              <button type="button" name="button">Apply Changes</button>
             </div>
           </div>
           <!-- <div class="tab editor hidden"> -->
           <div class="tab editor">
             <div class="symbol">
               <div class="input">
-                <label for="currentSymbol">Current symbol</label>
+                <label for="currentSymbol">Symbol to edit</label>
                 <input id="currentSymbol" form="newSymbolForm" type="text" name="current_symbol" placeholder="New Symbol" value="">
               </div>
               <div class="input">
@@ -285,6 +288,20 @@
         <div class="alert__buttons">
           <button class="yes" type="button">Yes</button>
           <button class="no" type="button" onclick="closeAlert()">No</button>
+        </div>
+      </div>
+      <div id="protoForce">
+        <div class="wrap">
+          <canvas class="range" width="200" height="200"></canvas>
+        </div>
+        <div class="wrap">
+          <canvas class="value" width="200" height="200"></canvas>
+        </div>
+        <div class="wrap">
+          <div class="rad3"></div>
+        </div>
+        <div class="wrap">
+          <div class="type"></div>
         </div>
       </div>
       <!-- <div class="centerLine debuggingStuff"></div> -->
