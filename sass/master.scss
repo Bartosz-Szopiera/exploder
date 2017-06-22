@@ -119,9 +119,17 @@ a {
     z-index: 3;
     width: 30px;
     height: 30px;
-    border: 2px solid rgba(46, 137, 210, 0.3);
+    border: 1px solid rgba(46, 137, 210, 0.3);
     border-radius: 50%;
-    background: rgba(46, 137, 210, 0.7);
+    &[data-force-type="1"] {
+      background: rgba(210, 46, 46, 0.7);
+    }
+    &[data-force-type="2"] {
+      background: rgba(46, 210, 77, 0.7);
+    }
+    &[data-force-type="3"] {
+      background: rgba(46, 137, 210, 0.7);
+    }
   }
 }
 

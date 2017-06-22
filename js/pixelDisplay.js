@@ -308,7 +308,6 @@ function createForce() {
     // Allow doubleclick to change type
     typeElement.addEventListener('mouseup', dbClick);
     function dbClick() {
-      console.log('dbClick');
       typeElement.dataset.dbclick = true;
       typeElement.addEventListener('mousedown', modifyType);
       setTimeout(function(element){
@@ -322,7 +321,7 @@ function createForce() {
   var globalX = event.clientX;
   var globalY = event.clientY;
   // Get position of .display center
-  var display = document.querySelector('.display');
+  // var display = document.querySelector('.display');
   var centerX = display.offsetLeft;
   var centerY = display.offsetTop;
   // Get position of force in local system of the display
@@ -446,7 +445,8 @@ function modifyType() {
   var force = this.parentNode.parentNode;
   var id = parseInt(force.dataset.forceIndex);
   // Record current position
-  oldPosition = [forces[id].position];
+  // oldPosition = [forces[id].position];
+  oldPosition = forces[id].position;
   // Change type of emitted force
   var type = forces[id].type;
   type = type == 3 ? 1 : type + 1;
@@ -457,6 +457,8 @@ function modifyType() {
     configurable: true,
     value: defaultForce['type' + type]
   });
+  var typeElement = force.querySelector('.type');
+  typeElement.dataset.forceType = type;
   // Restore force position
   forces[id].position = oldPosition;
 
@@ -484,8 +486,24 @@ function selectToDelete() {
 }
 // ========================================
 function moveForce(target) {
-  console.log('moveForce');
-  console.log(target);
+  // console.log('moveForce');
+  // console.log(target);
+  var force = target;
+  var forceIndex = force.dataset.forceIndex;
+  // Get click position
+  var globalX = event.clientX;
+  var globalY = event.clientY;
+  // Get position of .display center
+  // var display = document.querySelector('.display');
+  var centerX = display.offsetLeft;
+  var centerY = display.offsetTop;
+  // Get position of force in local system of the display
+  var localX = globalX - centerX;
+  var localY = globalY - centerY;
+  // Position force in local system of the display
+  force.style.left = localX + 'px';
+  force.style.top = localY + 'px';
+  forces[forceIndex].position = [localX,localY];
   // Disable option to double-click to change type
   var typeElement = target.querySelector('.type');
   typeElement.removeEventListener('click', modifyType);
