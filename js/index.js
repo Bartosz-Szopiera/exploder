@@ -269,6 +269,8 @@ function hidePixels() {
   for (var i = 0; i < pixels.length; i++) {
     pixels[i].classList.add('hidden');
   }
+  var forceWrapper = document.querySelector('#forceWrapper');
+  forceWrapper.style.display = 'none';
 }
 // ========================================
 function showPixels() {
@@ -276,6 +278,8 @@ function showPixels() {
   for (var i = 0; i < pixels.length; i++) {
     pixels[i].classList.remove('hidden');
   }
+  var forceWrapper = document.querySelector('#forceWrapper');
+  forceWrapper.style.display = 'unset';
 }
 // ========================================
 // Display grid for creating and editing symbols
@@ -438,13 +442,21 @@ function closeAlert() {
 // ========================================
 // Draw a basic parts for the protoForce
 function drawForce() {
-  var rangeCanv = document.querySelector('#protoForce .range');
-  var valueCanv = document.getElementById('#protoForce .value');
-  var rangeCtx = rangeCanv.getContext('2d');
-  var valueCtx = valueCanv.getContext('2d');
+  // Draw range
+  var canvas = document.querySelector('#prototype .range');
+  var ctx = canvas.getContext('2d');
+  var centerX = canvas.style.width
+  ctx.beginPath();
+  ctx.arc();
+  ctx.stroke();
+
+  // var rangeCanv = document.querySelector('#protoForce .range');
+  // var valueCanv = document.getElementById('#protoForce .value');
+  // var rangeCtx = rangeCanv.getContext('2d');
+  // var valueCtx = valueCanv.getContext('2d');
 }
 // ========================================
-function updateForceGraphic(id, property) {
+function redrawForce(id, property) {
   // Apply new rad3
   if (property == direction) {
 
