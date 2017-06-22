@@ -248,8 +248,14 @@ function addForce(target) {
   target.classList.add('active');
 }
 // ========================================
-// Create new force at clicked location
-var forceIndex = 0;
+// Create new force at clicked location.
+// --Global variables--
+// Index for each new force:
+  var forceIndex = 0;
+// Container for all currently attached handlers of
+// events for force modification:
+  var handlers = [];
+// --Function--
 function createForce() {
   var protoForce = document.querySelector('#protoForce');
   var force = protoForce.cloneNode(true);
@@ -269,42 +275,47 @@ function createForce() {
   // Control direction
   rad3Element.addEventListener('mousedown', function(){
     modifyDirection(force, true);
-    window.addEventListener('mousemove', function(){
-      modifyDirection(force);
-    });
+    var handler = function(){modifyDirection(force)};
+    handlers.push(handler);
+    window.addEventListener('mousemove', handler);
     window.addEventListener('mouseup', stopModifying);
   });
   // Control area of influence
   rangeElement.addEventListener('mousedown', function(){
     modifyRange(force, true);
-    window.addEventListener('mousemove', function(){
-      modifyRange(force);
-    });
+    var handler = function(){modifyRange(force)};
+    handlers.push(handler);
+    window.addEventListener('mousemove', handler);
     window.addEventListener('mouseup', stopModifying);
   });
   // Control force value
   valueElement.addEventListener('mousedown', function(){
     modifyValue(force, true);
-    window.addEventListener('mousemove', function(){
-      modifyValue(force);
-    });
+    var handler = function(){modifyValue(force)};
+    handlers.push(handler);
+    window.addEventListener('mousemove', handler);
     window.addEventListener('mouseup', stopModifying);
   });
   // Control force type and force location
   typeElement.addEventListener('mousedown', function(){
+    if(typeElement.dataset.dbclick == true) return
     // Drag to move force:
-    window.addEventListener('mousemove', function(){
-      moveForce(force);
-    });
+    var handler = function(){moveForce(force)};
+    handlers.push(handler);
+    window.addEventListener('mousemove', handler);
     // Stop dragging behavior
     window.addEventListener('mouseup', stopModifying);
     // Allow doubleclick to change type
-    window.addEventListener('mouseup', dbClick);
+    typeElement.addEventListener('mouseup', dbClick);
     function dbClick() {
-      typeElement.addEventListener('click', modifyType);
+      console.log('dbClick');
+      typeElement.dataset.dbclick = true;
+      typeElement.addEventListener('mousedown', modifyType);
       setTimeout(function(element){
-        element.removeEventListener('click', modifyType);
-      }, 140, typeElement);
+        element.removeEventListener('mousedown', modifyType);
+        element.dataset.dbclick = false;
+      }, 250, typeElement);
+      typeElement.removeEventListener('mouseup', dbClick);
     }
   });
   // Get click position
@@ -322,6 +333,7 @@ function createForce() {
   force.style.top = localY + 'px';
   // Define basic properties
   Object.defineProperty(forces, forceIndex, {
+    configurable: true,
     value: defaultForce.type1
   });
   // Update position inside the object
@@ -330,12 +342,16 @@ function createForce() {
   document.getElementById('addForce').classList.remove('active');
 }
 // ========================================
+// Remove all window event associated with
+// modifying force.
 function stopModifying() {
-  window.removeEventListener('mousemove', modifyDirection);
-  window.removeEventListener('mousemove', modifyRange);
-  window.removeEventListener('mousemove', modifyValue);
-  window.removeEventListener('mousemove', moveForce);
+  console.log('removing handlers');
+  for (var i = 0; i < handlers.length; i++) {
+    window.removeEventListener('mousemove', handlers[i]);
+  }
   window.removeEventListener('mouseup', stopModifying);
+  // Clear an array
+  handlers = [];
 }
 // ========================================
 // Modify existing force
@@ -345,7 +361,7 @@ var cursorX, cursorY, cursorOldX, cursorOldY;
 var refVec = [1,0]; // reference vector indicating 0' angle
 // ========================================
 function modifyDirection(target, start) {
-  console.log('modifyDirection, target: ' + target);
+  console.log('modifyDirection');
   var id = parseInt(target.dataset.forceIndex);
   if (forces[id].type != 2) return
   var prop = forces[id];
@@ -373,7 +389,7 @@ function modifyDirection(target, start) {
 }
 // ========================================
 function modifyRange(target, start) {
-  console.log('modifyRange, target: ' + target);
+  console.log('modifyRange');
   var id = parseInt(target.dataset.forceIndex);
   var prop = forces[id];
   var oldPosition = prop.position;
@@ -405,7 +421,7 @@ function modifyRange(target, start) {
 }
 // ========================================
 function modifyValue(target, start) {
-  console.log('modifyValue, target: ' + target);
+  console.log('modifyValue');
   var id = parseInt(target.dataset.forceIndex);
   var prop = forces[id];
   var oldPosition = prop.position;
@@ -425,7 +441,10 @@ function modifyValue(target, start) {
 // ========================================
 function modifyType() {
   console.log('modifyType');
-  var id = parseInt(this.dataset.forceIndex);
+  this.removeEventListener('mousedown', modifyType);
+  this.dataset.dbclick = false;
+  var force = this.parentNode.parentNode;
+  var id = parseInt(force.dataset.forceIndex);
   // Record current position
   oldPosition = [forces[id].position];
   // Change type of emitted force
@@ -435,12 +454,14 @@ function modifyType() {
   delete forces[id];
   // Insert new force of given type
   Object.defineProperty(forces, id, {
+    configurable: true,
     value: defaultForce['type' + type]
   });
   // Restore force position
   forces[id].position = oldPosition;
 
-  updateForceGraphic(id, 'all');
+  // Reload graphic of the force to depict changed values
+  // updateForceGraphic(id, 'all');
 }
 // ========================================
 function removeForce() {
@@ -463,8 +484,10 @@ function selectToDelete() {
 }
 // ========================================
 function moveForce(target) {
+  console.log('moveForce');
+  console.log(target);
   // Disable option to double-click to change type
-  var typeElement = target.querySelector('.typeElement');
+  var typeElement = target.querySelector('.type');
   typeElement.removeEventListener('click', modifyType);
 }
 // ========================================
