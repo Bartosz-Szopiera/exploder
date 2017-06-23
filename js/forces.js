@@ -33,9 +33,6 @@ function drawForce(canvas, id) {
 function updateRange(id, force) {
   var rad1 = forces[id].rad1;
   var rad2 = forces[id].rad2;
-  console.log('updating:');
-  console.log('rad1: ' + rad1);
-  console.log('rad2: ' + rad2);
   var rangeCanvas = force.querySelector('.range');
   drawForce(rangeCanvas, id);
 }
@@ -86,8 +83,8 @@ var defaultForce = {
   type2 : {
     'position'  : null,
     'value'   : 0.5,
-    'rad1'    : 1.5*Math.PI,
-    'rad2'    : 1.5*Math.PI,
+    'rad1'    : 1.60*Math.PI,
+    'rad2'    : 1.40*Math.PI,
     'rad3'    : 0.5*Math.PI,
     'rot'     : 1,
     'duration' : 0,
@@ -96,8 +93,8 @@ var defaultForce = {
   type3 : {
     'position'  : null,
     'value'   : 0.5,
-    'rad1'    : 1.5*Math.PI,
-    'rad2'    : 1.5*Math.PI,
+    'rad1'    : 1.60*Math.PI,
+    'rad2'    : 1.40*Math.PI,
     'rad3'    : 0.5*Math.PI,
     'rot'     : 1,
     'duration' : 0,
@@ -184,19 +181,27 @@ function createForce() {
   var globalX = event.clientX;
   var globalY = event.clientY;
   // Get position of .display center
-  // var display = document.querySelector('.display');
   var centerX = display.offsetLeft;
   var centerY = display.offsetTop;
   // Get position of force in local system of the display
   var localX = globalX - centerX;
-  var localY = globalY - centerY;
+  var localY = centerY - globalY;
   // Position force in local system of the display
   force.style.left = localX + 'px';
-  force.style.top = localY + 'px';
+  force.style.top = -localY + 'px';
   // Define basic properties
   Object.defineProperty(forces, forceIndex, {
     configurable: true,
-    value: defaultForce.type1
+    value: {
+      'position'  : null,
+      'value'   : 0.5,
+      'rad1'    : 1.60*Math.PI,
+      'rad2'    : 1.40*Math.PI,
+      'rad3'    : 0.5*Math.PI,
+      'rot'     : 1,
+      'duration' : 0,
+      'type'     : 1,
+    }
   });
   // Update position inside the object
   forces[forceIndex].position = [localX,localY];
@@ -252,32 +257,47 @@ function modifyDirection(target, start) {
   oldLength = vectorLength([xOld,yOld]);
 }
 // ========================================
+var xOld, yOld;
 function modifyRange(force, start) {
+  // console.log('xOld: ' + xOld);
+  // console.log('yOld: ' + yOld);
   console.log('modifyRange');
   var id = parseInt(force.dataset.forceIndex);
   var prop = forces[id];
-  var oldPosition = prop.position;
   // Read current cursor position;
-  x = event.clientX;
-  y = event.clientY;
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+  // Translate cursor coordinates to local system
+    var forceX = prop.position[0];
+    var forceY = prop.position[1];
+    var x = mouseX - (displayX + forceX);
+    displayY = display.offsetTop;
+    var y = displayY - forceY - mouseY;
+    console.log('x: ' + x);
+    console.log('y: ' + y);
   if (!start) {
     console.log('changing range direction');
     // Define change in direction
-    angleDelta = vectorAngle([x,y],[xOld,yOld]);
-    relativeDeltaNew = relativeAngle([x,y]);
-    relativeDeltaOld = relativeAngle([xOld,yOld]);
-    relativeDelta = relativeDeltaOld - relativeDeltaNew;
-    if (relativeDelta == angleDelta) {
-      angleDelta = relativeDelta;
-    }
+      // Angular distance between new point and
+      // reference vector [1,0]
+      relativeDeltaNew = relativeAngle([x,y]);
+      console.log('relativeDeltaNew: ' + relativeDeltaNew);
+      // Angular distance between old point and r.v. [1,0]
+      relativeDeltaOld = relativeAngle([xOld,yOld]);
+      console.log('relativeDeltaOld: ' + relativeDeltaOld);
+      // Difference
+      relativeDelta = relativeDeltaNew - relativeDeltaOld;
+    angleDelta = relativeDelta;
+    console.log('angleDelta: '+ angleDelta);
     // Rotate influence borders (rad1 rad2)
     prop.rad1 += angleDelta;
     prop.rad2 += angleDelta;
     // Define change in range (space covered)(rad1-rad2 cone)
-    var delta = vectorLength([x,y]) - oldLength;
-    prop.rad1 -= (2*Math.PI)/360*delta; //?????
-    prop.rad1 += (2*Math.PI)/360*delta; //?????
-    // APPLY CHANGE TO THE ELEMENT STYLE
+    // var delta = vectorLength([x,y]) - oldLength;
+    // prop.rad1 -= (2*Math.PI)/360*delta; //?????
+    // prop.rad1 += (2*Math.PI)/360*delta; //?????
+
+    // Apply change to the element graphics
     updateRange(id, force);
   }
   // Record current values;
@@ -312,7 +332,6 @@ function modifyType() {
   var force = this.parentNode.parentNode;
   var id = parseInt(force.dataset.forceIndex);
   // Record current position
-  // oldPosition = [forces[id].position];
   oldPosition = forces[id].position;
   // Change type of emitted force
   var type = forces[id].type;
@@ -322,7 +341,16 @@ function modifyType() {
   // Insert new force of given type
   Object.defineProperty(forces, id, {
     configurable: true,
-    value: defaultForce['type' + type]
+    value: {
+      'position'  : null,
+      'value'   : 0.5,
+      'rad1'    : 1.60*Math.PI,
+      'rad2'    : 1.40*Math.PI,
+      'rad3'    : 0.5*Math.PI,
+      'rot'     : 1,
+      'duration' : 0,
+      'type'     : type,
+    }
   });
   var typeElement = force.querySelector('.type');
   typeElement.dataset.forceType = type;
@@ -330,6 +358,7 @@ function modifyType() {
   forces[id].position = oldPosition;
 
   // Reload graphic of the force to depict changed values
+  updateRange(id, force);
   // redrawForce(id, 'all');
 }
 // ========================================
@@ -360,23 +389,20 @@ function selectToDelete() {
 }
 // ========================================
 function moveForce(target) {
-  // console.log('moveForce');
-  // console.log(target);
   var force = target;
   var forceIndex = force.dataset.forceIndex;
   // Get click position
   var globalX = event.clientX;
   var globalY = event.clientY;
   // Get position of .display center
-  // var display = document.querySelector('.display');
   var centerX = display.offsetLeft;
   var centerY = display.offsetTop;
   // Get position of force in local system of the display
   var localX = globalX - centerX;
-  var localY = globalY - centerY;
+  var localY = centerY - globalY;
   // Position force in local system of the display
   force.style.left = localX + 'px';
-  force.style.top = localY + 'px';
+  force.style.top = -localY + 'px';
   forces[forceIndex].position = [localX,localY];
   // Disable option to double-click to change type
   var typeElement = target.querySelector('.type');
@@ -402,9 +428,9 @@ function vectorAngle(v1,v2) {
   return angle
 }
 // ========================================
-// Measure angle between vector and vector [1,0]
+// Measure angle between vector 'v' and vector [1,0]
 // assuming that angles are measured always from
-// [1,0] and clockwise
+// [1,0] and counter-clockwise
 function relativeAngle(v) {
   var dotProd = v[0];
   var vLen = vectorLength(v);
