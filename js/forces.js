@@ -1,6 +1,6 @@
 // ========================================
 // Draw a basic parts for the protoForce
-function drawForce(canvas) {
+function drawForce(canvas, id) {
   // Draw range
   if (!canvas) {
     var canvas = document.querySelector('#protoForce .range');
@@ -15,8 +15,8 @@ function drawForce(canvas) {
   ctx.strokeStyle = 'rgba(30,155,30,0.5)';
   // Define parameter of the arc for the default force
   var radius = centerX*0.5;
-  var rad1 = 1.5*Math.PI;
-  var rad2 = 1.5*Math.PI;
+  var rad1 = forces[id].rad1;
+  var rad2 = forces[id].rad2;
   var start = rad1 + 2*Math.PI;
   var end = rad2;
   var shift = 2*Math.PI;
@@ -30,8 +30,14 @@ function drawForce(canvas) {
   // var valueCtx = valueCanv.getContext('2d');
 }
 // ========================================
-function updateRange(id) {
-
+function updateRange(id, force) {
+  var rad1 = forces[id].rad1;
+  var rad2 = forces[id].rad2;
+  console.log('updating:');
+  console.log('rad1: ' + rad1);
+  console.log('rad2: ' + rad2);
+  var rangeCanvas = force.querySelector('.range');
+  drawForce(rangeCanvas, id);
 }
 // ========================================
 function updateValue(id) {
@@ -70,8 +76,8 @@ var defaultForce = {
   type1 : {
     'position'  : null,
     'value'   : 0.5,
-    'rad1'    : 1.5*Math.PI,
-    'rad2'    : 1.5*Math.PI,
+    'rad1'    : 1.60*Math.PI,
+    'rad2'    : 1.40*Math.PI,
     'rad3'    : 0.5*Math.PI,
     'rot'     : 1,
     'duration' : 0,
@@ -196,6 +202,8 @@ function createForce() {
   forces[forceIndex].position = [localX,localY];
   window.removeEventListener('mousedown', createForce);
   document.getElementById('addForce').classList.remove('active');
+  // Draw properties of the force on canvas
+  updateRange(forceIndex, force);
 }
 // ========================================
 // Remove all window event associated with
@@ -244,15 +252,16 @@ function modifyDirection(target, start) {
   oldLength = vectorLength([xOld,yOld]);
 }
 // ========================================
-function modifyRange(target, start) {
+function modifyRange(force, start) {
   console.log('modifyRange');
-  var id = parseInt(target.dataset.forceIndex);
+  var id = parseInt(force.dataset.forceIndex);
   var prop = forces[id];
   var oldPosition = prop.position;
   // Read current cursor position;
   x = event.clientX;
   y = event.clientY;
   if (!start) {
+    console.log('changing range direction');
     // Define change in direction
     angleDelta = vectorAngle([x,y],[xOld,yOld]);
     relativeDeltaNew = relativeAngle([x,y]);
@@ -266,9 +275,10 @@ function modifyRange(target, start) {
     prop.rad2 += angleDelta;
     // Define change in range (space covered)(rad1-rad2 cone)
     var delta = vectorLength([x,y]) - oldLength;
-    prop.rad1 -= (2*Math.PI)/50*delta; //?????
-    prop.rad1 += (2*Math.PI)/50*delta; //?????
+    prop.rad1 -= (2*Math.PI)/360*delta; //?????
+    prop.rad1 += (2*Math.PI)/360*delta; //?????
     // APPLY CHANGE TO THE ELEMENT STYLE
+    updateRange(id, force);
   }
   // Record current values;
   xOld = x;
@@ -324,20 +334,27 @@ function modifyType() {
 }
 // ========================================
 function removeForce() {
-  var forceWrapper = document.selectElementById('forceWrapper');
-  forceWrapper.removeChild(this);
+  var button = document.getElementById('removeForce');
+  var forceWrapper = document.getElementById('forceWrapper');
+  var force = this.parentNode.parentNode;
+  forceWrapper.removeChild(force); //remove from DOM
+  var id = force.dataset.forceIndex;
+  delete forces[id]; //remove from objcet
+  selectToDelete();
 }
 function selectToDelete() {
-  var forces = document.querySelectorAll('forces');
-  if (this.classList.contains('pressed')) {
+  var forces = document.querySelectorAll('.force');
+  var button = document.getElementById('removeForce');
+  if (button.classList.contains('active')) {
     for (var i = 0; i < forces.length; i++) {
-      forces[i].removeEventListener('click', removeForce);
+      forces[i].querySelector('.type').removeEventListener('click', removeForce);
     }
+    button.classList.remove('active');
   }
   else {
-    this.classList.add('pressed');
+    button.classList.add('active');
     for (var i = 0; i < forces.length; i++) {
-      forces[i].addEventListener('click', removeForce);
+      forces[i].querySelector('.type').addEventListener('click', removeForce);
     }
   }
 }
@@ -391,7 +408,7 @@ function vectorAngle(v1,v2) {
 function relativeAngle(v) {
   var dotProd = v[0];
   var vLen = vectorLength(v);
-  var angle = Math.acos(dotProd/v1Len); //radians
+  var angle = Math.acos(dotProd/vLen); //radians
   angle = v[1] > 0 ? angle : (Math.PI*2 - angle);
   return angle
 }
