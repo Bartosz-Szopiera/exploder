@@ -6,6 +6,7 @@ addListeners();
 isLogged();
 panelsObserver();
 windowListeners();
+drawForce();
 // ========================================
 // Show or hide tabs acoording to which one
 // was clicked
@@ -441,13 +442,28 @@ function closeAlert() {
 }
 // ========================================
 // Draw a basic parts for the protoForce
-function drawForce() {
+function drawForce(canvas) {
   // Draw range
-  var canvas = document.querySelector('#prototype .range');
+  if (!canvas) {
+    var canvas = document.querySelector('#protoForce .range');
+  }
+  canvas.width = 80;
+  canvas.height = 80;
   var ctx = canvas.getContext('2d');
-  var centerX = canvas.style.width
+  var centerX = canvas.width*0.5;
+  var centerY = canvas.height*0.5;
   ctx.beginPath();
-  ctx.arc();
+  ctx.lineWidth = centerX;
+  ctx.strokeStyle = 'rgba(30,155,30,0.5)';
+  // Define parameter of the arc for the default force
+  var radius = centerX*0.5;
+  var rad1 = 1.5*Math.PI;
+  var rad2 = 1.5*Math.PI;
+  var start = rad1 + 2*Math.PI;
+  var end = rad2;
+  var shift = 2*Math.PI;
+
+  ctx.arc(centerX,centerY,radius,shift - start, shift - end, true);
   ctx.stroke();
 
   // var rangeCanv = document.querySelector('#protoForce .range');
