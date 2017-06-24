@@ -1,6 +1,6 @@
 // ========================================
-// Draw a basic parts for the protoForce
-function drawForce(canvas, id) {
+// Draw a basic part for the protoForce
+function drawRange(canvas, id) {
   // Draw range
   if (!canvas) {
     var canvas = document.querySelector('#protoForce canvas.range');
@@ -20,23 +20,49 @@ function drawForce(canvas, id) {
   var start = rad1 + 2*Math.PI;
   var end = rad2;
   var shift = 2*Math.PI;
-
+  ctx.arc(centerX,centerY,radius,shift - start, shift - end, true);
+  ctx.stroke();
+}
+// ========================================
+// Draw a basic part for the protoForce
+function drawValue(canvas, id) {
+  // Draw value
+  if (!canvas) {
+    var canvas = document.querySelector('#protoForce canvas.value');
+  }
+  canvas.width = 350;
+  canvas.height = 350;
+  var ctx = canvas.getContext('2d');
+  var centerX = canvas.width*0.5;
+  var centerY = canvas.height*0.5;
+  ctx.beginPath();
+  var value = forces[id].value;
+  ctx.lineWidth = (centerX - 50) * value;
+  ctx.strokeStyle = 'rgba(200,30,30,0.7)';
+  // Define parameter of the arc for the default force
+  var radius = (centerX - 50) * 0.5 * value + 50;
+  var rad1 = forces[id].rad1;
+  var rad2 = forces[id].rad2;
+  var start = rad1 + 2*Math.PI;
+  var end = rad2;
+  var shift = 2*Math.PI;
   ctx.arc(centerX,centerY,radius,shift - start, shift - end, true);
   ctx.stroke();
 }
 // ========================================
 function updateRange(id, force) {
-  var rad1 = forces[id].rad1;
-  var rad2 = forces[id].rad2;
   var rangeCanvas = force.querySelector('canvas.range');
-  drawForce(rangeCanvas, id);
+  drawRange(rangeCanvas, id);
+  var valueCanvas = force.querySelector('canvas.value');
+  drawValue(valueCanvas, id);
 }
 // ========================================
-function updateValue(id) {
-
+function updateValue(id, force) {
+  var valueCanvas = force.querySelector('canvas.value');
+  drawValue(valueCanvas, id);
 }
 // ========================================
-function updateDirection(id) {
+function updateDirection(id, force) {
 
 }
 // ========================================
@@ -292,8 +318,8 @@ function modifyRangeDirection(force, start) {
       prop.rad1 += angleDelta;
       prop.rad2 += angleDelta;
       var element = force.querySelector('div.range');
-      var rotation = parseFloat(element.dataset.rotation) || 0 +
-          angleDelta/6.28*360;
+      var rotation = parseFloat(element.dataset.rotation) || 0;
+      rotation -= angleDelta/6.28*360;
       element.dataset.rotation = rotation;
       element.style.transform = 'rotateZ(' + rotation + 'deg)';
     // Apply change to the element graphics
@@ -326,16 +352,103 @@ function modifyRangeCone(force, start) {
       var pi = Math.PI;
       var rangeDir = (rad2-pi)+((rad1-pi)-(rad2-pi))*0.5;
       console.log('rangeDir: ' + rangeDir);
-      var rangeVersor = angToVector(rangeDir);
+      var rangeVersor = angToVersor(rangeDir);
+      console.log('rangeVersor: ' + rangeVersor);
+    // Projection of vector, pointing to the cursor position,
+    // on the axis collinear with rangeVersor.
+      var angle = vectorAngle([x,y], rangeVersor);
+      console.log('angle: ' + angle);
+      var lNewLength = vectorLength([x,y]) * Math.cos(angle);
+      console.log('lNewLength: ' + lNewLength);
+      var lNew = [rangeVersor[0]*lNewLength,
+                  rangeVersor[1]*lNewLength]
+      console.log('lNew: ' + lNew);
+      // var lNew = [Math.abs(rangeVersor[0])*x,
+      //             Math.abs(rangeVersor[1])*y];
+  if (!start) {
+    // Define change in range (space covered)(rad1-rad2 cone)
+      // Length of vector being cursor movement projection
+      // on axis collinear with rangeVersor.
+      var lDelta = vectorLength(lNew) - vectorLength(lOld);
+      console.log('lDelta: ' + lDelta);
+      // Change range cone relative to the cursor movement
+      if (vectorAngle(lNew,rangeVersor) < Math.PI*0.5) {
+        prop.rad1 += lDelta/40;
+        prop.rad2 -= lDelta/40;
+      }
+      else if (vectorAngle(lNew,rangeVersor) > Math.PI*0.5){
+        prop.rad1 -= lDelta/40;
+        prop.rad2 += lDelta/40;
+      }
+      console.log('vectorAngle: ' + vectorAngle(lNew,rangeVersor));
+      console.log('-------------------------------------');
+    // Apply change to the element graphics
+    updateRange(id, force);
+  }
+  // Record current values;
+  lOld = lNew;
+}
+// ========================================
+function modify(force, start) {
+  console.log('modifyValue');
+  var id = parseInt(force.dataset.forceIndex);
+  var prop = forces[id];
+  // Read current cursor position;
+  x = event.clientX;
+  y = event.clientY;
+  if (!start) {
+    var delta = vectorLength([x,y]) - oldLength;
+    prop.value += 0.1*delta/8;
+    prop.value = Math.max(prop.value, 0.2);
+    prop.value = Math.min(prop.value, 1.0);
+    // APPLY CHANGE TO THE ELEMENT STYLE
+  }
+  // Record current values;
+  xOld = x;
+  yOld = y;
+  oldLength = vectorLength([xOld,yOld]);
+  // updateValue(id, force);
+}
+// ========================================
+var refVector;
+function modifyValue(force, start) {
+  console.log('modifyValue');
+  var id = parseInt(force.dataset.forceIndex);
+  var prop = forces[id];
+  // Read current cursor position;
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+  // Translate cursor coordinates to local system
+  var forceX = prop.position[0];
+  var forceY = prop.position[1];
+  var x = mouseX - (displayX + forceX);
+  displayY = display.offsetTop;
+  var y = displayY - forceY - mouseY;
+  console.log('x: ' + x);
+  console.log('y: ' + y);
+  // Calculate projection of vector
+    // Versor which divides range on two equal parts
+    // and points in direction of force influence.
+      var pi = Math.PI;
+      var rangeDir = (rad2-pi)+((rad1-pi)-(rad2-pi))*0.5;
+      console.log('rangeDir: ' + rangeDir);
+      var rangeVersor = angToVersor(relativeAngle([x,y]));
       console.log('rangeVersor: ' + rangeVersor);
     // Projection of vector, pointing to the cursor position,
     // on the axis collinear with rangeVersor.
       var lNew = [Math.abs(rangeVersor[0])*x,
                   Math.abs(rangeVersor[1])*y];
-  if (!start) {
+  if (start) {
+    // Versor of reverence for cursor movements
+    var length = vectorLength([x,y]);
+    refVersor = [x/length,y/length];
+    var lNew = [x,y];
+  }
+  else if (!start) {
     // Define change in range (space covered)(rad1-rad2 cone)
-      // Distance of cursor movement projection on axis
-      // collinear with rangeVersor.
+
+      // Length of vector being cursor movement projection
+      // on axis collinear with rangeVersor.
       var lDelta = vectorLength(lNew) - vectorLength(lOld);
       console.log('lDelta: ' + lDelta);
       // Change range cone relative to the cursor movement
@@ -354,25 +467,6 @@ function modifyRangeCone(force, start) {
   }
   // Record current values;
   lOld = lNew;
-}
-// ========================================
-function modifyValue(target, start) {
-  console.log('modifyValue');
-  var id = parseInt(target.dataset.forceIndex);
-  var prop = forces[id];
-  var oldPosition = prop.position;
-  // Read current cursor position;
-  x = event.clientX;
-  y = event.clientY;
-  if (!start) {
-    var delta = vectorLength([x,y]) - oldLength;
-    prop.value += delta/10;
-    // APPLY CHANGE TO THE ELEMENT STYLE
-  }
-  // Record current values;
-  xOld = x;
-  yOld = y;
-  oldLength = vectorLength([xOld,yOld]);
 }
 // ========================================
 function modifyType() {
@@ -409,7 +503,6 @@ function modifyType() {
 
   // Reload graphic of the force to depict changed values
   updateRange(id, force);
-  // redrawForce(id, 'all');
 }
 // ========================================
 function removeForce() {
@@ -471,9 +564,12 @@ function vectorLength(point) {
 // ========================================
 // Angle between vectors 1 and 2
 function vectorAngle(v1,v2) {
-  var dotProd = v1[0]*v2[0] + v1[1]*v2[1];
-  var v1Len = vectorLength(v1);
-  var v2Len = vectorLength(v2);
+  var dotProd = Math.round((v1[0]*v2[0] + v1[1]*v2[1])*1000)/1000;
+  // console.log('dotProd: ' + dotProd);
+  var v1Len = Math.round(vectorLength(v1)*1000)/1000;
+  var v2Len = Math.round(vectorLength(v2)*1000)/1000;
+  // console.log('v1Len: ' + v1Len);
+  // console.log('v2Len: ' + v2Len);
   var angle = Math.acos(dotProd/(v1Len*v2Len)); //radians
   return angle
 }
@@ -491,7 +587,7 @@ function relativeAngle(v) {
 // ========================================
 // Return coordinates of versor which creates
 // with versor [1,0] given angle
-// function angToVector(angle) {
+// function angToVersor(angle) {
 //   var x = Math.cos(angle);
 //   var y = Math.sqrt(1-x*x);
 //   if ((angle - Math.floor(angle/(Math.PI*2))) > Math.PI) {
@@ -502,7 +598,7 @@ function relativeAngle(v) {
 // ========================================
 // Return coordinates of versor which creates
 // with versor [1,0] given angle
-function angToVector(angle) {
+function angToVersor(angle) {
   var x = Math.cos(angle);
   var y = Math.sqrt(1-x*x);
   if (absAngle(angle) > Math.PI) {
