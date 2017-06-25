@@ -351,26 +351,19 @@ function modifyRangeCone(force, start) {
     // and points in direction of force influence.
       var pi = Math.PI;
       var rangeDir = (rad2-pi)+((rad1-pi)-(rad2-pi))*0.5;
-      console.log('rangeDir: ' + rangeDir);
       var rangeVersor = angToVersor(rangeDir);
-      console.log('rangeVersor: ' + rangeVersor);
     // Projection of vector, pointing to the cursor position,
     // on the axis collinear with rangeVersor.
       var angle = vectorAngle([x,y], rangeVersor);
-      console.log('angle: ' + angle);
       var lNewLength = vectorLength([x,y]) * Math.cos(angle);
-      console.log('lNewLength: ' + lNewLength);
       var lNew = [rangeVersor[0]*lNewLength,
                   rangeVersor[1]*lNewLength]
-      console.log('lNew: ' + lNew);
-      // var lNew = [Math.abs(rangeVersor[0])*x,
-      //             Math.abs(rangeVersor[1])*y];
   if (!start) {
     // Define change in range (space covered)(rad1-rad2 cone)
       // Length of vector being cursor movement projection
       // on axis collinear with rangeVersor.
       var lDelta = vectorLength(lNew) - vectorLength(lOld);
-      console.log('lDelta: ' + lDelta);
+      // console.log('lDelta: ' + lDelta);
       // Change range cone relative to the cursor movement
       if (vectorAngle(lNew,rangeVersor) < Math.PI*0.5) {
         prop.rad1 += lDelta/40;
@@ -380,34 +373,11 @@ function modifyRangeCone(force, start) {
         prop.rad1 -= lDelta/40;
         prop.rad2 += lDelta/40;
       }
-      console.log('vectorAngle: ' + vectorAngle(lNew,rangeVersor));
-      console.log('-------------------------------------');
     // Apply change to the element graphics
     updateRange(id, force);
   }
   // Record current values;
   lOld = lNew;
-}
-// ========================================
-function modify(force, start) {
-  console.log('modifyValue');
-  var id = parseInt(force.dataset.forceIndex);
-  var prop = forces[id];
-  // Read current cursor position;
-  x = event.clientX;
-  y = event.clientY;
-  if (!start) {
-    var delta = vectorLength([x,y]) - oldLength;
-    prop.value += 0.1*delta/8;
-    prop.value = Math.max(prop.value, 0.2);
-    prop.value = Math.min(prop.value, 1.0);
-    // APPLY CHANGE TO THE ELEMENT STYLE
-  }
-  // Record current values;
-  xOld = x;
-  yOld = y;
-  oldLength = vectorLength([xOld,yOld]);
-  // updateValue(id, force);
 }
 // ========================================
 var refVector;
@@ -427,43 +397,36 @@ function modifyValue(force, start) {
   console.log('x: ' + x);
   console.log('y: ' + y);
   // Calculate projection of vector
-    // Versor which divides range on two equal parts
-    // and points in direction of force influence.
-      var pi = Math.PI;
-      var rangeDir = (rad2-pi)+((rad1-pi)-(rad2-pi))*0.5;
-      console.log('rangeDir: ' + rangeDir);
-      var rangeVersor = angToVersor(relativeAngle([x,y]));
-      console.log('rangeVersor: ' + rangeVersor);
+  if (start) {
+    // Versor of reference for cursor movements
+      var length = vectorLength([x,y]);
+      refVersor = [x/length,y/length];
+    // First projected vector colinear vector.
+      var lNew = [x,y];
+  }
+  if (!start) {
     // Projection of vector, pointing to the cursor position,
     // on the axis collinear with rangeVersor.
-      var lNew = [Math.abs(rangeVersor[0])*x,
-                  Math.abs(rangeVersor[1])*y];
-  if (start) {
-    // Versor of reverence for cursor movements
-    var length = vectorLength([x,y]);
-    refVersor = [x/length,y/length];
-    var lNew = [x,y];
-  }
-  else if (!start) {
-    // Define change in range (space covered)(rad1-rad2 cone)
-
+      var angle = vectorAngle([x,y], refVersor);
+      var lNewLength = vectorLength([x,y]) * Math.cos(angle);
+      var lNew = [refVersor[0]*lNewLength,
+                  refVersor[1]*lNewLength]
       // Length of vector being cursor movement projection
       // on axis collinear with rangeVersor.
-      var lDelta = vectorLength(lNew) - vectorLength(lOld);
-      console.log('lDelta: ' + lDelta);
+      var delta = vectorLength(lNew) - vectorLength(lOld);
       // Change range cone relative to the cursor movement
-      if (vectorAngle(lNew,rangeVersor) < Math.PI*0.5) {
-        prop.rad1 += lDelta/40;
-        prop.rad2 -= lDelta/40;
+      if (vectorAngle(lNew,refVersor) < Math.PI*0.5) {
+        prop.value += 0.1*delta/12.8;
+        prop.value = Math.max(prop.value, 0.1);
+        prop.value = Math.min(prop.value, 1.0);
       }
-      else {
-        prop.rad1 -= lDelta/40;
-        prop.rad2 += lDelta/40;
+      else if (vectorAngle(lNew,refVersor) > Math.PI*0.5) {
+        prop.value -= 0.1*delta/12.8;
+        prop.value = Math.max(prop.value, 0.1);
+        prop.value = Math.min(prop.value, 1.0);
       }
-      console.log('vectorAngle: ' + vectorAngle(lNew,rangeVersor));
-      console.log('lDelta: ' + lDelta);
     // Apply change to the element graphics
-    updateRange(id, force);
+    updateValue(id, force);
   }
   // Record current values;
   lOld = lNew;
