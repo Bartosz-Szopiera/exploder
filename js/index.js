@@ -6,7 +6,6 @@ addListeners();
 isLogged();
 panelsObserver();
 windowListeners();
-drawForce();
 // ========================================
 // Show or hide tabs acoording to which one
 // was clicked

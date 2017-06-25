@@ -257,32 +257,67 @@ function stopModifying() {
 var cursorX, cursorY, cursorOldX, cursorOldY;
 var refVec = [1,0]; // reference vector indicating 0' angle
 // ========================================
-function modifyDirection(target, start) {
+// Register angular delta between subsequent cursor
+// positions and apply to the element as rotation.
+var oldPos =[];
+function modifyDirection(force, start) {
   console.log('modifyDirection');
-  var id = parseInt(target.dataset.forceIndex);
+  var id = parseInt(force.dataset.forceIndex);
   if (forces[id].type != 2) return
   var prop = forces[id];
-  var oldPosition = prop.position;
   // Read current cursor position;
-  x = event.clientX;
-  y = event.clientY;
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+  // Translate cursor coordinates to local system
+  var forceX = prop.position[0];
+  var forceY = prop.position[1];
+  var x = mouseX - (displayX + forceX);
+  displayY = display.offsetTop;
+  var y = displayY - forceY - mouseY;
   if (!start) {
-    // Define change in direction
-    angleDelta = vectorAngle([x,y],[xOld,yOld]);
-    relativeDeltaNew = relativeAngle([x,y]);
-    relativeDeltaOld = relativeAngle([xOld,yOld]);
-    relativeDelta = relativeDeltaOld - relativeDeltaNew;
-    if (relativeDelta == angleDelta) {
-      angleDelta = relativeDelta;
+    // Angle between the old position and reference versor
+    console.log('-------------------');
+    var angOld = relativeAngle(oldPos);
+    console.log('angOld: ' + angOld);
+    // Angle between current position and reference versor
+    var angNew = relativeAngle([x,y]);
+    console.log('angNew: ' + angNew);
+    // Delta of angles values
+    var delta = angNew - angOld;
+    console.log('delta: ' + delta);
+    // Delta of angles values in absolute terms (not in terms
+    // of the reference versor)
+    var deltaAbs = vectorAngle(oldPos, [x,y]);
+    console.log('deltaAbs: ' + deltaAbs);
+    // Difference in deltas
+    var diff = (1-Math.abs(deltaAbs/delta))
+    console.log('diff: ' + diff);
+
+    // Define rotation direction and apply to the force object
+    // NOTE: '-' sign is because css rotation goes clockwise,
+    // contrary to convention in this script.
+    var el = force.querySelector('.rad3').parentNode;
+    var rotation = parseFloat(el.dataset.rotation) || 0;
+    console.log('rotation old: ' + rotation);
+    if (diff > 0.5) {
+      if (delta > 0) {
+        rotation += -deltaAbs;
+      }
+      else {
+        rotation -= -deltaAbs;
+      }
     }
+    else {
+      rotation += -delta;
+    }
+    console.log('rotation new: ' + rotation);
     // Apply new direction to the force
-    prop.rad3 += angleDelta;
+    prop.rad3 = rotation + 2*Math.PI/4;
     // APPLY CHANGE TO THE ELEMENT STYLE
+    el.dataset.rotation = rotation;
+    el.style.transform = 'rotateZ(' + rotation/6.28*360 + 'deg)';
   }
-  // Record current values;
-  xOld = x;
-  yOld = y;
-  oldLength = vectorLength([xOld,yOld]);
+  oldPos = [x,y];
 }
 // ========================================
 var xOld, yOld, lOld ;
@@ -363,7 +398,6 @@ function modifyRangeCone(force, start) {
       // Length of vector being cursor movement projection
       // on axis collinear with rangeVersor.
       var lDelta = vectorLength(lNew) - vectorLength(lOld);
-      // console.log('lDelta: ' + lDelta);
       // Change range cone relative to the cursor movement
       if (vectorAngle(lNew,rangeVersor) < Math.PI*0.5) {
         prop.rad1 += lDelta/40;
@@ -380,7 +414,6 @@ function modifyRangeCone(force, start) {
   lOld = lNew;
 }
 // ========================================
-var refVector;
 function modifyValue(force, start) {
   console.log('modifyValue');
   var id = parseInt(force.dataset.forceIndex);
@@ -463,7 +496,10 @@ function modifyType() {
   typeElement.dataset.forceType = type;
   // Restore force position
   forces[id].position = oldPosition;
-
+  // Show or hide force direction control
+  var rad3Element = force.querySelector('.rad3');
+  if (type == 2) rad3Element.style.display = 'unset';
+  else rad3Element.style.display = 'none';
   // Reload graphic of the force to depict changed values
   updateRange(id, force);
 }
@@ -550,17 +586,6 @@ function relativeAngle(v) {
 // ========================================
 // Return coordinates of versor which creates
 // with versor [1,0] given angle
-// function angToVersor(angle) {
-//   var x = Math.cos(angle);
-//   var y = Math.sqrt(1-x*x);
-//   if ((angle - Math.floor(angle/(Math.PI*2))) > Math.PI) {
-//     y = -y;
-//   }
-//   return [x,y]
-// }
-// ========================================
-// Return coordinates of versor which creates
-// with versor [1,0] given angle
 function angToVersor(angle) {
   var x = Math.cos(angle);
   var y = Math.sqrt(1-x*x);
@@ -570,9 +595,9 @@ function angToVersor(angle) {
   return [x,y]
 }
 // ========================================
-// Translates angle to the range of values from
-// 0 to 2*PI measuring from the [1,0] versor
-// anticlockwise.
+// Translate angle to contain its value within
+// the range from 0 to 2*PI measuring from
+// the [1,0] versor anticlockwise.
 function absAngle(angle) {
   var pi = Math.PI;
   var newAng;
