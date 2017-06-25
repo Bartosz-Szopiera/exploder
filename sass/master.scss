@@ -94,7 +94,7 @@ a {
     }
   }
 }
-
+// ===================================
 #protoForce, .force {
   width: 0px;
   height: 0px;
@@ -109,30 +109,66 @@ a {
     & * {
       flex: 0 0 auto;
     }
+    & div.range {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 10px dotted rgba(110,255,110,0.7);
+    }
+    & .rad3 {
+      display: none;
+      width: 18px;
+      height: 18px;
+      position: relative;
+      top: -26px;
+      background: $brightGreen;
+      transform: rotateZ(45deg) skew(10deg,10deg);
+      border-bottom-right-radius: 100%;
+    }
   }
   & canvas {
-    border: 1px solid;
     border-radius: 50%;
-    background: rgba(46, 137, 210, 0.3);
+    &.value {
+      background: rgba(255, 110, 110, 0.1);
+    }
+    &.range {
+      border: 1px solid;
+    }
   }
   & .type {
     z-index: 3;
     width: 30px;
     height: 30px;
-    border: 1px solid rgba(46, 137, 210, 0.3);
+    border: 1px solid rgba(46, 137, 210, 1);
     border-radius: 50%;
     &[data-force-type="1"] {
-      background: rgba(210, 46, 46, 0.7);
+      background: rgba(210, 46, 46, 1);
     }
     &[data-force-type="2"] {
-      background: rgba(46, 210, 77, 0.7);
+      background: rgba(46, 210, 77, 1);
     }
     &[data-force-type="3"] {
-      background: rgba(46, 137, 210, 0.7);
+      background: rgba(46, 137, 210, 1);
     }
   }
 }
+// ===================================
+#zeroX {
+  position: absolute;
+  width: 100vw;
+  height: 0px;
+  border-top: 1px solid orangered;
+  transform: translate(-50%,0);
+}
+#zeroY {
+  position: absolute;
+  width: 0px;
+  height: 100vh;
+  border-left: 1px solid orangered;
+  transform: translate(0,-50%);
+}
 
+// ===================================
 body {
   color: $consoleGreen; //
   height: 100vh;

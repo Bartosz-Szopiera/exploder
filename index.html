@@ -24,6 +24,8 @@
             </div>
           </div>
         </div>
+        <div id="zeroX"></div>
+        <div id="zeroY"></div>
         <div id="forceWrapper"></div>
       </div>
       <div class="tabs">
@@ -103,7 +105,7 @@
             </div>
             <div class="forces">
               <button id="addForce" type="button" name="button" onmouseup="addForce(this)">Add Force</button>
-              <button type="button" name="button" onclick="selectToDelete()")>Remove Force</button>
+              <button id="removeForce" type="button" name="button" onclick="selectToDelete(this)")>Remove Force</button>
               <button type="button" name="button">Apply Changes</button>
             </div>
           </div>
@@ -292,22 +294,30 @@
       </div>
       <div id="protoForce">
         <div class="wrap">
-          <canvas class="range" width="200" height="200"></canvas>
-        </div>
-        <div class="wrap">
           <canvas class="value" width="200" height="200"></canvas>
         </div>
         <div class="wrap">
-          <div class="rad3"></div>
+          <div class="range"></div>
+        </div>
+        <div class="wrap">
+          <canvas class="range" width="200" height="200"></canvas>
         </div>
         <div class="wrap">
           <div class="type" data-force-type="1"></div>
         </div>
+        <div class="wrap rad3wrap">
+          <div class="rad3"></div>
+        </div>
+        <div id="zeroX"></div>
+        <div id="zeroY"></div>
       </div>
       <!-- <div class="centerLine debuggingStuff"></div> -->
+
+      </div>
     </main>
   </body>
   <script type="text/javascript" src="js/pixelDisplay.js"></script>
+  <script type="text/javascript" src="js/forces.js"></script>
   <script type="text/javascript" src="js/ajax.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
 </html>
