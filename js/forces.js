@@ -312,7 +312,7 @@ function modifyDirection(force, start) {
     }
     console.log('rotation new: ' + rotation);
     // Apply new direction to the force
-    prop.rad3 = rotation + 2*Math.PI/4;
+    prop.rad3 = -rotation + 6.283/4;
     // APPLY CHANGE TO THE ELEMENT STYLE
     el.dataset.rotation = rotation;
     el.style.transform = 'rotateZ(' + rotation/6.28*360 + 'deg)';
@@ -498,7 +498,11 @@ function modifyType() {
   forces[id].position = oldPosition;
   // Show or hide force direction control
   var rad3Element = force.querySelector('.rad3');
-  if (type == 2) rad3Element.style.display = 'unset';
+  if (type == 2) {
+    rad3Element.style.display = 'unset';
+    rad3Element.parentNode.style.transform = '';
+    rad3Element.parentNode.dataset.rotation = 0;
+  }
   else rad3Element.style.display = 'none';
   // Reload graphic of the force to depict changed values
   updateRange(id, force);
