@@ -19,8 +19,9 @@ function drawRange(canvas, id) {
   var rad2 = forces[id].rad2;
   var start = rad1 + 2*Math.PI;
   var end = rad2;
+  if (rad1 == rad2) start = end + 0.00001;
   var shift = 2*Math.PI;
-  ctx.arc(centerX,centerY,radius,shift - start, shift - end, true);
+  ctx.arc(centerX,centerY,radius,-start,-end, true);
   ctx.stroke();
 }
 // ========================================
@@ -45,8 +46,9 @@ function drawValue(canvas, id) {
   var rad2 = forces[id].rad2;
   var start = rad1 + 2*Math.PI;
   var end = rad2;
+  if (rad1 == rad2) start = end + 0.00001;
   var shift = 2*Math.PI;
-  ctx.arc(centerX,centerY,radius,shift - start, shift - end, true);
+  ctx.arc(centerX,centerY,radius,-start,-end, true);
   ctx.stroke();
 }
 // ========================================
@@ -399,13 +401,49 @@ function modifyRangeCone(force, start) {
       // on axis collinear with rangeVersor.
       var lDelta = vectorLength(lNew) - vectorLength(lOld);
       // Change range cone relative to the cursor movement
+      var radDelta = prop.rad1-prop.rad2;
+      console.log('radDelta: ' + radDelta);
       if (vectorAngle(lNew,rangeVersor) < Math.PI*0.5) {
-        prop.rad1 += lDelta/40;
-        prop.rad2 -= lDelta/40;
+        // ---------------------------------------
+        // Prevent rad1 becoming < than rad2
+        // or greater than it by over full circle (6.28 rad)
+        if ((radDelta >= 6.28*355/360 || radDelta+2*lDelta/40 >= 6.28*355/360) && lDelta > 0); // Do nothing
+        else if ((radDelta <= 6.28*2/360 || radDelta+2*lDelta/40 <= 2/360) && lDelta < 0) {
+          if (radDelta < 0.05) {
+            prop.rad1 -= radDelta/2;
+            prop.rad2 = prop.rad1;
+          }
+          else {
+            prop.rad1 -= radDelta/2 * 0.5 * 0.3;
+            prop.rad2 += radDelta/2 * 0.5 * 0.3;
+          }
+        }
+        // ---------------------------------------
+        else {
+          prop.rad1 += lDelta/40;
+          prop.rad2 -= lDelta/40;
+        }
       }
       else if (vectorAngle(lNew,rangeVersor) > Math.PI*0.5){
-        prop.rad1 -= lDelta/40;
-        prop.rad2 += lDelta/40;
+        // ---------------------------------------
+        // Prevent rad1 becoming < than rad2
+        // or greater than it by over full circle (6.28 rad)
+        if ((radDelta >= 6.28*355/360 || radDelta-2*lDelta/40 >= 6.28*355/360) && lDelta < 0); // Do nothing
+        else if ((radDelta <= 6.28*2/360 || radDelta-2*lDelta/40 <= 2/360) && lDelta > 0) {
+          if (radDelta < 0.05) {
+            prop.rad1 -= radDelta/2;
+            prop.rad2 = prop.rad1;
+          }
+          else {
+            prop.rad1 -= radDelta/2 * 0.5 * 0.3;
+            prop.rad2 += radDelta/2 * 0.5 * 0.3;
+          }
+        }
+        // ---------------------------------------
+        else {
+          prop.rad1 -= lDelta/40;
+          prop.rad2 += lDelta/40;
+        }
       }
     // Apply change to the element graphics
     updateRange(id, force);
@@ -482,7 +520,7 @@ function modifyType() {
   Object.defineProperty(forces, id, {
     configurable: true,
     value: {
-      'position'  : null,
+      'position': null,
       'value'   : 0.5,
       'rad1'    : 1.60*Math.PI,
       'rad2'    : 1.40*Math.PI,
