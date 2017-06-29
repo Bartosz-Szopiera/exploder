@@ -228,7 +228,8 @@ function applyForce(i,j,id,fps) {
   // ---------------------------------
   // ----Apply force----
   var value = forces[id].value;
-  var speed = setup.speed;
+  // var speed = setup.speed;
+  var speed = setup.speed * 3;
   if (forces[id].type === 1) { // Radial force
     var length = vectorLength([localX,localY]);
     var incrementX = localX/length*value*speed/fps;
@@ -359,24 +360,61 @@ function restore() { //POSSIBLY OBSOLETE
 // Animate pixels moves according to calculated
 // positions and fps settings. Play forwards (dir=1)
 // or backwards (dir=-1).
-function play(dir) {
-  for (var i = 0; i < position.length; i++) {
-    for (var j = 0; j < pixels.length; j++) {
-      var x, y;
-      if (dir == 1) {
-        x = position[i][j][0];
-        y = position[i][j][1];
-      }
-      else if (!dir || dir == -1 ) {
-        x = position[position.length - 1 - i][j][0];
-        y = position[position.length - 1 - i][j][1];
-      }
-      setTimeout( function(x,y,j) {
-        pixels[j].style.left = x*pW + 'px';
-        pixels[j].style.bottom = y*pW + 'px';
-      },1000/setup.speed*i,x,y,j);
+function play(dir, fps) {
+  var delay = 1000/fps;
+  var skip = 60/fps; // 60-> 1, 30 -> etc.
+
+  if (dir === 1) {
+    var j = 0;
+    var condition = function() {
+      j < pixels.length;
+    }
+    var increment = function() {
+      j ++;
     }
   }
+  else if (dir === -1) {
+    var j = pixels.length;
+    var condition = function() {
+      return (j > 0);
+    }
+    var increment = function() {
+      j --;
+    }
+  }
+  for (var i = 0; i < position.length; i + skip) {
+    for ( j; condition; increment) {
+      x = position[i][j][0];
+      y = position[i][j][1];
+      setTimeout( function(x,y,j) {
+        pixels[j].style.left = x 'px';
+        pixels[j].style.bottom = y 'px';
+      },delay*i,x,y,j);
+    }
+  }
+
+  // for (var i = 0; i < position.length; i++) {
+  //   if (dir == 1) {
+  //     for (var j = 0; j < pixels.length; j++) {
+  //       x = position[i][j][0];
+  //       y = position[i][j][1];
+  //       setTimeout( function(x,y,j) {
+  //         pixels[j].style.left = x 'px';
+  //         pixels[j].style.bottom = y 'px';
+  //       },1000/setup.speed*i,x,y,j);
+  //     }
+  //   }
+  //   else {
+  //     for (var j = pjxels.length; j > 0; j--) {
+  //       x = position[i][j][0];
+  //       y = position[i][j][1];
+  //       setTimeout( function(x,y,j) {
+  //         pixels[j].style.left = x 'px';
+  //         pixels[j].style.bottom = y 'px';
+  //       },1000/setup.speed*i,x,y,j);
+  //     }
+  //   }
+  // }
 }
 // OBSOLETE
 // ========================================

@@ -106,7 +106,7 @@
             <div class="forces">
               <button id="addForce" type="button" name="button" onmouseup="addForce(this)">Add Force</button>
               <button id="removeForce" type="button" name="button" onclick="selectToDelete(this)")>Remove Force</button>
-              <button type="button" name="button">Apply Changes</button>
+              <button type="button" name="button" onclick="simulate()">Apply Changes</button>
             </div>
           </div>
           <!-- <div class="tab editor hidden"> -->
@@ -281,9 +281,9 @@
         </div>
       </div>
       <div id="controls" class="buttons">
-        <div class="rewind button" onclick="play(-1)">Rewind</div>
-        <div class="explode button" onclick="explode(20), play(1)">Explode!</div>
-        <div class="replay button" onclick="play(1)">Replay</div>
+        <div class="rewind button" onclick="play(-1, 60)">Rewind</div>
+        <div class="explode button" onclick="play(1, 60)">Explode!</div>
+        <div class="replay button" onclick="play(1, 60)">Replay</div>
       </div>
       <div id="alert" class="alert">
         <div class="text"></div>
