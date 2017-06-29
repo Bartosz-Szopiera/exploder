@@ -188,39 +188,55 @@ function mkArray(a,b,c) {
 // dimension.
 // a x b x c
   var array = [];
+
   for (var i = 0; i < a; i++) {
-    array[i] = [];
-    if (c > 1) {
-      for (var j = 0; j < b; j++) {
-        array[i][j] = [];
+    array.push([]);
+    for (var j = 0; j < b; j++) {
+      array[i].push([]);
+      if (c > 0) {
+        for (var k = 0; k < c; k++) {
+          array[i][j].push([]);
+        }
       }
     }
+    // array[i] = [];
+    // if (c > 1) {
+    //   for (var j = 0; j < b; j++) {
+    //     array[i][j] = [];
+    //   }
+    // }
   }
   return array;
 }
 // ========================================
 function applyForce(i,j,id,fps) {
+  // console.log('---------------------');
+  // console.log('frame: ' + i + ', pixel: ' + j);
+  // console.log('Apllying force...');
   // Check if pixel is within influence area of the force
-  var pixelX = position[i][j][0] || 0;
-  var pixelY = position[i][j][1] || 0;
-  var forceX = prop.position[0];
-  var forceY = prop.position[1];
+  var pixelX = position[i][j][0];
+  var pixelY = position[i][j][1];
+  var forceX = forces[id].position[0];
+  var forceY = forces[id].position[1];
   // Pixel position in force coordinates system
   var localX = pixelX - forceX;
   var localY = pixelY - forceY;
+  // console.log('localX: ' + localX + ', localY: ' + localY);
   // Perimeters of influence area
-  var relAngRange1 = toRelAngle(forces[id].rad1);
-  var relAngRange2 = toRelAngle(forces[id].rad2);
+  var relAngRad1 = toRelAngle(forces[id].rad1);
+  var relAngRad2 = toRelAngle(forces[id].rad2);
   // Relative angle of vector pointing to the pixel
   var angle = relativeAngle([localX, localY]);
   // Check
-  if (absRange2>absRange1) {
-    if (angle > relAngRange1 && angle < relAngRange2) {
+  if (relAngRad2 > relAngRad1) {
+    if (angle < relAngRad1 || angle > relAngRad2) {
+      // console.log('!! Exception1: Return !!');
       return
     }
   }
   else {
-    if (angle > relAngRange1 || angle < relAngRange2) {
+    if (angle > relAngRad2 && angle < relAngRad1) {
+      // console.log('!! Exception2: Return !!');
       return
     }
   }
@@ -234,14 +250,18 @@ function applyForce(i,j,id,fps) {
     var length = vectorLength([localX,localY]);
     var incrementX = localX/length*value*speed/fps;
     var incrementY = localY/length*value*speed/fps;
+    // console.log('incrementX: ' + incrementX + ', incrementY: ' + incrementY);
     velocities[j][0] += incrementX;
     velocities[j][1] += incrementY;
+    // console.log('velocities[0]: ' + velocities[j][0] + ', velocities[1]: ' + velocities[j][1]);
   }
   else if (forces[id].type === 2) { // One direction
     var incrementX = angToVersor(forces[id].rad3)[0]*value*speed/fps;
     var incrementY = angToVersor(forces[id].rad3)[1]*value*speed/fps;
+    // console.log('incrementX: ' + incrementX + ', incrementY: ' + incrementY);
     velocities[j][0] += incrementX;
     velocities[j][1] += incrementY;
+    // console.log('velocities[0]: ' + velocities[j][0] + ', velocities[1]: ' + velocities[j][1]);
   }
   else if (forces[id].type === 3) { // Vortex
     var angle = relativeAngle([localX,localY]);
@@ -250,8 +270,10 @@ function applyForce(i,j,id,fps) {
     var force = angToVersor(forceAngle);
     var incrementX = force[0];
     var incrementY = force[1];
+    // console.log('incrementX: ' + incrementX + ', incrementY: ' + incrementY);
     velocities[j][0] += incrementX;
     velocities[j][1] += incrementY;
+    // console.log('velocities[0]: ' + velocities[j][0] + ', velocities[1]: ' + velocities[j][1]);
   }
 }
 // ========================================
@@ -292,29 +314,35 @@ function forceTiming(id,fps) {
 var velocities = []; //Current speed vector of each pixel
 // -----------
 function simulate() {
-  pixels = document.querySelectorAll('.pixel');
-  for (var i = 0; i < pixels.length; i++) {
-    velocities[i] = [0,0];
-  }
-  position = [];
-  position = mkArray(frames,pixels.length,2); // Prepare array
-  for (var i = 0; i < pixels.length; i++) {
-    // Write initial position
-    position[0][i] = [batch[i][0]*pW,batch[i][1]*pW];
-  }
-  var time = setup.stopTime; // when animation should stop
+  console.log('simulating...');
+  // var time = setup.stopTime; // when animation should stop
+  var time = 2; // when animation should stop
   var fps = 60;
   var frames = time * fps;
   displayY = (window.innerHeight - display.offsetTop);
   // var displayX = 800;
   // var displayY = 500;
-  var pixelsOut = 0; // Sum of pixels off-screen
+  var pixelsOut = []; // Array of off-screen pixels
+  pixels = document.querySelectorAll('.pixel');
+  velocities = [];
+  for (var i = 0; i < pixels.length; i++) {
+    velocities[i] = [0,0];
+  }
+  position = [];
+  position = mkArray(frames+1,pixels.length,2); // Prepare array
+  for (var i = 0; i < pixels.length; i++) {
+    // Write initial position
+    var x = parseInt(pixels[i].style.left);
+    var y = parseInt(pixels[i].style.bottom);
+    position[0][i] = [x,y];
+  }
 
   // ----FRAMES-----
-  for (var i = 0; i < frames.length; i++) {
+  for (var i = 0; i < frames; i++) {
 
     // ----FORCES----
     for (var k = 0; k < Object.keys(forces).length; k++) {
+      // console.log('Force ' + k);
       var id = Object.keys(forces)[k];
       // var forceApplies = forceTiming(id,fps);
       var forceApplies = true;
@@ -326,22 +354,32 @@ function simulate() {
               Math.abs(position[i][j][1]) > displayY ) {
             velocities[j][0] = 0;
             velocities[j][1] = 0;
-            pixelsOut ++;
+            if (! pixelsOut.find(function(el){return el === j})) {
+              pixelsOut.push(j);
+            }
+            // console.log('Pixel is off-screen.');
             continue
           }
+          // console.log('Pixel is on-screen.');
           // Apply force
+          // console.log('Applying force to the pixel ' + j + '.');
           applyForce(i,j,id,fps);
         }
       }
       // ----PIXELS----
       for (var j = 0; j < pixels.length; j++) {
         // Move pixel
-        position[i+1][j][0] += velocities[j][0];
-        position[i+1][j][1] += velocities[j][1];
+        position[i+1][j][0] = position[i][j][0] + velocities[j][0];
+        position[i+1][j][1] = position[i][j][1] + velocities[j][1];
       }
     }
-    if (pixelsOut = pixels.length) return
+    if (pixelsOut.length == pixels.length) {
+      position.splice(i+1, 9999);
+      // console.log('----->SPLICED!!!');
+      return
+    }
   }
+  console.log('Done!');
 }
 // ==========================================
 function restore() { //POSSIBLY OBSOLETE
@@ -363,58 +401,26 @@ function restore() { //POSSIBLY OBSOLETE
 function play(dir, fps) {
   var delay = 1000/fps;
   var skip = 60/fps; // 60-> 1, 30 -> etc.
+  var iterations = position.length;
 
-  if (dir === 1) {
-    var j = 0;
-    var condition = function() {
-      j < pixels.length;
-    }
-    var increment = function() {
-      j ++;
-    }
-  }
-  else if (dir === -1) {
-    var j = pixels.length;
-    var condition = function() {
-      return (j > 0);
-    }
-    var increment = function() {
-      j --;
-    }
-  }
-  for (var i = 0; i < position.length; i + skip) {
-    for ( j; condition; increment) {
+  for ( var i=0; i < iterations; i++) {
+    for (var j = 0; j < pixels.length; j++) {
       x = position[i][j][0];
       y = position[i][j][1];
-      setTimeout( function(x,y,j) {
-        pixels[j].style.left = x 'px';
-        pixels[j].style.bottom = y 'px';
-      },delay*i,x,y,j);
+      if (dir === 1) {
+        setTimeout( function(x,y,j) {
+          pixels[j].style.left = x + 'px';
+          pixels[j].style.bottom = y + 'px';
+        },delay*i ,x,y,j);
+      }
+      else if (dir === -1) {
+        setTimeout( function(x,y,j) {
+          pixels[j].style.left = x + 'px';
+          pixels[j].style.bottom = y + 'px';
+        },delay*(iterations - i) ,x,y,j);
+      }
     }
   }
-
-  // for (var i = 0; i < position.length; i++) {
-  //   if (dir == 1) {
-  //     for (var j = 0; j < pixels.length; j++) {
-  //       x = position[i][j][0];
-  //       y = position[i][j][1];
-  //       setTimeout( function(x,y,j) {
-  //         pixels[j].style.left = x 'px';
-  //         pixels[j].style.bottom = y 'px';
-  //       },1000/setup.speed*i,x,y,j);
-  //     }
-  //   }
-  //   else {
-  //     for (var j = pjxels.length; j > 0; j--) {
-  //       x = position[i][j][0];
-  //       y = position[i][j][1];
-  //       setTimeout( function(x,y,j) {
-  //         pixels[j].style.left = x 'px';
-  //         pixels[j].style.bottom = y 'px';
-  //       },1000/setup.speed*i,x,y,j);
-  //     }
-  //   }
-  // }
 }
 // OBSOLETE
 // ========================================
