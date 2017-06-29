@@ -1,7 +1,7 @@
 // ==========================================
 var centerX = 0;
 var centerY = 0;
-var pixelWidth = 14; //px, with margin
+var pixelWidth = 14; //in 'px', with margin
 var pW = pixelWidth; //for shortcut
 var display = document.querySelector('div.display');
 var displayX = display.offsetLeft;
@@ -201,9 +201,8 @@ function mkArray(a,b,c) {
 // ========================================
 function applyForce(i,j,id,fps) {
   // Check if pixel is within influence area of the force
-  var pixelX = position[i][j][0]*pixelWidth;
-  var pixelY = position[i][j][1]*pixelWidth;
-  var velocity = velocities[0] || 0;
+  var pixelX = position[i][j][0] || 0;
+  var pixelY = position[i][j][1] || 0;
   var forceX = prop.position[0];
   var forceY = prop.position[1];
   // Pixel position in force coordinates system
@@ -255,6 +254,10 @@ function applyForce(i,j,id,fps) {
   }
 }
 // ========================================
+function movePixels() {
+
+}
+// ========================================
 // Check force time constraints
 function forceTiming(id,fps) {
   // ---Check time constraints---
@@ -289,38 +292,58 @@ var velocities = []; //Current speed vector of each pixel
 // -----------
 function simulate() {
   pixels = document.querySelectorAll('.pixel');
-  position = mkArray(n,pixels.length,2); // Prepare array
-  var time = setup.length; // when animation should stop
+  for (var i = 0; i < pixels.length; i++) {
+    velocities[i] = [0,0];
+  }
+  position = [];
+  position = mkArray(frames,pixels.length,2); // Prepare array
+  for (var i = 0; i < pixels.length; i++) {
+    // Write initial position
+    position[0][i] = [batch[i][0]*pW,batch[i][1]*pW];
+  }
+  var time = setup.stopTime; // when animation should stop
   var fps = 60;
   var frames = time * fps;
-  var forcesCount = Object.keys('forces').length;
+  displayY = (window.innerHeight - display.offsetTop);
+  // var displayX = 800;
+  // var displayY = 500;
+  var pixelsOut = 0; // Sum of pixels off-screen
 
+  // ----FRAMES-----
   for (var i = 0; i < frames.length; i++) {
-    veocities[i] = [];
-  }
 
-  for (var i = 0; i < frames.length; i++) {
-    for (var j = 0; j < pixels.length; j++) {
-      // Record current position:
-      var x = parseInt(pixels[j].style.left);
-      var y = parseInt(pixels[j].style.bottom);
-      position[i][j] = [x,y];
-
-      for (var k = 0; k < Object.keys(forces).length; k++) {
-        var forceApplies = forceTiming(id,fps);
-        if (!forceApplies) return
-
+    // ----FORCES----
+    for (var k = 0; k < Object.keys(forces).length; k++) {
+      var id = Object.keys(forces)[k];
+      // var forceApplies = forceTiming(id,fps);
+      var forceApplies = true;
+      if (forceApplies) {
+        // ----PIXELS----
+        for (var j = 0; j < pixels.length; j++) {
+          // Check if pixel is off-screen
+          if (Math.abs(position[i][j][0]) > displayX ||
+              Math.abs(position[i][j][1]) > displayY ) {
+            velocities[j][0] = 0;
+            velocities[j][1] = 0;
+            pixelsOut ++;
+            continue
+          }
+          // Apply force
+          applyForce(i,j,id,fps);
+        }
+      }
+      // ----PIXELS----
+      for (var j = 0; j < pixels.length; j++) {
+        // Move pixel
+        position[i+1][j][0] += velocities[j][0];
+        position[i+1][j][1] += velocities[j][1];
       }
     }
+    if (pixelsOut = pixels.length) return
   }
 }
 // ==========================================
-function movePixel(pixel) {
-
-
-}
-// ==========================================
-function restore() {
+function restore() { //POSSIBLY OBSOLETE
 // Restore initial position of pixels
   var x,y;
   if (pixels!=undefined) {
@@ -333,10 +356,10 @@ function restore() {
   }
 }
 // ==========================================
+// Animate pixels moves according to calculated
+// positions and fps settings. Play forwards (dir=1)
+// or backwards (dir=-1).
 function play(dir) {
-// Move all pixels of given element
-// according to their saved movements.
-// Forwards (dir = 1) or backwards (-1)
   for (var i = 0; i < position.length; i++) {
     for (var j = 0; j < pixels.length; j++) {
       var x, y;
