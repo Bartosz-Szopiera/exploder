@@ -4,9 +4,11 @@ var centerY = 0;
 var pixelWidth = 14; //px, with margin
 var pW = pixelWidth; //for shortcut
 var display = document.querySelector('div.display');
+var displayX = display.offsetLeft;
+var displayY = display.offsetTop;
 var batch = []; //array of coordinates
 var pixels; // Array of all the pixels
-var record; // Array of past movements
+var position; // Array of pixel's positions at various points in time
 var coeX = [];
 var coordinates = {}; // Object for all symbols coordinates
 var widths = {}; // Object for all symbols widths
@@ -16,6 +18,7 @@ var localData = {
   'symbols'   : null,
   'symbolsParsed' : null
 }
+// Objects holding data about symbols
 var dictionary = [];
 var coordinates = {};
 var widths = {};
@@ -196,60 +199,125 @@ function mkArray(a,b,c) {
   return array;
 }
 // ========================================
-// pix - X,Y coordinates of pixel in global system
-function applyForce(pix, force) {
-  var center = force.center;
-  var val = force.value;
-  var rad1 = force.rad1;
-  var rad2 = force.rad2;
-  var rad3 = force.rad3;
-  var dir = force.dir;
-  var dur = force.duration;
-  // Transform 'pix' to local system
-  var localPix = [pix[0] - center[0], pix[1] - center[1]];
-  // Check if pixel is in the area of influence
-  // of the force
-  var localPixLen = vectorLength(localPix);
-  var rad1Len = vectorLength(rad1);
-  var rad2Len = vectorLength(rad2);
-  var dotProd1 = pix[0]*rad1[0]+pix[1]*rad1[1];
-  var angle1 = Math.acos(dotProd/(rad1Len*rad2Len)); //radians
-  var dotProd2 = pix[0]*rad2[0]+pix[1]*rad2[1];
-  var angle2 = Math.acos(dotProd/(rad1Len*rad2Len)); //radians
-  if (angle1 < angle2) break;
-
-  // Try to describe forces so that there will be in one function.
-
-  // Get current pixel acceleration: value + direction
-  // Modify acceleration with effects of this force
-  // Save modified acceleration (value and direction (vector))
+function applyForce(i,j,id,fps) {
+  // Check if pixel is within influence area of the force
+  var pixelX = position[i][j][0]*pixelWidth;
+  var pixelY = position[i][j][1]*pixelWidth;
+  var velocity = velocities[0] || 0;
+  var forceX = prop.position[0];
+  var forceY = prop.position[1];
+  // Pixel position in force coordinates system
+  var localX = pixelX - forceX;
+  var localY = pixelY - forceY;
+  // Perimeters of influence area
+  var relAngRange1 = toRelAngle(forces[id].rad1);
+  var relAngRange2 = toRelAngle(forces[id].rad2);
+  // Relative angle of vector pointing to the pixel
+  var angle = relativeAngle([localX, localY]);
+  // Check
+  if (absRange2>absRange1) {
+    if (angle > relAngRange1 && angle < relAngRange2) {
+      return
+    }
+  }
+  else {
+    if (angle > relAngRange1 || angle < relAngRange2) {
+      return
+    }
+  }
+  // ---Conditions are met---
+  // ---------------------------------
+  // ----Apply force----
+  var value = forces[id].value;
+  var speed = setup.speed;
+  if (forces[id].type === 1) { // Radial force
+    var length = vectorLength([localX,localY]);
+    var incrementX = localX/length*value*speed/fps;
+    var incrementY = localY/length*value*speed/fps;
+    velocities[j][0] += incrementX;
+    velocities[j][1] += incrementY;
+  }
+  else if (forces[id].type === 2) { // One direction
+    var incrementX = angToVersor(forces[id].rad3)[0]*value*speed/fps;
+    var incrementY = angToVersor(forces[id].rad3)[1]*value*speed/fps;
+    velocities[j][0] += incrementX;
+    velocities[j][1] += incrementY;
+  }
+  else if (forces[id].type === 3) { // Vortex
+    var angle = relativeAngle([localX,localY]);
+    var sign = forces[id].rot;
+    var forceAngle = angle + sign*Math.PI/2;
+    var force = angToVersor(forceAngle);
+    var incrementX = force[0];
+    var incrementY = force[1];
+    velocities[j][0] += incrementX;
+    velocities[j][1] += incrementY;
+  }
 }
 // ========================================
+// Check force time constraints
+function forceTiming(id,fps) {
+  // ---Check time constraints---
+  // Check delay
+  var delay = forces[id].delay;
+  var currentTime = frame / fps;
+  if (currentTime < delay) {
+    return false
+  }
+  // Check stop time
+  var stopTime = forces[id].stopTime;
+  if (currentTime > stopTime) {
+    return false
+  }
+  // Check iterations
+  var currentIteration = Math.ceil((currentTime-delay)/(interval+1));
+  if (currentIteration > iterations) {
+    return false
+  }
+  // Check interval
+  // Is force in resting phase or should it be applied?
+  var interval = forces[id].interval; //interval lasts 1s
+  var iterations = forces[id].iterations;
+  if (((currentTime-delay)-(currentIteration-1)*(interval+1))>1) {
+    return false
+  }
+  return true
+}
+// ========================================
+// ---Global Variables
+var velocities = []; //Current speed vector of each pixel
+// -----------
 function simulate() {
-  // How many frames to simulate
-    // What is desired speed
-    // What is desired fps
-    // What is desired animation time
-  var speed = setup.speed; // modify interval between frames
-  var fps = setup.fps; // how many frames per secund will be captured
+  pixels = document.querySelectorAll('.pixel');
+  position = mkArray(n,pixels.length,2); // Prepare array
   var time = setup.length; // when animation should stop
+  var fps = 60;
+  var frames = time * fps;
+  var forcesCount = Object.keys('forces').length;
 
-  for (var i = 0; i < frames.length; i++) { //Each frame
+  for (var i = 0; i < frames.length; i++) {
+    veocities[i] = [];
+  }
 
-    for (var j = 0; j < pixels.length; j++) { //Each pixel
+  for (var i = 0; i < frames.length; i++) {
+    for (var j = 0; j < pixels.length; j++) {
       // Record current position:
       var x = parseInt(pixels[j].style.left);
       var y = parseInt(pixels[j].style.bottom);
-      record[i][j] = [x,y];
+      position[i][j] = [x,y];
 
-      for (var k = 0; k < Object.keys(forces).length; k++) { //Each force
-        var index = Object.keys(forces)[k];
-        var properties = forces[index];
-        applyForce(pixels[j], properties);
+      for (var k = 0; k < Object.keys(forces).length; k++) {
+        var forceApplies = forceTiming(id,fps);
+        if (!forceApplies) return
+
       }
-      movePixel(pixels[j]);
     }
   }
+}
+// ==========================================
+function movePixel(pixel) {
+
+
 }
 // ==========================================
 function restore() {
@@ -257,8 +325,8 @@ function restore() {
   var x,y;
   if (pixels!=undefined) {
     for (var i = 0; i < pixels.length; i++) {
-      x = record[0][i][0];
-      y = record[0][i][1];
+      x = position[0][i][0];
+      y = position[0][i][1];
       pixels[i].style.left = x * pW + 'px';
       pixels[i].style.bottom = y * pW + 'px';
     }
@@ -267,18 +335,18 @@ function restore() {
 // ==========================================
 function play(dir) {
 // Move all pixels of given element
-// according to their recorded movement
-// patterns forwards (dir = 1) or backwards (-1)
-  for (var i = 0; i < record.length; i++) {
+// according to their saved movements.
+// Forwards (dir = 1) or backwards (-1)
+  for (var i = 0; i < position.length; i++) {
     for (var j = 0; j < pixels.length; j++) {
       var x, y;
       if (dir == 1) {
-        x = record[i][j][0];
-        y = record[i][j][1];
+        x = position[i][j][0];
+        y = position[i][j][1];
       }
       else if (!dir || dir == -1 ) {
-        x = record[record.length - 1 - i][j][0];
-        y = record[record.length - 1 - i][j][1];
+        x = position[position.length - 1 - i][j][0];
+        y = position[position.length - 1 - i][j][1];
       }
       setTimeout( function(x,y,j) {
         pixels[j].style.left = x*pW + 'px';
@@ -292,7 +360,7 @@ function play(dir) {
 function explode() {
 // Relocate all pixels of given element
 // in specific number of random moves
-// and record all taken actions for each.
+// and position all taken actions for each.
 
 // Define number of movements based on minimal
 // number of them required to reach viewport edge.
@@ -300,7 +368,7 @@ function explode() {
   var n = Math.floor((vpSize/2)/pW * setup.range);
 restore(); //Restore pixels default positions
 pixels = document.querySelectorAll('.pixel'); // All pixl elements
-record = mkArray(n,pixels.length,2); // Prepare array
+position = mkArray(n,pixels.length,2); // Prepare array
 var dirX = [], dirY = [];
 //----------------------------------------
 // Define direction of movement for each pixel
@@ -328,7 +396,7 @@ var dirX = [], dirY = [];
       // Record current position:
       var x = parseInt(pixels[j].style.left)/pW;
       var y = parseInt(pixels[j].style.bottom)/pW;
-      record[i][j] = [x,y]; //in normalized units
+      position[i][j] = [x,y]; //in normalized units
       // -------------------------------
       // Define new position:
         var dX = Math.abs(centerX - x);
