@@ -402,7 +402,6 @@ function modifyRangeCone(force, start) {
       var lDelta = vectorLength(lNew) - vectorLength(lOld);
       // Change range cone relative to the cursor movement
       var radDelta = prop.rad1-prop.rad2;
-      console.log('radDelta: ' + radDelta);
       if (vectorAngle(lNew,rangeVersor) < Math.PI*0.5) {
         // ---------------------------------------
         // Prevent rad1 becoming < than rad2
@@ -631,7 +630,7 @@ function relativeAngle(v) {
 function angToVersor(angle) {
   var x = Math.cos(angle);
   var y = Math.sqrt(1-x*x);
-  if (absAngle(angle) > Math.PI) {
+  if (toRelAngle(angle) > Math.PI) {
     y = -y;
   }
   return [x,y]
@@ -640,7 +639,7 @@ function angToVersor(angle) {
 // Translate angle to contain its value within
 // the range from 0 to 2*PI measuring from
 // the [1,0] versor anticlockwise.
-function absAngle(angle) {
+function toRelAngle(angle) {
   var pi = Math.PI;
   var newAng;
   if (angle == 0)   return angle
