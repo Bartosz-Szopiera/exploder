@@ -60,6 +60,7 @@ function showTab(el) {
   //-------------------------
   adjustDBWindow();
   showGrid();
+  hideForces();
 }
 function tabListener() {
   if (this.classList.contains('active')){
@@ -405,6 +406,15 @@ function adjustDisplay() {
   display.style.top = newTop + 'px';
 }
 // ========================================
+function hideForces() {
+  var settings = document.querySelector('.panels>.tab.settings');
+  var hidden = settings.classList.contains('hidden');
+  console.log('hidden? :' + hidden);
+  var forceWrapper = document.querySelector('#forceWrapper');
+  var style = hidden ? 'none' : 'unset';
+  forceWrapper.style.display = style;
+}
+// ========================================
 function panelsObserver() {
   var observer = new MutationObserver(adjustDisplay);
   var target = document.querySelector('.labels');
@@ -416,6 +426,7 @@ function windowListeners() {
   window.addEventListener('resize', function(){
     adjustDisplay();
     adjustDBWindow();
+    displayX = display.offsetLeft;
   });
 }
 // ========================================
