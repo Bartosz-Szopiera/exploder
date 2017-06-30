@@ -222,6 +222,7 @@ function createForce() {
   // Define basic properties
   Object.defineProperty(forces, forceIndex, {
     configurable: true,
+    enumerable: true,
     value: {
       'position'  : null,
       'value'   : 0.5,
@@ -518,6 +519,7 @@ function modifyType() {
   // Insert new force of given type
   Object.defineProperty(forces, id, {
     configurable: true,
+    enumerable: true,
     value: {
       'position': null,
       'value'   : 0.5,
@@ -590,6 +592,53 @@ function moveForce(target) {
   // Disable option to double-click to change type
   var typeElement = target.querySelector('.type');
   typeElement.removeEventListener('click', modifyType);
+}
+// ========================================
+// Monitor cursor position and bring appropriate
+// force forwards waiting for interaction.
+// Rules:
+// Hover over type element? - instant focus
+var throttle = false;
+function focusForce() {
+  if (!throttle) {
+    console.log('running!');
+    // Get click position
+    var globalX = event.clientX;
+    var globalY = event.clientY;
+    // Get position of .display center
+    var centerX = display.offsetLeft;
+    var centerY = display.offsetTop;
+    // Get position of force in local system of the display
+    var localX = globalX - centerX;
+    var localY = centerY - globalY;
+    var typeElementRadius = 15;
+    var found = false;
+    for (var i = 0; i < Object.keys(forces).length; i++) {
+      var id = Object.keys(forces)[i];
+      var dist = pointsDistance(forces[id].position, [localX,localY]);
+      var selector = '[data-force-index="' + id + '"]';
+      var force = document.querySelector(selector);
+      if (dist <= typeElementRadius && !found) {
+        force.classList.add('front');
+        found = true;
+        i = 0;
+        var omit = id;
+      }
+      else if (found && (id != omit)) {
+        force.classList.remove('front');
+      }
+    }
+    throttle = true;
+    setTimeout(function(){
+      throttle = false;
+    },1000);
+  }
+}
+// ========================================
+// Show context menu if multiple forcex are
+// stacked on top of each other
+function forceContexMenu() {
+
 }
 // ========================================
 function pointsDistance(p1,p2) {
