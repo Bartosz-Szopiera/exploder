@@ -176,8 +176,11 @@ function layout(el,shift_x,shift_y) {
     // Adjust position:
     var x = el[i][0] + shift_x;
     var y = el[i][1] + shift_y;
-    pixel.style.left = x*pW + 'px';
-    pixel.style.bottom = y*pW + 'px';
+    // pixel.style.left = x*pW + 'px';
+    // pixel.style.bottom = y*pW + 'px';
+    var translate = 'translate(' + x*pW + 'px,' + (-y*pW) + 'px)';
+    pixel.style.transform = translate;
+    // pixel.style.bottom = y*pW + 'px';
   }
 }
 // ==========================================
@@ -332,8 +335,11 @@ function simulate() {
   position = mkArray(frames+1,pixels.length,2); // Prepare array
   for (var i = 0; i < pixels.length; i++) {
     // Write initial position
-    var x = parseInt(pixels[i].style.left);
-    var y = parseInt(pixels[i].style.bottom);
+    // var x = parseInt(pixels[i].style.left);
+    // var y = parseInt(pixels[i].style.bottom);
+    var matrix = getComputedStyle(pixels[i]).transform;
+    var x = parseInt(matrix.split(',')[4]);
+    var y = -parseInt(matrix.split(',')[5]);
     position[0][i] = [x,y];
   }
 
@@ -395,6 +401,13 @@ function restore() { //POSSIBLY OBSOLETE
   }
 }
 // ==========================================
+function preparePixels() {
+  var pixels = document.querySelectorAll('.pixel');
+  for (var i = 0; i < pixels.length; i++) {
+    pixels[i].classList.toggle('willChange');
+  }
+}
+// ==========================================
 // Animate pixels moves according to calculated
 // positions and fps settings. Play forwards (dir=1)
 // or backwards (dir=-1).
@@ -402,6 +415,10 @@ function play(dir, fps) {
   var delay = 1000/fps;
   var skip = 60/fps; // 60-> 1, 30 -> etc.
   var iterations = position.length;
+  preparePixels();
+  setTimeout(function(){
+    preparePixels();
+  },(iterations*delay + 1000));
 
   for ( var i=0; i < iterations; i++) {
     for (var j = 0; j < pixels.length; j++) {
@@ -409,14 +426,18 @@ function play(dir, fps) {
       y = position[i][j][1];
       if (dir === 1) {
         setTimeout( function(x,y,j) {
-          pixels[j].style.left = x + 'px';
-          pixels[j].style.bottom = y + 'px';
+          // pixels[j].style.left = x + 'px';
+          // pixels[j].style.bottom = y + 'px';
+          var translate = 'translate(' + x + 'px,' + (-y) +'px)';
+          pixels[j].style.transform = translate;
         },delay*i ,x,y,j);
       }
       else if (dir === -1) {
         setTimeout( function(x,y,j) {
-          pixels[j].style.left = x + 'px';
-          pixels[j].style.bottom = y + 'px';
+          // pixels[j].style.left = x + 'px';
+          // pixels[j].style.bottom = y + 'px';
+          var translate = 'translate(' + x + 'px,' + (-y) +'px)';
+          pixels[j].style.transform = translate;
         },delay*(iterations - i) ,x,y,j);
       }
     }
