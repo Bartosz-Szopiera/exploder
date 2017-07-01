@@ -402,46 +402,49 @@ function restore() { //POSSIBLY OBSOLETE
 }
 // ==========================================
 function preparePixels() {
-  var pixels = document.querySelectorAll('.pixel');
   for (var i = 0; i < pixels.length; i++) {
-    pixels[i].classList.toggle('willChange');
+    pixels[i].classList.add('willChange');
+  }
+}
+// ==========================================
+function loosePixels() {
+  for (var i = 0; i < pixels.length; i++) {
+    pixels[i].classList.remove('willChange');
   }
 }
 // ==========================================
 // Animate pixels moves according to calculated
 // positions and fps settings. Play forwards (dir=1)
 // or backwards (dir=-1).
+
 function play(dir, fps) {
   var delay = 1000/fps;
   var skip = 60/fps; // 60-> 1, 30 -> etc.
-  var iterations = position.length;
-  preparePixels();
-  setTimeout(function(){
-    preparePixels();
-  },(iterations*delay + 1000));
+  // var iterations = position.length;
+  var z = 0; // Frame iterator
+  var lastFrame = position.length;
+  pixels = document.querySelectorAll('.pixel');
 
-  for ( var i=0; i < iterations; i++) {
-    for (var j = 0; j < pixels.length; j++) {
-      x = position[i][j][0];
-      y = position[i][j][1];
-      if (dir === 1) {
-        setTimeout( function(x,y,j) {
-          // pixels[j].style.left = x + 'px';
-          // pixels[j].style.bottom = y + 'px';
-          var translate = 'translate(' + x + 'px,' + (-y) +'px)';
-          pixels[j].style.transform = translate;
-        },delay*i ,x,y,j);
-      }
-      else if (dir === -1) {
-        setTimeout( function(x,y,j) {
-          // pixels[j].style.left = x + 'px';
-          // pixels[j].style.bottom = y + 'px';
-          var translate = 'translate(' + x + 'px,' + (-y) +'px)';
-          pixels[j].style.transform = translate;
-        },delay*(iterations - i) ,x,y,j);
-      }
-    }
+  preparePixels();
+
+  setTimeout(function(){
+    render(delay,dir,z,lastFrame);
+  },500,delay,dir,z,lastFrame);
+}
+// ========================================
+function render(delay,dir,z,lastFrame) {
+  if (z === lastFrame) return loosePixels()
+  var currentFrame = dir === 1 ? z : (lastFrame - 1 - z);
+  console.log('currentFrame: ' + currentFrame);
+  for (var i = 0; i < pixels.length; i++) {
+    var x = position[currentFrame][i][0];
+    var y = position[currentFrame][i][1];
+    var translate = 'translate(' + x + 'px,' + (-y) +'px)';
+    pixels[i].style.transform = translate;
   }
+
+  z ++;
+  setTimeout(render,delay,  delay,dir,z,lastFrame);
 }
 // OBSOLETE
 // ========================================
