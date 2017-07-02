@@ -319,7 +319,7 @@ var velocities = []; //Current speed vector of each pixel
 function simulate() {
   console.log('simulating...');
   // var time = setup.stopTime; // when animation should stop
-  var time = 2; // when animation should stop
+  var time = 4; // when animation should stop
   var fps = 60;
   var frames = time * fps;
   displayY = (window.innerHeight - display.offsetTop);
@@ -356,13 +356,12 @@ function simulate() {
         // ----PIXELS----
         for (var j = 0; j < pixels.length; j++) {
           // Check if pixel is off-screen
-          if (Math.abs(position[i][j][0]) > displayX ||
-              Math.abs(position[i][j][1]) > displayY ) {
+          if ( (Math.abs(position[i][j][0]) > displayX ||
+              Math.abs(position[i][j][1]) > displayY) &&
+              !findInAr(pixelsOut, j) ) {
             velocities[j][0] = 0;
             velocities[j][1] = 0;
-            if (! pixelsOut.find(function(el){return el === j})) {
-              pixelsOut.push(j);
-            }
+            pixelsOut.push(j);
             // console.log('Pixel is off-screen.');
             continue
           }
@@ -381,11 +380,10 @@ function simulate() {
     }
     if (pixelsOut.length == pixels.length) {
       position.splice(i+1, 9999);
-      // console.log('----->SPLICED!!!');
       return
     }
   }
-  console.log('Done!');
+  console.log('Done');
 }
 // ==========================================
 function restore() { //POSSIBLY OBSOLETE
@@ -399,6 +397,12 @@ function restore() { //POSSIBLY OBSOLETE
       pixels[i].style.bottom = y * pW + 'px';
     }
   }
+}
+// ==========================================
+function findInAr(array,value) {
+  var result = array.find(function(el){return el === value });
+  var logic = result === undefined ? false : true;
+  return logic
 }
 // ==========================================
 function preparePixels() {
