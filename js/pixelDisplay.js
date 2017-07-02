@@ -267,16 +267,30 @@ function applyForce(i,j,id,fps) {
     // console.log('velocities[0]: ' + velocities[j][0] + ', velocities[1]: ' + velocities[j][1]);
   }
   else if (forces[id].type === 3) { // Vortex
-    var angle = relativeAngle([localX,localY]);
+    var length = vectorLength([localX, localY]);
+    var angle = relativeAngle([localX, localY]);
+    // var angularMove = 6.28/360*value*speed/fps/length;
+    var angularMove = 6.28/360*value*speed/fps;
     var sign = forces[id].rot;
-    var forceAngle = angle + sign*Math.PI/2;
-    var force = angToVersor(forceAngle);
-    var incrementX = force[0];
-    var incrementY = force[1];
-    // console.log('incrementX: ' + incrementX + ', incrementY: ' + incrementY);
+    var endAngle = angle + sign*angularMove;
+    var endVersor = angToVersor(endAngle);
+    var x = endVersor[0]*length;
+    var y = endVersor[1]*length;
+    var incrementX = x - localX;
+    var incrementY = y - localY;
+
     velocities[j][0] += incrementX;
     velocities[j][1] += incrementY;
+
+    // console.log('incrementX: ' + incrementX + ', incrementY: ' + incrementY);
     // console.log('velocities[0]: ' + velocities[j][0] + ', velocities[1]: ' + velocities[j][1]);
+
+    // var angle = relativeAngle([localX,localY]);
+    // var sign = forces[id].rot;
+    // var forceAngle = angle + sign*Math.PI/2;
+    // var force = angToVersor(forceAngle);
+    // var incrementX = force[0];
+    // var incrementY = force[1];
   }
 }
 // ========================================
@@ -439,7 +453,7 @@ function play(dir, fps) {
 function render(delay,dir,z,lastFrame) {
   if (z === lastFrame) return loosePixels()
   var currentFrame = dir === 1 ? z : (lastFrame - 1 - z);
-  console.log('currentFrame: ' + currentFrame);
+  // console.log('currentFrame: ' + currentFrame);
   for (var i = 0; i < pixels.length; i++) {
     var x = position[currentFrame][i][0];
     var y = position[currentFrame][i][1];
