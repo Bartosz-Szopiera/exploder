@@ -409,7 +409,6 @@ function adjustDisplay() {
 function hideForces() {
   var settings = document.querySelector('.panels>.tab.settings');
   var hidden = settings.classList.contains('hidden');
-  console.log('hidden? :' + hidden);
   var forceWrapper = document.querySelector('#forceWrapper');
   var style = hidden ? 'none' : 'unset';
   forceWrapper.style.display = style;
@@ -419,6 +418,13 @@ function panelsObserver() {
   var observer = new MutationObserver(adjustDisplay);
   var target = document.querySelector('.labels');
   var config = {attributes: true, attributeFilter: ['class']};
+  observer.observe(target, config);
+}
+// ========================================
+function forcesObserver() {
+  var observer = new MutationObserver(forcesList);
+  var target = document.querySelector('#forceWrapper');
+  var config = {childList: true};
   observer.observe(target, config);
 }
 // ========================================
@@ -449,4 +455,17 @@ function showAlert(text,callback) {
 function closeAlert() {
   alert = document.querySelector('#alert');
   alert.style.display = 'none';
+}
+// ========================================
+// Keep existing forces listed in forces
+// settings panel
+function forcesList() {
+  var forceWrapper = document.querySelector('#forceWrapper');
+
+}
+// ========================================
+// Keep force settings in panel synchronised
+// with changes in their 'visual' UI.
+function functionName() {
+
 }
