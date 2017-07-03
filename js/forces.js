@@ -548,23 +548,44 @@ function modifyType() {
 }
 // ========================================
 function removeForce() {
-  var button = document.getElementById('removeForce');
   var forceWrapper = document.getElementById('forceWrapper');
-  var force = this.parentNode.parentNode;
+  // If function was invoked from the force settings panel
+  if (this.classList.contains('button')) {
+    var id = this.dataset.forceIndex;
+    var selector = '[data-force-Index="'+ id +'"]';
+    var force = forceWrapper.querySelector(selector);
+  }
+  // If function was invoked through listener on the force
+  else {
+    var id = force.dataset.forceIndex;
+    var force = this.parentNode.parentNode;
+    selectToDelete(); // deactivate button
+  }
+  // Remove element
   forceWrapper.removeChild(force); //remove from DOM
-  var id = force.dataset.forceIndex;
+  // Remove object property
   delete forces[id]; //remove from objcet
-  selectToDelete();
+  // Remove from forces settings list
+  var list = document.querySelector('.settings .forcesList');
+  var selector = '[data-force-id="'+ id +'"]';
+  list.removeChild(list.querySelector(selector));
 }
+// ========================================
+// Click handler on Remove Force button which
+// adds or removes click listeners to the .type
+// element of forces and sets Remove Force button
+// class to indicate if listeners are in place.
 function selectToDelete() {
   var forces = document.querySelectorAll('.force');
   var button = document.getElementById('removeForce');
+  // Remove listener from forces if button is active
   if (button.classList.contains('active')) {
     for (var i = 0; i < forces.length; i++) {
       forces[i].querySelector('.type').removeEventListener('click', removeForce);
     }
     button.classList.remove('active');
   }
+  // Add listener to forces if button is inactive
   else {
     button.classList.add('active');
     for (var i = 0; i < forces.length; i++) {
@@ -601,7 +622,6 @@ function moveForce(target) {
 var throttle = false;
 function focusForce() {
   if (!throttle) {
-    console.log('running!');
     // Get click position
     var globalX = event.clientX;
     var globalY = event.clientY;
@@ -635,8 +655,8 @@ function focusForce() {
   }
 }
 // ========================================
-// Show context menu if multiple forcex are
-// stacked on top of each other
+// Show context menu if multiple forces are
+// stacked on top of each other.
 function forceContexMenu() {
 
 }
