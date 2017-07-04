@@ -212,7 +212,7 @@ body {
       height: 100%;
       left: 0px;
       top: 0px;
-      background: url("/asset/background/pexels-photo-311012-edit1.png");
+      background: url("../asset/background/pexels-photo-311012-edit1.png");
       background-size: cover;
       background-position: 50% 0px;
       background-repeat: no-repeat;
