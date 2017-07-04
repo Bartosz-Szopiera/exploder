@@ -84,7 +84,9 @@ function adjustDBWindow() {
   var mainHeight = parseInt(getComputedStyle(main).height);
   var height = mainHeight - panels.offsetHeight;
   var databaseWindow = document.querySelectorAll('div.database');
+  // Height of settings database window
   databaseWindow[0].style.height = height - 1 + 'px';
+  // Height of symbols database window
   databaseWindow[1].style.height = height - 1 + 'px';
 }
 // ========================================
@@ -421,17 +423,11 @@ function panelsObserver() {
   observer.observe(target, config);
 }
 // ========================================
-function forcesObserver() {
-  var observer = new MutationObserver(forcesList);
-  var target = document.querySelector('#forceWrapper');
-  var config = {childList: true};
-  observer.observe(target, config);
-}
-// ========================================
 function windowListeners() {
   window.addEventListener('resize', function(){
     adjustDisplay();
     adjustDBWindow();
+    adjustPanelHeight();
     displayX = display.offsetLeft;
   });
 }
@@ -457,15 +453,41 @@ function closeAlert() {
   alert.style.display = 'none';
 }
 // ========================================
-// Keep existing forces listed in forces
-// settings panel
-function forcesList() {
-  var forceWrapper = document.querySelector('#forceWrapper');
-
-}
-// ========================================
 // Keep force settings in panel synchronised
 // with changes in their 'visual' UI.
-function functionName() {
-
+function forcesObserver() {
+  var observer = new MutationObserver(syncSettings);
+  // var target = document.querySelector('.labels');
+  // var config = {attributes: true, attributeFilter: ['class']};
+  observer.observe(target, config);
 }
+function settingsObserver() {
+  var observer = new MutationObserver(syncSettings);
+  // var target = document.querySelector('.labels');
+  // var config = {attributes: true, attributeFilter: ['class']};
+  observer.observe(target, config);
+}
+function syncSettings() {
+
+  // Hide settings if no force is currently selected
+}
+// ========================================
+function showForceSettings() {
+  var element = document.querySelector('.settings.forces');
+  element.classList.toggle('hidden');
+  adjustPanelHeight();
+}
+// ========================================
+function adjustPanelHeight() {
+  // Bottom tabs
+  var tabs = document.querySelector('.tabs');
+  // Main window
+  var main = document.querySelector('main');
+  var mainHeight = parseInt(getComputedStyle(main).height);
+  // Remaining height
+  var height = mainHeight - tabs.offsetHeight;
+  // Panel
+  var panel = document.querySelector('.settings.forces');
+  panel.style.height = height + 'px';
+}
+// ========================================

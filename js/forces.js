@@ -238,6 +238,12 @@ function createForce() {
   forces[forceIndex].position = [localX,localY];
   window.removeEventListener('mousedown', createForce);
   document.getElementById('addForce').classList.remove('active');
+  // Add force to the list in the force settings panel
+  var list = document.querySelector('select.forcesList');
+  var option = document.createElement('option');
+  option.value = forceIndex;
+  option.innerHTML = 'Force #' + forceIndex;
+  list.appendChild(option);
   // Draw properties of the force on canvas
   updateRange(forceIndex, force);
 }
@@ -547,18 +553,19 @@ function modifyType() {
   updateRange(id, force);
 }
 // ========================================
-function removeForce() {
+function removeForce(target) {
   var forceWrapper = document.getElementById('forceWrapper');
   // If function was invoked from the force settings panel
-  if (this.classList.contains('button')) {
-    var id = this.dataset.forceIndex;
-    var selector = '[data-force-Index="'+ id +'"]';
+  if (target.tagName === "BUTTON") {
+    var select = document.querySelector('select.forcesList');
+    var id = select.value;
+    var selector = '[data-force-index="'+ id +'"]';
     var force = forceWrapper.querySelector(selector);
   }
   // If function was invoked through listener on the force
   else {
-    var id = force.dataset.forceIndex;
     var force = this.parentNode.parentNode;
+    var id = force.dataset.forceIndex;
     selectToDelete(); // deactivate button
   }
   // Remove element
@@ -566,8 +573,8 @@ function removeForce() {
   // Remove object property
   delete forces[id]; //remove from objcet
   // Remove from forces settings list
-  var list = document.querySelector('.settings .forcesList');
-  var selector = '[data-force-id="'+ id +'"]';
+  var list = document.querySelector('select.forcesList');
+  var selector = 'option[value="'+ id +'"]';
   list.removeChild(list.querySelector(selector));
 }
 // ========================================

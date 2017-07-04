@@ -9,11 +9,16 @@ input:-webkit-autofill {
   transition: background-color 9999s ease-in-out 9999s; }
 
 button {
+  box-sizing: border-box;
   background: none;
   color: #0c7329;
   border: 1px solid #0c7329;
   font-size: 1em;
-  outline: none; }
+  outline: none;
+  margin: 2px 10px;
+  width: 100%;
+  height: 20px;
+  padding: 0px; }
   button:hover {
     cursor: pointer;
     color: #18e753; }
@@ -37,6 +42,15 @@ a {
 .debug {
   border: 2px dashed red;
   background: #deb91b; }
+
+#controls .apply {
+  width: 300px; }
+#controls.ready .apply {
+  display: none; }
+#controls .play {
+  width: 150px; }
+#controls:not(.ready) .play {
+  display: none; }
 
 #alert {
   display: none;
@@ -78,6 +92,8 @@ a {
   height: 0px;
   position: absolute;
   display: none; }
+  #protoForce.front, .force.front {
+    z-index: 3; }
   #protoForce .wrap, .force .wrap {
     width: 0px;
     height: 0px;
@@ -90,7 +106,7 @@ a {
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      border: 10px dotted rgba(110, 255, 110, 0.7); }
+      border: 10px dashed rgba(110, 255, 110, 0.7); }
     #protoForce .wrap .rad3, .force .wrap .rad3 {
       display: none;
       width: 18px;
@@ -132,6 +148,39 @@ a {
   height: 100vh;
   border-left: 1px solid orangered;
   transform: translate(0, -50%); }
+
+.sidePanel {
+  box-sizing: border-box;
+  position: absolute;
+  height: 100%;
+  width: 300px;
+  padding: 15px;
+  top: 0px;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: flex-start; }
+  .sidePanel.left {
+    left: 0px; }
+  .sidePanel.right {
+    right: 0px; }
+  .sidePanel.hidden {
+    display: none; }
+  .sidePanel > select {
+    width: 100%;
+    margin: 2px 10px;
+    width: 100%;
+    height: 20px;
+    padding: 0px; }
+  .sidePanel > .input {
+    box-sizing: border-box;
+    margin: 2px 10px;
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center; }
 
 body {
   color: #0c7329;
@@ -233,13 +282,13 @@ body {
         display: none; }
     body main .database {
       box-sizing: border-box;
-      padding: 15px;
       position: absolute;
+      width: 300px;
+      height: auto;
+      padding: 15px;
       right: 0px;
       top: 0px;
-      width: 300px;
-      background: rgba(0, 0, 0, 0.3);
-      height: auto; }
+      background: rgba(0, 0, 0, 0.3); }
       body main .database.hidden {
         display: none; }
       body main .database > .filterExpDB input[type="text"] {
@@ -283,23 +332,23 @@ body {
           background: rgba(68, 150, 24, 0.2); }
     body main .buttons {
       position: fixed;
-      top: 95px;
+      top: 85px;
       left: 0px;
       width: 100%;
       height: 0px;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 1.15em; }
+      font-size: 1.0em; }
       body main .buttons .button {
-        width: 70px; }
+        width: 140px; }
       body main .buttons .explode {
         width: 90px; }
     body main .button {
       width: auto;
       height: 1em;
       text-align: center;
-      margin: 0px 10px;
+      margin: 0px 3px;
       padding: 3px;
       border: 1px solid #0c7329; }
       body main .button:hover {
@@ -491,6 +540,8 @@ div.display {
   background: radial-gradient(circle, #18e753, #0a5c21); }
   .pixel.hidden {
     display: none; }
+  .pixel.willChange {
+    will-change: transform; }
 
 .centerLine {
   position: fixed;

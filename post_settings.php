@@ -20,20 +20,20 @@ if (!isset($_SESSION['logged'])) {
 
 if (!isset($_SESSION['user_name'],
           $_POST['settings_name'],
-          $_POST['scale'],
-          $_POST['rand'],
-          $_POST['range'],
-          $_POST['density'],
+          // $_POST['scale'],
+          // $_POST['rand'],
+          // $_POST['range'],
+          // $_POST['density'],
           $_POST['speed'])) {
   die('Form data incomplete.');
 }
 
 $user_name = $_SESSION['user_name'];
 $settings_name = $_POST['settings_name'];
-$scale = $_POST['scale'];
-$rand = $_POST['rand'];
-$range = $_POST['range'];
-$density = $_POST['density'];
+// $scale = $_POST['scale'];
+// $rand = $_POST['rand'];
+// $range = $_POST['range'];
+// $density = $_POST['density'];
 $speed = $_POST['speed'];
 
 $query = "INSERT INTO settings (user_name, settings_name,
