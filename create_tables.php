@@ -44,7 +44,7 @@ $query = "CREATE TABLE IF NOT EXISTS symbols(
 )";
 
 if ($result = mysqli_query($dbc, $query)) {
-  echo "Table 'coords' successfully created" . "<br>";
+  echo "Table 'symbols' successfully created" . "<br>";
 }
 else {
   echo mysqli_error($dbc);
