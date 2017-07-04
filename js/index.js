@@ -498,3 +498,16 @@ function adjustPanelHeight() {
   panel.style.height = height + 'px';
 }
 // ========================================
+function checkScroll(target) {
+  var paragraphs = target.querySelectorAll('p');
+  var lastP = paragraphs[paragraphs.length - 1];
+  var fullScroll = (lastP.offsetTop + lastP.offsetHeight) -
+                    target.offsetHeight;
+  if(target.scrollTop == fullScroll) {
+    target.classList.add('scrolled');
+  } else {
+    target.classList.remove('scrolled');
+  }
+  console.log('checkScroll running');
+}
+// ========================================

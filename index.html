@@ -311,7 +311,61 @@
         <div id="zeroY"></div> -->
       </div>
       <!-- <div class="centerLine debuggingStuff"></div> -->
-
+      </div>
+      <div id="help" onscroll="checkScroll(this)">
+        <div class="openHelp" onclick="this.parentNode.classList.toggle('hidden')">INFO</div>
+        <p>To show or hide this text click 'INFO' mark in right-top of the screen.</p>
+        <br>
+        <p>This application allows you to create short simulations of particles movements under acting forces.</p>
+        <ul>
+          <li>
+            <p>Type text in the top input-field and confirm it with enter.</p>
+          </li>
+          <li>
+            <p>Go to 'Explosion Settings', click 'Add Force' and then on the screen to place it there (you can add multiple forces).</p>
+          </li>
+          <li>
+            <p>Manipulate the force with your mouse to change its properties:</p>
+            <ul>
+              <li>
+                <p>Green ring modifies area that is under influence of the force.</p>
+              </li>
+              <li>
+                <p>Middle ring redirects area of influence.</p>
+              </li>
+              <li>
+                <p>Red ring indicates power.</p>
+              </li>
+              <li>
+                <p>Relocate the force by dragging the central dot.</p>
+              </li>
+              <li>
+                <p>Click the dot twice to changee the type of the force:</p>
+                <ul>
+                  <li>
+                    <p>Red - it emits radial force in all directions.</p>
+                  </li>
+                  <li>
+                    <p>Green - it acts in single direction indicated with the green arrow.</p>
+                  </li>
+                  <li>
+                    <p>Blue - it acts like a vortex.</p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p>When you finish configuring forces click 'Apply Changes'.</p>
+          </li>
+          <li>
+            <p>Now use 'Play' buttons below the text input-field to see the simulation.</p>
+          </li>
+        </ul>
+        <br>
+        <p>After you create profile in 'Your Profile' tab you can use Symbol Editor to create your own symbols (to load custom symbol type: &lt;mySymbol&gt;). Also you can save Explosion Settings covering the text and setup of forces.</p>
+        <br>
+        <p>This is a work in progress and new features are on their way.</p>
       </div>
     </main>
   </body>
