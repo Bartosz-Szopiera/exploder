@@ -25,12 +25,16 @@ var widths = {};
 
 // ==========================================
 // SETTINGS
-var keys = ['scale','rand','range','density','speed']
+// var keys = ['scale','rand','range','density','speed']
+var keys = ['speed']
+// var setup = {
+//   'scale'   : 1, //
+//   'rand'    : 0.15, // Probability of random movements
+//   'range'   : 0.6, // How much moves pixels make
+//   'density' : 1, // Pixels number multiplier
+//   'speed'   : 30 // Pixel movements per second
+// }
 var setup = {
-  'scale'   : 1, //
-  'rand'    : 0.15, // Probability of random movements
-  'range'   : 0.6, // How much moves pixels make
-  'density' : 1, // Pixels number multiplier
   'speed'   : 30 // Pixel movements per second
 }
 // ==========================================
@@ -370,8 +374,8 @@ function simulate() {
         // ----PIXELS----
         for (var j = 0; j < pixels.length; j++) {
           // Check if pixel is off-screen
-          if ( (Math.abs(position[i][j][0]) > displayX ||
-              Math.abs(position[i][j][1]) > displayY) &&
+          if ( (Math.abs(position[i][j][0]) > displayX*1.15 ||
+              Math.abs(position[i][j][1]) > displayY*1.15) &&
               !findInAr(pixelsOut, j) ) {
             velocities[j][0] = 0;
             velocities[j][1] = 0;
