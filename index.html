@@ -24,8 +24,8 @@
             </div>
           </div>
         </div>
-        <div id="zeroX"></div>
-        <div id="zeroY"></div>
+        <!-- <div id="zeroX"></div>
+        <div id="zeroY"></div> -->
         <div id="forceWrapper"></div>
       </div>
       <div class="tabs">
@@ -58,25 +58,7 @@
               <form id="settingsForm"></form>
             </div>
             <div class="sliders settingsForm">
-              <!-- <div class="widgets"> -->
-                <button type="button" onclick="showDatabase('settings')">Database</button>
-              <!-- </div> -->
-              <div class="input">
-                <label for="scale">Scale</label>
-                <input id="scale" form="settingsForm" type="range" min="0.5" max="2.0" name="scale" value="1.0" step="0.1" oninput="takeInput(this)">
-              </div>
-              <div class="input">
-                <label for="rand">Random Moves</label>
-                <input id="rand" form="settingsForm" type="range" min="0" max="1" name="rand" value="0.15" step="0.01" oninput="takeInput(this)">
-              </div>
-              <div class="input">
-                <label for="range">Range</label>
-                <input id="range" form="settingsForm" type="range" min="0.3" max="1.2" step="0.1" name="range" value="0.6" oninput="takeInput(this)">
-              </div>
-              <div class="input">
-                <label for="density">Density</label>
-                <input id="density" form="settingsForm" type="range" min="1" max="16" name="density" value="1" oninput="takeInput(this)">
-              </div>
+              <h4>Explosion Settings (WIP)</h4>
               <div class="input">
                 <label for="speed">Speed</label>
                 <input id="speed" form="settingsForm" type="range" min="1" max="90" step="1" name="speed" value="30" oninput="takeInput(this)">
@@ -107,10 +89,13 @@
               <button id="addForce" type="button" name="button" onmouseup="addForce(this)">Add Force</button>
               <button id="removeForce" type="button" name="button" onclick="selectToDelete(this)")>Remove Force</button>
               <button type="button" name="button" onclick="simulate()">Apply Changes</button>
+              <button type="button" name="button" onclick="showForceSettings()">Force Settings (WIP)</button>
+              <button type="button" onclick="showDatabase('settings')">Database</button>
+              <button type="button" name="button">Create Sequence (WIP)</button>
             </div>
           </div>
-          <!-- <div class="tab editor hidden"> -->
-          <div class="tab editor">
+          <div class="tab editor hidden">
+          <!-- <div class="tab editor"> -->
             <div class="symbol">
               <div class="input">
                 <label for="currentSymbol">Symbol to edit</label>
@@ -227,7 +212,6 @@
           <div class="table">
             <table class="mainTable">
               <tbody>
-                <!-- <tr class="row prototype" onclick="loadSettings(this)" onmouseenter="loadSettings(this)" onmouseleave="loadSettings(this)"> -->
                 <tr class="row prototype" onclick="loadSymbol(this)">
                   <td></td>
                   <td></td>
@@ -236,6 +220,19 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+      <div class="settings forces hidden sidePanel left">
+        <select form="forcesList" class="forcesList" name="force"></select>
+        <button onclick="removeForce(this)">Remove Force</button>
+        <div class="input">
+          <label>Range Cone</label>
+          <input id="range" form="forceSettings" type="range" min="0.5" max="2.0" name="scale" value="1.0" step="0.1" oninput="takeInput(this)">
+          <!-- <input type="text" name="" value=""> -->
+          <!-- <div class="smallButtons">
+            <button class="plus" type="button" name="button"></button>
+            <button class="minus" type="button" name="button"></button>
+          </div> -->
         </div>
       </div>
       <div class="settings database hidden">
@@ -284,6 +281,9 @@
         <div class="rewind button" onclick="play(-1, 60)">Rewind</div>
         <div class="explode button" onclick="play(1, 60)">Explode!</div>
         <div class="replay button" onclick="play(1, 60)">Replay</div>
+        <!-- <div class="apply button" onclick="simulate()">Apply Settings</div>
+        <div class="play button" onclick="play(-1, 60)">Play Backwards</div>
+        <div class="play button" onclick="play(1, 60)">Play Forwards</div> -->
       </div>
       <div id="alert" class="alert">
         <div class="text"></div>
@@ -294,13 +294,13 @@
       </div>
       <div id="protoForce">
         <div class="wrap">
-          <canvas class="value" width="200" height="200"></canvas>
+          <canvas class="value" width="200" height="200" onmousemove="focusForce()"></canvas>
         </div>
         <div class="wrap">
           <div class="range"></div>
         </div>
         <div class="wrap">
-          <canvas class="range" width="200" height="200"></canvas>
+          <canvas class="range" width="200" height="200" onmousemove="focusForce()"></canvas>
         </div>
         <div class="wrap">
           <div class="type" data-force-type="1"></div>
@@ -308,8 +308,8 @@
         <div class="wrap">
           <div class="rad3"></div>
         </div>
-        <div id="zeroX"></div>
-        <div id="zeroY"></div>
+        <!-- <div id="zeroX"></div>
+        <div id="zeroY"></div> -->
       </div>
       <!-- <div class="centerLine debuggingStuff"></div> -->
 
