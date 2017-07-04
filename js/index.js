@@ -46,17 +46,24 @@ function showTab(el) {
       labels[i].classList.remove('active');
     }
   }
-  // ---Hide or show tables---
-  var el = document.querySelector('.settings.database');
+  // ---Hide or show side panels---
+  var settingsDbTab = document.querySelector('.settings.database');
+  var forceSettings = document.querySelector('.settings.forces')
   if (!labels[0].classList.contains('active')) {
-    el.classList.add('tabHidden');
+    settingsDbTab.classList.add('tabHidden');
+    forceSettings.classList.add('tabHidden');
   }
-  else el.classList.remove('tabHidden')
-  var el = document.querySelector('.symbols.database');
+  else {
+    settingsDbTab.classList.remove('tabHidden');
+    forceSettings.classList.remove('tabHidden');
+  }
+  var symbolsDbTab = document.querySelector('.symbols.database');
   if (!labels[1].classList.contains('active')) {
-    el.classList.add('tabHidden');
+    symbolsDbTab.classList.add('tabHidden');
   }
-  else el.classList.remove('tabHidden')
+  else {
+    symbolsDbTab.classList.remove('tabHidden');
+  }
   //-------------------------
   adjustDBWindow();
   showGrid();
