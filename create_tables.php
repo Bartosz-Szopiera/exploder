@@ -19,17 +19,35 @@ else {
 
 // Create settings table
 $query = "CREATE TABLE IF NOT EXISTS settings(
+      _id INT(10) NOT NULL AUTO_INCREMENT,
       user_name VARCHAR(255) NOT NULL CHECK (user_name <> ''),
       settings_name VARCHAR(255) NOT NULL CHECK (settings_name <> ''),
-      _scale DECIMAL(3,2) NOT NULL CHECK (_scale <> ''),
-      _rand DECIMAL(3,2) NOT NULL CHECK (_rand <> ''),
-      _range DECIMAL(2,1) NOT NULL CHECK (_range <> ''),
-      _density INT(2) NOT NULL CHECK (_density <> ''),
-      _speed INT(2) NOT NULL CHECK (_speed <> '')
+      _speed INT(2) NOT NULL,
+      _duration INT(2) NOT NULL,
+      PRIMARY KEY (_id)
 )";
 
 if ($result = mysqli_query($dbc, $query)) {
   echo "Table 'settings' successfully created" . "<br>";
+}
+else {
+  echo mysqli_error($dbc);
+}
+
+// Create forces table
+$query = "CREATE TABLE IF NOT EXISTS forces(
+      _id INT(10) NOT NULL,
+      _positionX INT(255) NOT NULL,
+      _positionY INT(255) NOT NULL,
+      _value DECIMAL(3,2) NOT NULL,
+      _rad1 DECIMAL(18,15) NOT NULL,
+      _rad2 DECIMAL(18,15) NOT NULL,
+      _rad3 DECIMAL(18,15) NOT NULL,
+      _type INT(1) NOT NULL,
+      FOREIGN KEY (_id) references settings (_id)
+)";
+if ($result = mysqli_query($dbc, $query)) {
+  echo "Table 'forces' successfully created." . "<br>";
 }
 else {
   echo mysqli_error($dbc);
