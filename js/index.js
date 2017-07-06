@@ -130,12 +130,24 @@ function toggleUserForm(response) {
 // Load downloaded settings to the table
 function updateTable(response) {
   if (typeof(response.data) == 'undefined') return;
-
+  console.log(response);
+  console.log(response.data);
+  console.log(response.data[0]);
+  console.log(response.data[1]);
   var subject = response.subject; //'settings'/'symbols'
+  console.log('subject: ' + subject + '  ' + (subject==='settings'));
   var mainTable = document.querySelector('.' + subject +' .mainTable tbody');
   var userTable = document.querySelector('.' + subject +' .userTable tbody');
-  localData[subject] = response.data; //Store as local data
-
+  if (subject === 'settings') {
+    // localData[subject] = response.data.settings;
+    // localData[subject] = response.data[0];
+    // localData.forces = response.data[1];
+    localData[subject] = response.data.settings;
+    localData.forces = response.data.forces;
+  }
+  else {
+    localData[subject] = response.data; //Store as local data
+  }
   // Remove previously inserted rows
   var clones = mainTable.querySelectorAll('.clone');
   for (var i = 0; i < clones.length; i++) {
@@ -151,7 +163,8 @@ function updateTable(response) {
     clone.children[0].innerHTML = i;
     // Populate 'i' row starting from second column (j=1)
     for (var j = 1; j < clone.children.length; j++) {
-      clone.children[j].innerHTML = localData[subject][i][j-1];
+      // clone.children[j].innerHTML = localData[subject][i][j-1];
+      clone.children[j].innerHTML = localData[subject][i][j];
     }
   }
   // Remove rows form the user table
@@ -177,29 +190,49 @@ function updateTable(response) {
 // to the settingsForm based on user selection
 // from the Settings Database table.
 var setupBuffer = []; //temporary container for settings
+var forcesBuffer = [];
 function loadSettings(target) {
   var settings = localData.settings;
   var settingsForm = document.querySelector('.settingsForm.sliders');
   var inputs = settingsForm.querySelectorAll('input');
-  if (event.type == 'mouseenter' || event.type == 'click') {
+  var forceWrapper = document.getElementById('forceWrapper');
+  if (event.type === 'mouseenter' || event.type == 'click') {
     // Save settings to the buffer
     for (var i = 0; i < inputs.length; i++) {
       setupBuffer[i] = setup[keys[i]];
     }
   }
-  if (event.type == 'mouseenter') {
+  if (event.type === 'mouseenter') {
     // Load settings from table to the form inputs
     var index = parseInt(target.children[0].innerHTML);
     for (var i = 0; i < inputs.length; i++) {
-      inputs[i].value = parseFloat(settings[index][i + 2]);
+      // inputs[i].value = parseFloat(settings[index][i + 2]);
+      inputs[i].value = parseFloat(settings[index][i + 3]);
+    }
+    // Now get adequate forces settings
+    var id = settings[index][0];
+    // Hide forces
+    for (var i = 0; i < forceWrapper.children.length; i++) {
+      forceWrapper.children[i].classList.add('hidden');
+    }
+    // Search for forces with matching id
+    for (var i = 0; i < localData.forces.length; i++) {
+      if (localData.forces[i][0] === id) {
+        // Draw temporary forces
+          // Remove (slice) column with id
+          var forceSettings = localData.forces[i].slice(1);
+        createForce('', forceSettings);
+      }
     }
   }
-  if (event.type == 'click') {
+  if (event.type === 'click') {
+    console.log('click!');
     // Load settings from table to the form inputs,
     // setup object and buffer
     var index = parseInt(target.children[0].innerHTML);
     for (var i = 0; i < inputs.length; i++) {
-      var value = parseFloat(settings[index][i + 2]);
+      // var value = parseFloat(settings[index][i + 2]);
+      var value = parseFloat(settings[index][i + 3]);
       inputs[i].value = value;
       setup[keys[i]] = value;
       setupBuffer[i] = value;
@@ -208,11 +241,37 @@ function loadSettings(target) {
     currentSettings.value = target.children[2].innerHTML;
     var settingsName = document.querySelector('#settingsName');
     settingsName.value = target.children[2].innerHTML;
+    // Remove hidden forces and 'untemporary' temporary
+    for (var i = 0; i < forceWrapper.children.length; i++) {
+      var force = forceWrapper.children[i];
+      if (force.classList.contains('hidden')) {
+        var id = force.dataset.forceIndex;
+        removeForce('',id,force);
+      }
+      else {
+        force.classList.remove('temporary');
+      }
+    }
   }
-  if (event.type == 'mouseleave') {
+  if (event.type === 'mouseleave') {
     // load settings from the buffer
     for (var i = 0; i < inputs.length; i++) {
       inputs[i].value = setupBuffer[i];
+    }
+    // Remove temporary forces and show actual ones
+    for (var i = 0; i < forceWrapper.children.length; i++) {
+      // !!!Elements are being deleted, list length variable!!!
+      console.log("i:" + i);
+      var force = forceWrapper.children[i];
+      if (force.classList.contains('hidden')) {
+        force.classList.remove('hidden');
+      }
+      else if (force.classList.contains('temporary')) {
+        console.log('trying to remove, i: ' + i);
+        var id = force.dataset.forceIndex;
+        removeForce('',id,force);
+        i --;
+      }
     }
   }
 }
@@ -508,6 +567,5 @@ function checkScroll(target) {
   } else {
     target.classList.remove('scrolled');
   }
-  console.log('checkScroll running');
 }
 // ========================================

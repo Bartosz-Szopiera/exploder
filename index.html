@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Szopiera Bartosz</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <link rel="stylesheet" href="css/master.css">
   </head>
   <body class="body">
@@ -62,34 +63,17 @@
                 <label for="speed">Speed</label>
                 <input id="speed" form="settingsForm" type="range" min="1" max="90" step="1" name="speed" value="30" oninput="takeInput(this)">
               </div>
-              <!-- <div class="input">
-              <label for="acceleration">Acceleration</label>
-              <input id="acceleration" type="text" name="scale" value="1.0">
-              </div> -->
-              <!-- <div class="input">
-              <label for="direction">Direction</label>
-              <input id="direction" type="text" name="scale" value="1.0">
-              </div> -->
-              <!-- <div class="input">
-              <label for="trajectory">Trajectory</label>
-              <input id="trajectory" type="checkbox" name="trajectory" value="straight">
-              <input id="trajectory" type="checkbox" name="trajectory" value="sinusoid">
-              <input type="text" name="amplitude" value="">
-              <input id="trajectory" type="checkbox" name="trajectory" value="parabola">
-              <input id="trajectory" type="checkbox" name="trajectory" value="spiral">
-              <input type="text" name="curvature" value="">
-              </div> -->
-              <!-- <div class="input">
-              <label for="degradation">Degradation</label>
-              <input id="degradation" type="text" name="degradation" value="1.0">
-              </div> -->
+              <div class="input">
+                <label for="duration">Duration</label>
+                <input id="duration" form="settingsForm" type="range" min="1" max="10" step="1" name="duration" value="3" oninput="takeInput(this)">
+              </div>
             </div>
             <div class="forces">
               <button id="addForce" type="button" name="button" onmouseup="addForce(this)">Add Force</button>
               <button id="removeForce" type="button" name="button" onclick="selectToDelete(this)")>Remove Force</button>
               <button type="button" name="button" onclick="simulate()">Apply Changes</button>
               <button type="button" name="button" onclick="showForceSettings()">Force Settings (WIP)</button>
-              <button type="button" onclick="showDatabase('settings')">Database</button>
+              <button type="button" onclick="showDatabase('settings')">Settings Database</button>
               <button type="button" name="button">Create Sequence (WIP)</button>
             </div>
           </div>
@@ -118,7 +102,7 @@
               <form id="newSymbolForm"></form>
             </div>
             <div class="widgets">
-              <button type="button" onclick="showDatabase('symbols')">Database</button>
+              <button type="button" onclick="showDatabase('symbols')">Symbols Database</button>
               <button type="button" onclick="resetEditor()">Reset Editor</button>
             </div>
             <div class="widgets">
@@ -291,7 +275,7 @@
           <button class="no" type="button" onclick="closeAlert()">No</button>
         </div>
       </div>
-      <div id="protoForce">
+      <div id="protoForce" class="hidden">
         <div class="wrap">
           <canvas class="value" width="200" height="200" onmousemove="focusForce()"></canvas>
         </div>
@@ -314,7 +298,7 @@
       </div>
       <div id="help" onscroll="checkScroll(this)">
         <div class="openHelp" onclick="this.parentNode.classList.toggle('hidden')">INFO</div>
-        <p>To show or hide this text click 'INFO' mark in right-top of the screen.</p>
+        <p>To show or hide this text click 'INFO' in right-top of the screen.</p>
         <br>
         <p>This application allows you to create short simulations of particles movements under acting forces.</p>
         <ul>
@@ -340,7 +324,7 @@
                 <p>Relocate the force by dragging the central dot.</p>
               </li>
               <li>
-                <p>Click the dot twice to changee the type of the force:</p>
+                <p>Click the dot twice to change the type of the force:</p>
                 <ul>
                   <li>
                     <p>Red - it emits radial force in all directions.</p>

@@ -83,8 +83,6 @@ function updateType(id) {
 // rad1 - X,Y defining first perimeter of affected space
 // rad2 - X,Y defining second perimeter of affected space
 // rad3 - X,Y defining direction of simpleForce
-// rot - (+1 or -1) defines direction of vortex rotation
-// duration - (0 or 1) acts one time or continuously
 // type - (1,2 or 3) radial force, one direction force or vortex
 // radialForce - force acting radlial form it's center
 // simpleForce - force acting in one direction
@@ -99,8 +97,6 @@ var defaultForce = {
     'rad1'    : 1.60*Math.PI,
     'rad2'    : 1.40*Math.PI,
     'rad3'    : 0.5*Math.PI,
-    'rot'     : 1,
-    'duration' : 0,
     'type'     : 1,
   },
   type2 : {
@@ -109,8 +105,6 @@ var defaultForce = {
     'rad1'    : 1.60*Math.PI,
     'rad2'    : 1.40*Math.PI,
     'rad3'    : 0.5*Math.PI,
-    'rot'     : 1,
-    'duration' : 0,
     'type'     : 2,
   },
   type3 : {
@@ -119,8 +113,6 @@ var defaultForce = {
     'rad1'    : 1.60*Math.PI,
     'rad2'    : 1.40*Math.PI,
     'rad3'    : 0.5*Math.PI,
-    'rot'     : 1,
-    'duration' : 0,
     'type'     : 3,
   },
 };
@@ -139,7 +131,7 @@ function addForce(target) {
 // events for force modification:
   var handlers = [];
 // --Function--
-function createForce() {
+function createForce(event, forceSettings) {
   var protoForce = document.querySelector('#protoForce');
   var force = protoForce.cloneNode(true);
   force.id = '';
@@ -148,7 +140,8 @@ function createForce() {
   forceWrapper.appendChild(force);
   forceIndex ++;
   force.dataset.forceIndex = forceIndex;
-  force.style.display = 'flex';
+  // force.style.display = 'flex';
+  force.classList.remove('hidden');
   // Attach listeners to manipulate force
   var rad3Element = force.querySelector('.rad3');
   var rangeElementOne = force.querySelector('div.range');
@@ -207,37 +200,60 @@ function createForce() {
       typeElement.removeEventListener('mouseup', dbClick);
     }
   });
-  // Get click position
-  var globalX = event.clientX;
-  var globalY = event.clientY;
-  // Get position of .display center
-  var centerX = display.offsetLeft;
-  var centerY = display.offsetTop;
-  // Get position of force in local system of the display
-  var localX = globalX - centerX;
-  var localY = centerY - globalY;
-  // Position force in local system of the display
-  force.style.left = localX + 'px';
-  force.style.top = -localY + 'px';
-  // Define basic properties
-  Object.defineProperty(forces, forceIndex, {
-    configurable: true,
-    enumerable: true,
-    value: {
-      'position'  : null,
-      'value'   : 0.5,
-      'rad1'    : 1.60*Math.PI,
-      'rad2'    : 1.40*Math.PI,
-      'rad3'    : 0.5*Math.PI,
-      'rot'     : 1,
-      'duration' : 0,
-      'type'     : 1,
-    }
-  });
-  // Update position inside the object
-  forces[forceIndex].position = [localX,localY];
-  window.removeEventListener('mousedown', createForce);
-  document.getElementById('addForce').classList.remove('active');
+  if (forceSettings === undefined) { // Settings were not provided
+    // Get click position
+    var globalX = event.clientX;
+    var globalY = event.clientY;
+    // Get position of .display center
+    var centerX = display.offsetLeft;
+    var centerY = display.offsetTop;
+    // Get position of force in local system of the display
+    var localX = globalX - centerX;
+    var localY = centerY - globalY;
+    // Position force in local system of the display
+    force.style.left = localX + 'px';
+    force.style.top = -localY + 'px';
+    // Define basic properties
+    Object.defineProperty(forces, forceIndex, {
+      configurable: true,
+      enumerable: true,
+      value: {
+        'position'  : [localX, localY],
+        'value'   : 0.5,
+        'rad1'    : 1.60*Math.PI,
+        'rad2'    : 1.40*Math.PI,
+        'rad3'    : 0.5*Math.PI,
+        'type'     : 1,
+      }
+    });
+    // Remove listener from window
+    window.removeEventListener('mousedown', createForce);
+    // Remove 'active' class from the button
+    document.getElementById('addForce').classList.remove('active');
+  }
+  else {
+    console.log('loading force from settings');
+    force.classList.add('temporary');
+    // Position force in local system of the display
+    var positionX = parseInt(forceSettings[0]);
+    var positionY = parseInt(forceSettings[1]);
+    force.style.left = positionX + 'px';
+    force.style.top = -positionY + 'px';
+    var type = parseInt(forceSettings[6]);
+    Object.defineProperty(forces, forceIndex, {
+      configurable: true,
+      enumerable: true,
+      value: {
+        'position'  : [positionX, positionY],
+        'value'     : parseFloat(forceSettings[2]),
+        'rad1'      : parseFloat(forceSettings[3]),
+        'rad2'      : parseFloat(forceSettings[4]),
+        'rad3'      : parseFloat(forceSettings[5]),
+        'type'      : type,
+      }
+    });
+    if (type !== 1) modifyType(type, force, forceIndex)
+  }
   // Add force to the list in the force settings panel
   var list = document.querySelector('select.forcesList');
   var option = document.createElement('option');
@@ -509,51 +525,41 @@ function modifyValue(force, start) {
   lOld = lNew;
 }
 // ========================================
-function modifyType() {
+function modifyType(type, force, id) {
   console.log('modifyType');
+  console.log('type: ' + type);
+  if (typeof(type) !== 'number') {
   this.removeEventListener('mousedown', modifyType);
   this.dataset.dbclick = false;
   var force = this.parentNode.parentNode;
   var id = parseInt(force.dataset.forceIndex);
-  // Record current position
-  oldPosition = forces[id].position;
-  // Change type of emitted force
   var type = forces[id].type;
-  type = type == 3 ? 1 : type + 1;
-  // Remove old force from 'forces' object
-  delete forces[id];
-  // Insert new force of given type
-  Object.defineProperty(forces, id, {
-    configurable: true,
-    enumerable: true,
-    value: {
-      'position': null,
-      'value'   : 0.5,
-      'rad1'    : 1.60*Math.PI,
-      'rad2'    : 1.40*Math.PI,
-      'rad3'    : 0.5*Math.PI,
-      'rot'     : 1,
-      'duration' : 0,
-      'type'     : type,
-    }
-  });
+  type = type === 3 ? 1 : type + 1;
+  }
+  // Change type
+  forces[id].type = type;
+
   var typeElement = force.querySelector('.type');
   typeElement.dataset.forceType = type;
-  // Restore force position
-  forces[id].position = oldPosition;
-  // Show or hide force direction control
+
   var rad3Element = force.querySelector('.rad3');
-  if (type == 2) {
+  if (type === 2) {
     rad3Element.style.display = 'unset';
-    rad3Element.parentNode.style.transform = '';
-    rad3Element.parentNode.dataset.rotation = 0;
+    // rad3Element.parentNode.style.transform = '';
+    // rad3Element.parentNode.dataset.rotation = 0;
+    var rotation = 6.283/4  - forces[id].rad3;
+    var rad3Wrapper = rad3Element.parentNode;
+    rad3Wrapper.dataset.rotation = rotation;
+    rad3Wrapper.style.transform = 'rotateZ(' + rotation/6.28*360 + 'deg)';
   }
-  else rad3Element.style.display = 'none';
+  else {
+    rad3Element.style.display = 'none';
+  }
   // Reload graphic of the force to depict changed values
-  updateRange(id, force);
+  // updateRange(id, force);
 }
 // ========================================
-function removeForce(target) {
+function removeForce(target,id,force) {
   var forceWrapper = document.getElementById('forceWrapper');
   // If function was invoked from the force settings panel
   if (target.tagName === "BUTTON") {
@@ -563,7 +569,7 @@ function removeForce(target) {
     var force = forceWrapper.querySelector(selector);
   }
   // If function was invoked through listener on the force
-  else {
+  else if (id === undefined) {
     var force = this.parentNode.parentNode;
     var id = force.dataset.forceIndex;
     selectToDelete(); // deactivate button
@@ -578,7 +584,7 @@ function removeForce(target) {
   list.removeChild(list.querySelector(selector));
 }
 // ========================================
-// Click handler on Remove Force button which
+// 'click' handler on Remove Force button which
 // adds or removes click listeners to the .type
 // element of forces and sets Remove Force button
 // class to indicate if listeners are in place.
@@ -733,3 +739,10 @@ function sumVector(v1,v2) {
   return [v1[0]+v2[0],v1[1]+v2[1]]
 }
 // ========================================
+function setupForce(id, settings) {
+  var forceSettings = forces[id];
+  var selector = '.force [data-force-index="' + id +'"]';
+  var forceElement = document.querySelector(selector);
+
+
+}

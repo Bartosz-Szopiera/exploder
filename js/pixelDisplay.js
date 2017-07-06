@@ -15,8 +15,8 @@ var widths = {}; // Object for all symbols widths
 var readyInput = []; // List of symbols to display
 var localData = {
   'settings'  : null,
+  'forces' : null,
   'symbols'   : null,
-  'symbolsParsed' : null
 }
 // Objects holding data about symbols
 var dictionary = [];
@@ -26,7 +26,7 @@ var widths = {};
 // ==========================================
 // SETTINGS
 // var keys = ['scale','rand','range','density','speed']
-var keys = ['speed']
+var keys = ['speed','duration'];
 // var setup = {
 //   'scale'   : 1, //
 //   'rand'    : 0.15, // Probability of random movements
@@ -35,7 +35,8 @@ var keys = ['speed']
 //   'speed'   : 30 // Pixel movements per second
 // }
 var setup = {
-  'speed'   : 30 // Pixel movements per second
+  'speed'   : 30, // Pixel movements per second
+  'duration'   : 30, // Pixel movements per second
 }
 // ==========================================
 // Convert server response to a more convenient format
@@ -275,8 +276,9 @@ function applyForce(i,j,id,fps) {
     var angle = relativeAngle([localX, localY]);
     // var angularMove = 6.28/360*value*speed/fps/length;
     var angularMove = 6.28/360*value*speed/fps;
-    var sign = forces[id].rot;
-    var endAngle = angle + sign*angularMove;
+    // var sign = forces[id].rot;
+    // var endAngle = angle + sign*angularMove;
+    var endAngle = angle + angularMove;
     var endVersor = angToVersor(endAngle);
     var x = endVersor[0]*length;
     var y = endVersor[1]*length;
@@ -285,16 +287,6 @@ function applyForce(i,j,id,fps) {
 
     velocities[j][0] += incrementX;
     velocities[j][1] += incrementY;
-
-    // console.log('incrementX: ' + incrementX + ', incrementY: ' + incrementY);
-    // console.log('velocities[0]: ' + velocities[j][0] + ', velocities[1]: ' + velocities[j][1]);
-
-    // var angle = relativeAngle([localX,localY]);
-    // var sign = forces[id].rot;
-    // var forceAngle = angle + sign*Math.PI/2;
-    // var force = angToVersor(forceAngle);
-    // var incrementX = force[0];
-    // var incrementY = force[1];
   }
 }
 // ========================================
@@ -336,8 +328,8 @@ var velocities = []; //Current speed vector of each pixel
 // -----------
 function simulate() {
   console.log('simulating...');
-  // var time = setup.stopTime; // when animation should stop
-  var time = 4; // when animation should stop
+  var duration = setup.stopTime; // when animation should stop
+  // var time = 4; // when animation should stop
   var fps = 60;
   var frames = time * fps;
   displayY = (window.innerHeight - display.offsetTop);

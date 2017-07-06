@@ -120,9 +120,11 @@ a {
   width: 0px;
   height: 0px;
   position: absolute;
-  display: none; }
+  display: flex; }
   #protoForce.front, .force.front {
     z-index: 3; }
+  #protoForce.hidden, .force.hidden {
+    display: none; }
   #protoForce .wrap, .force .wrap {
     width: 0px;
     height: 0px;

@@ -161,9 +161,12 @@ a {
   width: 0px;
   height: 0px;
   position: absolute;
-  display: none;
+  display: flex;
   &.front {
     z-index: 3;
+  }
+  &.hidden {
+    display: none;
   }
   & .wrap {
     width: 0px;

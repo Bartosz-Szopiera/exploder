@@ -21,7 +21,16 @@ function isLogged() {
 // ======================================
 // Upload settings
 function postSettings() {
-  ajaxRequest('POST', 'settingsForm', 'post_settings.php', getData);
+  var current_settings = document.querySelector('#currentSettings').value;
+  var settings_name = document.querySelector('#settingsName').value;
+  if (settings_name === '') console.log('Settings name is missing.');
+  var postData = {
+    'current_settings'  : current_settings,
+    'settings_name'     : settings_name,
+    'settings'  : setup,
+    'forces'    : forces,
+  }
+  ajaxRequest('POST', postData, 'post_settings.php', getData);
 }
 // ======================================
 // Download table with settings
@@ -157,13 +166,20 @@ function test() {
 // and executing callback functions:
 //   callback1 for successful response and
 //   callback2 as long as it was provided.
-function ajaxRequest(method,formID,url,callback1, callback2) {
-  if (method == "POST" && formID != '') {
-    var formElement = document.querySelector('#' + formID);
+function ajaxRequest(method,postData,url,callback1, callback2) {
+  // Payload is a form
+  if (method == "POST" && postData != '' && typeof(postData) != 'object') {
+    var formElement = document.querySelector('#' + postData);
     var data = new FormData(formElement);
   }
+  // Payload is a prepared object
+  else if (method === "POST" && typeof(postData) === 'object' ) {
+    var data = JSON.stringify(postData);
+    console.log(data);
+  }
+  // No payload
   else {
-    data = null;
+    var data = null;
   }
   var xhr = new XMLHttpRequest();
   xhr.open(method, url);
