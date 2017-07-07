@@ -65,7 +65,7 @@ for ($i=0; $i < count($forces); $i++) {
 
 if ($parent_script) {
   $response['success'] = true;
-  $response['msg'] = 'Settings uploaded.';
+  $response['msg'] = 'Settings saved.';
   echo json_encode($response);
 }
 else {

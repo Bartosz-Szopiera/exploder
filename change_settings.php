@@ -13,7 +13,7 @@ if (!session_id()) {
 }
 if (!isset($_SESSION['logged'])) {
   $response['success'] = false;
-  $response['msg'] = '';
+  $response['msg'] = 'You are not logged-in.';
 }
 
 $current_settings = $_POST['current_settings'];
@@ -22,8 +22,9 @@ $user_name = $_SESSION['user_name'];
 
 $query = "SELECT * FROM settings WHERE
           settings_name='$current_settings'";
-$result = mysqli_query($dbc,$query);
-if(!$result) die('Error: ' . mysqli_error($dbc));
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
 // ---Check if settings exist
 if (count($data) != 1) {
@@ -40,8 +41,9 @@ if ($data[0]['user_name'] != $user_name) {
 // ---Delete old current settings
 $query = "DELETE FROM settings WHERE
           settings_name='$current_settings'";
-$result = mysqli_query($dbc, $query);
-if (!$result) die('Error: ' . mysqli_error($dbc));
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 
 // Add new settings
 require_once('post_settings.php');

@@ -25,8 +25,9 @@ $coordsY = $_POST['coordsY'];
 $query = "SELECT * FROM symbols
           WHERE coordsX ='$coordsX'
           AND coordsY = '$coordsY'";
-$result = mysqli_query($dbc,$query);
-if (!$result) {die(mysqli_error($dbc));}
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 elseif (mysqli_num_rows($result) > 0) {
   $response['success'] = false;
   $response['msg'] = 'Symbol like that already exists.';
@@ -35,8 +36,9 @@ elseif (mysqli_num_rows($result) > 0) {
 // -----Check for symbol of the same name-------
 $query = "SELECT * FROM symbols
           WHERE symbol_code ='$symbol_code'";
-$result = mysqli_query($dbc,$query);
-if (!$result) {die(mysqli_error($dbc));}
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 elseif (mysqli_num_rows($result) > 0) {
   $response['success'] = false;
   $response['msg'] = 'Symbol of that code already exists.';
@@ -47,8 +49,9 @@ $query = "INSERT INTO symbols
           (user_name, symbol_code, coordsX, coordsY)
           VALUES
           ('$user_name', '$symbol_code', '$coordsX', '$coordsY')";
-$result = mysqli_query($dbc,$query);
-if (!$result) {die(mysqli_error($dbc));}
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 
 $response['success'] = true;
 $response['msg'] = 'Symbol added to the database.';

@@ -23,9 +23,7 @@ else {
     $query = "SELECT user_name FROM users WHERE
         user_name='$user_name'
         and password='$password'";
-    $result = mysqli_query($dbc, $query);
-
-    if (!$result) {
+    if (!$result = mysqli_query($dbc, $query)) {
       die('Error: ' . mysqli_error($dbc));
     }
 
@@ -35,7 +33,7 @@ else {
       $_SESSION['user_name'] = $_POST['user_name'];
       $_SESSION['password'] = $_POST['password'];
       $response['success'] = true;
-      $response['msg'] = 'User logged-in.';
+      $response['msg'] = 'Logged-in.';
       $response['userName'] = $_POST['user_name'];
     }
     else {

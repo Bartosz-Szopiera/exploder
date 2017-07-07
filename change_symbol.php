@@ -24,8 +24,9 @@ $coordsY = $_POST['coordsY'];
 
 $query = "SELECT * FROM symbols WHERE
           symbol_code='$current_symbol'";
-$result = mysqli_query($dbc, $query);
-if (!$result) {die('ERROR: ' . mysqli_error($dbc));}
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
 // ---Check if current_symbol exists
 if (count($data) != 1) {
@@ -42,8 +43,9 @@ else if ($data[0]['user_name'] != $user_name) {
 $query = "SELECT * FROM symbols
           WHERE coordsX ='$coordsX'
           AND coordsY = '$coordsY'";
-$result = mysqli_query($dbc,$query);
-if (!$result) {die(mysqli_error($dbc));}
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
 if (mysqli_num_rows($result) > 0 &&
     $data[0]['symbol_code'] != $current_symbol) {
@@ -62,8 +64,9 @@ $query = "INSERT INTO symbols
           (user_name, symbol_code, coordsX, coordsY)
           VALUES
           ('$user_name', '$symbol_code', '$coordsX', '$coordsY')";
-$result = mysqli_query($dbc, $query);
-if (!$result) die('Error: ' . mysqli_error($dbc));
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 
 $response['success'] = true;
 $response['msg'] = 'Symbol changed.';

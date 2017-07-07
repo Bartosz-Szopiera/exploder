@@ -18,7 +18,7 @@ else {
   setcookie(session_name(), '', time() - 999, '/');
   session_unset();
   session_destroy();
-  $response['msg'] = 'Session data destroyed.';
+  $response['msg'] = 'Logged-out.';
 }
 $response['success'] = true;
 

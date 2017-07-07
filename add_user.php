@@ -19,15 +19,13 @@ elseif(isset($_POST['user_name']) && isset($_POST['password'])) {
   $user_name = mysqli_real_escape_string($dbc, $_POST['user_name']);
   $password = mysqli_real_escape_string($dbc, $_POST['password']);
   $query = "SELECT * FROM users WHERE user_name='$user_name'";
-  $result = mysqli_query($dbc, $query);
-
-  if (!$result) {
-    $response['success'] = false;
-    $response['msg'] = 'Error: ' . mysqli_error($dbc);
+  if (!$result = mysqli_query($dbc, $query)) {
+    die ('Error: ' . mysqli_error($dbc));
   }
+
   if (mysqli_num_rows($result) > 0) {
     $response['success'] = false;
-    $response['msg'] = 'User already exists.';
+    $response['msg'] = 'User already exists. Login or register with different User Name.';
   }
   else {
     $query = "INSERT INTO users (user_name, password)
@@ -35,8 +33,7 @@ elseif(isset($_POST['user_name']) && isset($_POST['password'])) {
     $result = mysqli_query($dbc, $query);
 
     if (!$result) {
-      $response['success'] = false;
-      $response['msg'] = 'Error: ' . mysqli_error($dbc);
+      die ('Error: ' . mysqli_error($dbc));
     }
     else {
       $_SESSION['logged'] = true;
@@ -52,6 +49,7 @@ else {
   $response['success'] = false;
   $response['msg'] = 'Please fill all required fields.';
 }
+
 echo json_encode($response);
 // --- Get back to parent
 $parent_script = true;
