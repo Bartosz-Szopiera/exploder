@@ -290,10 +290,6 @@ function applyForce(i,j,id,fps) {
   }
 }
 // ========================================
-function movePixels() {
-
-}
-// ========================================
 // Check force time constraints
 function forceTiming(id,fps) {
   // ---Check time constraints---
@@ -327,11 +323,11 @@ function forceTiming(id,fps) {
 var velocities = []; //Current speed vector of each pixel
 // -----------
 function simulate() {
-  console.log('simulating...');
-  var duration = setup.stopTime; // when animation should stop
-  // var time = 4; // when animation should stop
+  // console.log('simulating...');
+  restore(); // Restore initial positions
+  var duration = setup.duration; // when animation should stop
   var fps = 60;
-  var frames = time * fps;
+  var frames = duration * fps;
   displayY = (window.innerHeight - display.offsetTop);
   // var displayX = 800;
   // var displayY = 500;
@@ -399,12 +395,14 @@ function simulate() {
 function restore() { //POSSIBLY OBSOLETE
 // Restore initial position of pixels
   var x,y;
-  if (pixels!=undefined) {
+  if (pixels!==undefined) {
     for (var i = 0; i < pixels.length; i++) {
       x = position[0][i][0];
       y = position[0][i][1];
-      pixels[i].style.left = x * pW + 'px';
-      pixels[i].style.bottom = y * pW + 'px';
+      // pixels[i].style.left = x * pW + 'px';
+      // pixels[i].style.bottom = y * pW + 'px';
+      var style = 'translate(' + x + 'px,' + (-y) +'px)';
+      pixels[i].style.transform = style;
     }
   }
 }
