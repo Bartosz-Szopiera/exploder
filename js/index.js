@@ -130,19 +130,11 @@ function toggleUserForm(response) {
 // Load downloaded settings to the table
 function updateTable(response) {
   if (typeof(response.data) == 'undefined') return;
-  console.log(response);
-  console.log(response.data);
-  console.log(response.data[0]);
-  console.log(response.data[1]);
   var subject = response.subject; //'settings'/'symbols'
-  console.log('subject: ' + subject + '  ' + (subject==='settings'));
   var mainTable = document.querySelector('.' + subject +' .mainTable tbody');
   var userTable = document.querySelector('.' + subject +' .userTable tbody');
   if (subject === 'settings') {
-    // localData[subject] = response.data.settings;
-    // localData[subject] = response.data[0];
-    // localData.forces = response.data[1];
-    localData[subject] = response.data.settings;
+    localData.settings = response.data.settings;
     localData.forces = response.data.forces;
   }
   else {
@@ -156,6 +148,9 @@ function updateTable(response) {
   var row = document.querySelector('.' + subject + ' .row.prototype');
   row.classList.remove('prototype');
   // Insert rows to the mainTable
+
+  var shift = subject === 'settings' ? 0 : -1;
+
   for (var i = 0; i < localData[subject].length; i++) {
     var clone = row.cloneNode(true);
     clone.classList.add('clone');
@@ -163,8 +158,7 @@ function updateTable(response) {
     clone.children[0].innerHTML = i;
     // Populate 'i' row starting from second column (j=1)
     for (var j = 1; j < clone.children.length; j++) {
-      // clone.children[j].innerHTML = localData[subject][i][j-1];
-      clone.children[j].innerHTML = localData[subject][i][j];
+      clone.children[j].innerHTML = localData[subject][i][j + shift];
     }
   }
   // Remove rows form the user table
