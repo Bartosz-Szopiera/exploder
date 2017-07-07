@@ -61,13 +61,6 @@ for ($i=0; $i < count($forces); $i++) {
   if (!$result = mysqli_query($dbc, $query)){
     die("Error: " . mysqli_error($dbc));
   }
-  // $query = "INSERT INTO forces (_id, positionX, positionY, value
-  //           rad1, rad2, rad3, type)
-  //           VALUES ('$id', '$positionX', '$positionY', '$value',
-  //           '$rad1', '$rad2', '$rad3', '$type')";
-  // if (!$result = mysqli_query($dbc, $query)){
-  //   die("Error: " . mysqli_error($dbc));
-  // }
 }
 
 if ($parent_script) {
