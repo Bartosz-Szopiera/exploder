@@ -276,8 +276,6 @@ function applyForce(i,j,id,fps) {
     var angle = relativeAngle([localX, localY]);
     // var angularMove = 6.28/360*value*speed/fps/length;
     var angularMove = 6.28/360*value*speed/fps;
-    // var sign = forces[id].rot;
-    // var endAngle = angle + sign*angularMove;
     var endAngle = angle + angularMove;
     var endVersor = angToVersor(endAngle);
     var x = endVersor[0]*length;
@@ -394,6 +392,8 @@ function simulate() {
 // ==========================================
 function restore() { //POSSIBLY OBSOLETE
 // Restore initial position of pixels
+  window.clearTimeout(timeoutId); //stop animation
+  
   var x,y;
   if (pixels!==undefined) {
     for (var i = 0; i < pixels.length; i++) {
@@ -444,6 +444,8 @@ function play(dir, fps) {
   },500,delay,dir,z,lastFrame);
 }
 // ========================================
+var timeoutId; // Id of current setTimout
+
 function render(delay,dir,z,lastFrame) {
   if (z === lastFrame) return loosePixels()
   var currentFrame = dir === 1 ? z : (lastFrame - 1 - z);
@@ -456,5 +458,5 @@ function render(delay,dir,z,lastFrame) {
   }
 
   z ++;
-  setTimeout(render,delay,  delay,dir,z,lastFrame);
+  timeoutId = setTimeout(render,delay,  delay,dir,z,lastFrame);
 }
