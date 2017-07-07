@@ -220,7 +220,7 @@ function loadSettings(target) {
     }
   }
   if (event.type === 'click') {
-    console.log('click!');
+    // console.log('click!');
     // Load settings from table to the form inputs,
     // setup object and buffer
     var index = parseInt(target.children[0].innerHTML);
@@ -255,13 +255,12 @@ function loadSettings(target) {
     // Remove temporary forces and show actual ones
     for (var i = 0; i < forceWrapper.children.length; i++) {
       // !!!Elements are being deleted, list length variable!!!
-      console.log("i:" + i);
       var force = forceWrapper.children[i];
       if (force.classList.contains('hidden')) {
         force.classList.remove('hidden');
       }
       else if (force.classList.contains('temporary')) {
-        console.log('trying to remove, i: ' + i);
+        // console.log('trying to remove, i: ' + i);
         var id = force.dataset.forceIndex;
         removeForce('',id,force);
         i --;

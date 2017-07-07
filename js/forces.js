@@ -232,7 +232,7 @@ function createForce(event, forceSettings) {
     document.getElementById('addForce').classList.remove('active');
   }
   else {
-    console.log('loading force from settings');
+    // console.log('loading force from settings');
     force.classList.add('temporary');
     // Position force in local system of the display
     var positionX = parseInt(forceSettings[0]);
@@ -267,7 +267,7 @@ function createForce(event, forceSettings) {
 // Remove all window event associated with
 // modifying force.
 function stopModifying() {
-  console.log('removing handlers');
+  // console.log('removing handlers');
   for (var i = 0; i < handlers.length; i++) {
     window.removeEventListener('mousemove', handlers[i]);
   }
@@ -286,7 +286,7 @@ var refVec = [1,0]; // reference vector indicating 0' angle
 // positions and apply to the element as rotation.
 var oldPos =[];
 function modifyDirection(force, start) {
-  console.log('modifyDirection');
+  // console.log('modifyDirection');
   var id = parseInt(force.dataset.forceIndex);
   if (forces[id].type != 2) return
   var prop = forces[id];
@@ -301,29 +301,29 @@ function modifyDirection(force, start) {
   var y = displayY - forceY - mouseY;
   if (!start) {
     // Angle between the old position and reference versor
-    console.log('-------------------');
+    // console.log('-------------------');
     var angOld = relativeAngle(oldPos);
-    console.log('angOld: ' + angOld);
+    // console.log('angOld: ' + angOld);
     // Angle between current position and reference versor
     var angNew = relativeAngle([x,y]);
-    console.log('angNew: ' + angNew);
+    // console.log('angNew: ' + angNew);
     // Delta of angles values
     var delta = angNew - angOld;
-    console.log('delta: ' + delta);
+    // console.log('delta: ' + delta);
     // Delta of angles values in absolute terms (not in terms
     // of the reference versor)
     var deltaAbs = vectorAngle(oldPos, [x,y]);
-    console.log('deltaAbs: ' + deltaAbs);
+    // console.log('deltaAbs: ' + deltaAbs);
     // Difference in deltas
     var diff = (1-Math.abs(deltaAbs/delta))
-    console.log('diff: ' + diff);
+    // console.log('diff: ' + diff);
 
     // Define rotation direction and apply to the force object
     // NOTE: '-' sign is because css rotation goes clockwise,
     // contrary to convention in this script.
     var el = force.querySelector('.rad3').parentNode;
     var rotation = parseFloat(el.dataset.rotation) || 0;
-    console.log('rotation old: ' + rotation);
+    // console.log('rotation old: ' + rotation);
     if (diff > 0.5) {
       if (delta > 0) {
         rotation += -deltaAbs;
@@ -335,7 +335,7 @@ function modifyDirection(force, start) {
     else {
       rotation += -delta;
     }
-    console.log('rotation new: ' + rotation);
+    // console.log('rotation new: ' + rotation);
     // Apply new direction to the force
     prop.rad3 = -rotation + 6.283/4;
     // APPLY CHANGE TO THE ELEMENT STYLE
@@ -347,7 +347,7 @@ function modifyDirection(force, start) {
 // ========================================
 var xOld, yOld, lOld ;
 function modifyRangeDirection(force, start) {
-  console.log('modifyRange');
+  // console.log('modifyRange');
   var id = parseInt(force.dataset.forceIndex);
   var prop = forces[id];
   // Read current cursor position;
@@ -359,21 +359,21 @@ function modifyRangeDirection(force, start) {
   var x = mouseX - (displayX + forceX);
   displayY = display.offsetTop;
   var y = displayY - forceY - mouseY;
-  console.log('x: ' + x);
-  console.log('y: ' + y);
+  // console.log('x: ' + x);
+  // console.log('y: ' + y);
   if (!start) {
     // Define change in direction
       // Angular distance between new point and
       // reference vector [1,0]
       relativeDeltaNew = relativeAngle([x,y]);
-      console.log('relativeDeltaNew: ' + relativeDeltaNew);
+      // console.log('relativeDeltaNew: ' + relativeDeltaNew);
       // Angular distance between old point and r.v. [1,0]
       relativeDeltaOld = relativeAngle([xOld,yOld]);
-      console.log('relativeDeltaOld: ' + relativeDeltaOld);
+      // console.log('relativeDeltaOld: ' + relativeDeltaOld);
       // Difference
       relativeDelta = relativeDeltaNew - relativeDeltaOld;
       angleDelta = relativeDelta;
-      console.log('angleDelta: '+ angleDelta);
+      // console.log('angleDelta: '+ angleDelta);
       // Rotate influence borders (rad1 rad2)
       prop.rad1 += angleDelta;
       prop.rad2 += angleDelta;
@@ -390,7 +390,7 @@ function modifyRangeDirection(force, start) {
   yOld = y;
 }
 function modifyRangeCone(force, start) {
-  console.log('modifyRangeCone');
+  // console.log('modifyRangeCone');
   var id = parseInt(force.dataset.forceIndex);
   var prop = forces[id];
   // Read current cursor position;
@@ -402,8 +402,8 @@ function modifyRangeCone(force, start) {
   var x = mouseX - (displayX + forceX);
   displayY = display.offsetTop;
   var y = displayY - forceY - mouseY;
-  console.log('x: ' + x);
-  console.log('y: ' + y);
+  // console.log('x: ' + x);
+  // console.log('y: ' + y);
   // Calculate projection of vector
     var rad1 = prop.rad1;
     var rad2 = prop.rad2;
@@ -475,7 +475,7 @@ function modifyRangeCone(force, start) {
 }
 // ========================================
 function modifyValue(force, start) {
-  console.log('modifyValue');
+  // console.log('modifyValue');
   var id = parseInt(force.dataset.forceIndex);
   var prop = forces[id];
   // Read current cursor position;
@@ -487,8 +487,8 @@ function modifyValue(force, start) {
   var x = mouseX - (displayX + forceX);
   displayY = display.offsetTop;
   var y = displayY - forceY - mouseY;
-  console.log('x: ' + x);
-  console.log('y: ' + y);
+  // console.log('x: ' + x);
+  // console.log('y: ' + y);
   // Calculate projection of vector
   if (start) {
     // Versor of reference for cursor movements
@@ -526,8 +526,8 @@ function modifyValue(force, start) {
 }
 // ========================================
 function modifyType(type, force, id) {
-  console.log('modifyType');
-  console.log('type: ' + type);
+  // console.log('modifyType');
+  // console.log('type: ' + type);
   if (typeof(type) !== 'number') {
   this.removeEventListener('mousedown', modifyType);
   this.dataset.dbclick = false;
