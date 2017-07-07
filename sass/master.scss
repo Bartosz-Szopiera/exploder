@@ -136,9 +136,6 @@ a {
       display: none;
     }
   }
-  // &:not(.scrolled) {
-  //   box-shadow: 20px -10px 20px 0 rgba(0,0,0,0.5) inset;
-  // }
   &:not(.scrolled) {
     background: linear-gradient(to top, rgba(0,0,0,0.55) 0px, transparent 70px);
   }
@@ -154,6 +151,28 @@ a {
       cursor: pointer;
       color: $brightGreen;
     }
+  }
+}
+// ===================================
+#inputAlert, .inputAlert {
+  position: absolute;
+  left: 3px;
+  top: -3px;
+  transform: translate(0%,-100%);
+  min-width: 150px;
+  max-width: 300px;
+  padding: 15px 10px;
+  border: 1px solid $consoleGreen;
+  font-size: 1em;
+  color: $consoleGreen;
+  overflow-wrap: break-word;
+  background: rgba(0,0,0,0.65);
+  transition: transform 0.5s;
+  &.hidden {
+    transform: translate(-110%,-100%);
+  }
+  &.proto {
+    display: none;
   }
 }
 // ===================================

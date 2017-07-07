@@ -42,6 +42,8 @@ function getSettings() {
 function addSymbol() {
   var activeCells = document.querySelectorAll('.cell.active');
   if (activeCells.length == 0) {
+    var text = 'Draw your symbol in the above grid.';
+    inputAlert(text);
     return console.log('Draw your symbol in the above grid.')
   }
 
@@ -67,6 +69,8 @@ function getData() {
 function changeSymbol() {
   var activeCells = document.querySelectorAll('.cell.active');
   if (activeCells.length == 0) {
+    var text = 'Draw your symbol in the above grid.';
+    inputAlert(text);
     return console.log('Draw your symbol in the above grid.')
   }
   // Do initial validation (any final vaidation takes place
@@ -75,12 +79,16 @@ function changeSymbol() {
   symbolCode = document.querySelector('#symbolCode').value;
   // Is symbol to edit defined?
   if (currentSymbol == '') {
-    return console.log('Choose symbol to edit or provide its code in \'Current Symbol\' field.')
+    var text = 'Choose symbol to edit or provide its code in \'Current Symbol\' field.';
+    inputAlert(text);
+    return console.log(text)
   }
   // Is session started?
   if (document.cookie.search('PHPSESSID') == -1 ||
       document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in to edit.')
+      var text = 'You need to log-in to edit.';
+      inputAlert(text);
+      return console.log(text)
   }
   // Laod symbol from the grid
   var inputX = document.querySelector('#newSymbolX');
@@ -101,12 +109,16 @@ function deleteSymbol() {
   currentSymbol = document.querySelector('#currentSymbol').value;
   // Is symbol to edit defined?
   if (currentSymbol == '') {
-    return console.log('Choose symbol to delete or provide its code in \'Current Symbol\' field.')
+    var text = 'Choose symbol to delete or provide its code in \'Current Symbol\' field.';
+    inputAlert(text);
+    return console.log(text)
   }
   // Is session started?
   if (document.cookie.search('PHPSESSID') == -1 ||
       document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in to delete.')
+      var text = 'You need to log-in to delete.';
+      inputAlert(text);
+      return console.log(text)
   }
 
   var text = "Do you really want to delete current symbol?";
@@ -121,12 +133,16 @@ function changeSettings() {
   currentSettings = document.querySelector('#currentSettings').value;
   // Is symbol to edit defined?
   if (currentSettings == '') {
-    return console.log('Choose settings to change or provide their name in \'Current Settings\' field.')
+    var text = 'Choose settings to change or provide their name in \'Current Settings\' field.';
+    inputAlert(text);
+    return console.log(text)
   }
   // Is session started?
   if (document.cookie.search('PHPSESSID') == -1 ||
       document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in for this action.')
+        var text = 'You need to log-in for this action.';
+        inputAlert(text);
+      return console.log(text)
   }
 
   var text = "Do you really want to change current settings?";
@@ -141,12 +157,16 @@ function deleteSettings() {
   currentSettings = document.querySelector('#currentSettings').value;
   // Is symbol to edit defined?
   if (currentSettings == '') {
-    return console.log('Choose settings to delete or provide their name in \'Current Settings\' field.')
+    var text = 'Choose settings to delete or provide their name in \'Settings to edit\' field.';
+    inputAlert(text);
+    return console.log(text)
   }
   // Is session started?
   if (document.cookie.search('PHPSESSID') == -1 ||
       document.querySelector('.userProfile.logged') == null) {
-      return console.log('You need to log-in for this action.')
+        var text = 'You need to log-in for this action.';
+        inputAlert(text);
+      return console.log(text)
   }
 
   var text = "Do you really want to delete current settings?";
@@ -202,6 +222,7 @@ function ajaxRequest(method,postData,url,callback1, callback2) {
             var response = JSON.parse(xhr.responseText);
             console.log(response.success);
             console.log(response.msg);
+            inputAlert(response.msg);
           }
           catch (e) {
             var response = xhr.responseText;
@@ -209,7 +230,7 @@ function ajaxRequest(method,postData,url,callback1, callback2) {
               'There was an error: \n -> '
               + e + '\n'
               + 'Complete server response: \n -->'
-              + xhr.responseText
+              + response
             );
           }
         }
