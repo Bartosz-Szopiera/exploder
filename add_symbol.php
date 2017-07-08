@@ -35,7 +35,7 @@ elseif (mysqli_num_rows($result) > 0) {
 }
 // -----Check for symbol of the same name-------
 $query = "SELECT * FROM symbols
-          WHERE symbol_code ='$symbol_code'";
+          WHERE symbol_code COLLATE latin1_general_cs ='$symbol_code'";
 if (!$result = mysqli_query($dbc,$query)) {
   die('Error: ' . mysqli_error($dbc));
 }
