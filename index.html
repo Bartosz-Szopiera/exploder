@@ -58,10 +58,10 @@
               <form id="settingsForm"></form>
             </div>
             <div class="sliders settingsForm">
-              <h4>Explosion Settings (WIP)</h4>
+              <h4>Explosion Settings</h4>
               <div class="input">
                 <label for="speed">Speed</label>
-                <input id="speed" form="settingsForm" type="range" min="1" max="25" step="1" name="speed" value="30" oninput="takeInput(this)">
+                <input id="speed" form="settingsForm" type="range" min="1" max="25" step="1" name="speed" value="15" oninput="takeInput(this)">
               </div>
               <div class="input">
                 <label for="duration">Duration</label>
@@ -172,11 +172,9 @@
           </div>
           <div class="tab about hidden">
             <div class="text">
-              <p>Hi!</p>
-              <p>This website was created as a small project for making something fun while learning PHP and AJAX on the way.It could certainly use some polishing but main functionalities I wanted to implement work as planned.</p><br>
-              <p>I am currently on a lookout for a job as a junior front-end developer.</p>
-              <p>If you are interested you can contact me through <a href="#">e-mail</a> or social media: </p>
-              <p>Also checkout my GitHub if you like.</p>
+              <p>This website was created as a small project for making something fun while learning JavaScript, PHP and AJAX and pushing myself for doing something more complex. It could use some polishing but it works more or less as I wanted.</p><br>
+              <p>I am currently on a lookout for my first job as a front-end developer.</p>
+              <p><a class="email" href="mailto:bartosz.szopiera@gmail.com" title="Open your e-mail client.">bartosz.szopiera@gmail.com</a> | <a href="http://testserver.pl">testserver.pl</a> | <a href="https://github.com/bart5" target="_blank">GitHub</a> | <a href="https://www.facebook.com/bartosz.szopiera">Facebook</a></p>
             </div>
           </div>
         </div>
@@ -297,7 +295,7 @@
       </div>
       <!-- <div class="centerLine debuggingStuff"></div> -->
       </div>
-      <div id="help" onscroll="checkScroll(this)">
+      <div id="help" class="fullScreen">
         <div class="openHelp" onclick="this.parentNode.classList.toggle('hidden')">INFO</div>
         <p>To show or hide this text click 'INFO' in right-top of the screen.</p>
         <br>
@@ -319,7 +317,7 @@
                 <p>Middle ring redirects area of influence.</p>
               </li>
               <li>
-                <p>Red ring indicates power.</p>
+                <p>Big outer ring indicates force value (double-click to change sign).</p>
               </li>
               <li>
                 <p>Relocate the force by dragging the central dot.</p>
@@ -350,7 +348,7 @@
         <br>
         <p>After you create profile in 'Your Profile' tab you can use Symbol Editor to create your own symbols (to load custom symbol type: &lt;mySymbol&gt;). Also you can save Explosion Settings covering the text and setup of forces.</p>
         <br>
-        <p>This is a work in progress and new features are on their way.</p>
+        <p>This is a work in progress.</p>
       </div>
     </main>
   </body>
