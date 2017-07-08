@@ -175,7 +175,11 @@ function createForce(event, forceSettings) {
     if(valueElement.dataset.dbclick == true) return
     modifyValue(force, true);
     // Drag to move force:
-    var handler = function(){modifyValue(force)};
+    var handler = function(){
+      modifyValue(force);
+      // Do not list for db-click after draggin
+      valueElement.removeEventListener('mouseup', dbClick);
+    };
     handlers.push(handler);
     window.addEventListener('mousemove', handler);
     // Stop dragging behavior
