@@ -328,21 +328,15 @@ function removePixels() {
 // It's used to hide pixels from display
 // when entering Symbols Editor
 function hidePixels() {
-  var pixels = document.querySelectorAll('.pixel');
-  for (var i = 0; i < pixels.length; i++) {
-    pixels[i].classList.add('hidden');
-  }
-  var forceWrapper = document.querySelector('#forceWrapper');
-  forceWrapper.style.display = 'none';
+  var styleSheet = document.querySelector('style').sheet;
+  styleSheet.insertRule('.display .pixel {display:none}',0);
 }
 // ========================================
 function showPixels() {
-  var pixels = document.querySelectorAll('.pixel');
-  for (var i = 0; i < pixels.length; i++) {
-    pixels[i].classList.remove('hidden');
+  var styleSheet = document.querySelector('style').sheet;
+  if (styleSheet.rules.length !== 0) {
+    styleSheet.deleteRule(0);
   }
-  var forceWrapper = document.querySelector('#forceWrapper');
-  forceWrapper.style.display = 'unset';
 }
 // ========================================
 // Display grid for creating and editing symbols
