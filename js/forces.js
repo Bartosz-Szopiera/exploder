@@ -36,10 +36,17 @@ function drawValue(canvas, id) {
   var ctx = canvas.getContext('2d');
   var centerX = canvas.width*0.5;
   var centerY = canvas.height*0.5;
+
   ctx.beginPath();
+
   var value = forces[id].value;
+  if (value > 0) var color = 'rgba(190, 42, 42, 0.55)';
+  else var color = 'rgba(88, 89, 142, 0.55)';
+  ctx.strokeStyle = color;
+  value = value > 0 ? value : -value;
+
   ctx.lineWidth = (centerX - 50) * value;
-  ctx.strokeStyle = 'rgba(200,30,30,0.7)';
+
   // Define parameter of the arc for the default force
   var radius = (centerX - 50) * 0.5 * value + 50;
   var rad1 = forces[id].rad1;
@@ -62,14 +69,6 @@ function updateRange(id, force) {
 function updateValue(id, force) {
   var valueCanvas = force.querySelector('canvas.value');
   drawValue(valueCanvas, id);
-}
-// ========================================
-function updateDirection(id, force) {
-
-}
-// ========================================
-function updateRotation(id) {
-
 }
 // ========================================
 function updateType(id) {
@@ -173,11 +172,25 @@ function createForce(event, forceSettings) {
   });
   // Control force value
   valueElement.addEventListener('mousedown', function(){
+    if(valueElement.dataset.dbclick == true) return
     modifyValue(force, true);
+    // Drag to move force:
     var handler = function(){modifyValue(force)};
     handlers.push(handler);
     window.addEventListener('mousemove', handler);
+    // Stop dragging behavior
     window.addEventListener('mouseup', stopModifying);
+    // Allow doubleclick to change type
+    valueElement.addEventListener('mouseup', dbClick);
+    function dbClick() {
+      valueElement.dataset.dbclick = true;
+      valueElement.addEventListener('mousedown', valueSign);
+      setTimeout(function(element){
+        element.removeEventListener('mousedown', valueSign);
+        element.dataset.dbclick = false;
+      }, 250, valueElement);
+      valueElement.removeEventListener('mouseup', dbClick);
+    }
   });
   // Control force type and force location
   typeElement.addEventListener('mousedown', function(){
@@ -478,6 +491,7 @@ function modifyValue(force, start) {
   // console.log('modifyValue');
   var id = parseInt(force.dataset.forceIndex);
   var prop = forces[id];
+  var sign = prop.value/Math.abs(prop.value);
   // Read current cursor position;
   mouseX = event.clientX;
   mouseY = event.clientY;
@@ -509,15 +523,17 @@ function modifyValue(force, start) {
       var delta = vectorLength(lNew) - vectorLength(lOld);
       // Change range cone relative to the cursor movement
       if (vectorAngle(lNew,refVersor) < Math.PI*0.5) {
-        prop.value += 0.1*delta/12.8;
-        prop.value = Math.max(prop.value, 0.1);
-        prop.value = Math.min(prop.value, 1.0);
+        prop.value += 0.1*delta/12.8*sign;
+        prop.value = Math.max(prop.value*sign, 0.1);
+        prop.value = Math.min(prop.value*sign, 1.0);
       }
       else if (vectorAngle(lNew,refVersor) > Math.PI*0.5) {
-        prop.value -= 0.1*delta/12.8;
-        prop.value = Math.max(prop.value, 0.1);
-        prop.value = Math.min(prop.value, 1.0);
+        prop.value -= 0.1*delta/12.8*sign;
+        prop.value = Math.max(prop.value*sign, 0.1);
+        prop.value = Math.min(prop.value*sign, 1.0);
       }
+    // Apply proper sign
+    // prop.value *= sign;
     // Apply change to the element graphics
     updateValue(id, force);
   }
@@ -668,6 +684,16 @@ function focusForce() {
   }
 }
 // ========================================
+// Reverse force value sign and change valueElement
+// color
+function valueSign() {
+  var force = this.parentNode.parentNode;
+  var id = force.dataset.forceIndex;
+  forces[id].value *= (-1);
+  this.classList.toggle('negative');
+  drawValue(this,id);
+}
+// ========================================
 // Show context menu if multiple forces are
 // stacked on top of each other.
 function forceContexMenu() {
@@ -739,10 +765,3 @@ function sumVector(v1,v2) {
   return [v1[0]+v2[0],v1[1]+v2[1]]
 }
 // ========================================
-function setupForce(id, settings) {
-  var forceSettings = forces[id];
-  var selector = '.force [data-force-index="' + id +'"]';
-  var forceElement = document.querySelector(selector);
-
-
-}
