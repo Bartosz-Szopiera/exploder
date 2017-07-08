@@ -13,6 +13,7 @@ var coeX = [];
 var coordinates = {}; // Object for all symbols coordinates
 var widths = {}; // Object for all symbols widths
 var readyInput = []; // List of symbols to display
+var symbolSpacing = 0.25;
 var localData = {
   'settings'  : null,
   'forces' : null,
@@ -78,6 +79,7 @@ function evaluateInputText() {
     var symbol = text[i];
     // '<' indicate code for special symbol
     // unless escaped with '<' itself
+    var special;
     if (symbol == '<') { //Special symbol case
       var codeStart = i;
       var codeEnd = text.indexOf('>',codeStart);
@@ -86,18 +88,24 @@ function evaluateInputText() {
       // code for special symbol can't have ' ' in it
       // so in this case '<' is just regular symbol
       if (code == '' || code.indexOf(' ') != -1) {
-        var fail = true;
-        break
+        special = false;
       }
-      var index = dictionary.indexOf(code);
-      readyInput.push(code);
-      i = i + code.length + 1; //Skip next few symbols
+      else {
+        special = true;
+        var index = dictionary.indexOf(code);
+        readyInput.push(code);
+        i = i + code.length + 1; //Skip symbols equal code length
+      }
     }
-    else if (true || fail) { //Regular symbol case
+    if (!special) { //Regular symbol case
       var index = dictionary.indexOf(symbol);
       readyInput.push(symbol);
     }
-    if (index == -1) { //Invalid input case
+    // ---------
+    if (symbol == ' ') {
+      readyInput.push(symbol);
+    }
+    else if (index == -1) { //Invalid input case
       var msg = (code == 'undefined' ? symbol : code);
       return console.log('Unrecognized symbol/code: '+ msg +'.');
     }
@@ -113,14 +121,18 @@ function createBatch(text) {
   batch = []; //Clear batch
   var textLen = 0;
   for (var i = 0; i < text.length; i++) { //Each symbol
-    var coords = []
-    var symbol = coordinates[text[i]];
+    if (text[i] === ' ') { // Spot space
+      textLen += (1 - symbolSpacing);
+      continue;
+    }
+    var coords = [];
+    var symbol = coordinates[text[i]]; // Aggregated pixels
     for (var j = 0; j < symbol.length; j++) { //Each pixel
       coords.push([symbol[j][0],symbol[j][1]]); //save coords
       coords[j][0] += textLen; //push symbol to the end of text
     }
     batch.push.apply(batch, coords); //Append batch
-    textLen += widths[text[i]]; //Bump up total width
+    textLen += widths[text[i]] + symbolSpacing; //Bump up total width
   }
   // Call function to draw pixels
   layout(batch,-textWidth(batch)/2,-overBaseTextHeight(batch)/2);
