@@ -1,3 +1,11 @@
+// =========================================
+// Routines providing general functionality
+// =========================================
+buildGrid(400,200);
+addListeners();
+isLogged();
+panelsObserver();
+windowListeners();
 // ========================================
 // Show or hide tabs acoording to which one
 // was clicked
