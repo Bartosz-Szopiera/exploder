@@ -1,11 +1,3 @@
-// =========================================
-// Routines providing general functionality
-// =========================================
-buildGrid(400,200);
-addListeners();
-isLogged();
-panelsObserver();
-windowListeners();
 // ========================================
 // Show or hide tabs acoording to which one
 // was clicked
@@ -69,6 +61,7 @@ function showTab(el) {
   showGrid();
   hideForces();
 }
+// ========================================
 function tabListener() {
   if (this.classList.contains('active')){
     this.removeEventListener('click',tabListener);
@@ -476,7 +469,11 @@ function hideForces() {
 }
 // ========================================
 function panelsObserver() {
-  var observer = new MutationObserver(adjustDisplay);
+  var callback = function(){
+    adjustDisplay();
+    adjustHelp();
+  }
+  var observer = new MutationObserver(callback);
   var target = document.querySelector('.labels');
   var config = {attributes: true, attributeFilter: ['class']};
   observer.observe(target, config);
@@ -593,5 +590,13 @@ function inputAlert(text) {
       },550,clone,parent);
     }
   },2000*text.length/20,clone);
+}
+// ========================================
+function adjustHelp() {
+  var help = document.querySelector('#help');
+  var labels = document.querySelector('.labels');
+  var logic = labels.classList.contains('active');
+  if (logic)  help.classList.remove('fullScreen');
+  else        help.classList.add('fullScreen');
 }
 // ========================================
