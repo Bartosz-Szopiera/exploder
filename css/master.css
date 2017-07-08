@@ -155,6 +155,7 @@ a {
   #protoForce.hidden, .force.hidden {
     display: none; }
   #protoForce .wrap, .force .wrap {
+    z-index: 1;
     width: 0px;
     height: 0px;
     display: flex;
