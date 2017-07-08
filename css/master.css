@@ -43,14 +43,16 @@ a {
   border: 2px dashed red;
   background: #deb91b; }
 
-#controls .apply {
-  width: 300px; }
-#controls.ready .apply {
-  display: none; }
-#controls .play {
-  width: 150px; }
-#controls:not(.ready) .play {
-  display: none; }
+#controls {
+  z-index: 15; }
+  #controls .apply {
+    width: 300px; }
+  #controls.ready .apply {
+    display: none; }
+  #controls .play {
+    width: 150px; }
+  #controls:not(.ready) .play {
+    display: none; }
 
 #alert {
   display: none;
@@ -89,24 +91,31 @@ a {
 
 #help {
   position: absolute;
+  box-sizing: border-box;
   top: 100px;
   left: 0px;
   right: 0px;
   bottom: 200px;
   font-size: 1em;
   margin: 0px 10%;
-  overflow-y: scroll; }
+  padding: 15px;
+  overflow-y: scroll;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.85); }
+  #help.fullScreen {
+    bottom: 20px; }
   #help::-webkit-scrollbar {
     display: none; }
   #help.hidden {
-    width: 0px; }
+    width: 0px;
+    padding: 0px; }
     #help.hidden > *:not(.openHelp) {
       display: none; }
   #help:not(.scrolled) {
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0px, transparent 70px); }
+    background: linear-gradient(to top, black 0px, rgba(0, 0, 0, 0.85) 70px); }
   #help .openHelp {
     position: fixed;
-    top: 15px;
+    top: 10px;
     right: 15px;
     height: 25px;
     width: auto;
@@ -139,9 +148,10 @@ a {
   width: 0px;
   height: 0px;
   position: absolute;
-  display: flex; }
+  display: flex;
+  z-index: 1; }
   #protoForce.front, .force.front {
-    z-index: 3; }
+    z-index: 2; }
   #protoForce.hidden, .force.hidden {
     display: none; }
   #protoForce .wrap, .force .wrap {
@@ -169,7 +179,9 @@ a {
   #protoForce canvas, .force canvas {
     border-radius: 50%; }
     #protoForce canvas.value, .force canvas.value {
-      background: rgba(255, 110, 110, 0.1); }
+      background: rgba(190, 42, 42, 0.15); }
+    #protoForce canvas.negative, .force canvas.negative {
+      background: rgba(88, 89, 142, 0.15); }
     #protoForce canvas.range, .force canvas.range {
       border: 1px solid; }
   #protoForce .type, .force .type {
@@ -200,7 +212,7 @@ a {
   transform: translate(0, -50%); }
 
 .sidePanel {
-  z-index: 10;
+  z-index: 15;
   box-sizing: border-box;
   position: absolute;
   height: 100%;
@@ -255,7 +267,7 @@ body {
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none; }
-    body main * {
+    body main > * {
       z-index: 2; }
     body main .background::before {
       content: '';
@@ -334,7 +346,7 @@ body {
       body main .tableWrapper table .row.prototype {
         display: none; }
     body main .database {
-      z-index: 10;
+      z-index: 15;
       box-sizing: border-box;
       position: absolute;
       width: 300px;
@@ -365,9 +377,11 @@ body {
       body main .database.tabHidden {
         display: none; }
     body main div.textToExplode {
+      position: relative;
       padding: 10px 0px;
       margin: auto;
-      width: 100%; }
+      width: 100%;
+      z-index: 15; }
       body main div.textToExplode input {
         display: block;
         margin: auto;
@@ -418,7 +432,7 @@ body {
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
-      z-index: 10; }
+      z-index: 25; }
       body main .tabs .labels {
         width: 100%;
         height: 1em;
@@ -487,19 +501,21 @@ body {
                 padding: 0px;
                 margin: 0px;
                 height: 20px; }
-        body main .tabs .panels > div.settings:not(.hidden) .sliders div.input {
-          box-sizing: border-box;
-          background: rgba(0, 0, 0, 0.25); }
-          body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"] {
-            flex: 0 1 auto;
-            height: 2px;
-            width: 50%;
-            background: rgba(39, 117, 35, 0.25);
-            -webkit-appearance: none; }
-            body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"]:focus {
-              outline: none; }
-            body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"]:hover {
-              cursor: pointer; }
+        body main .tabs .panels > div.settings:not(.hidden) {
+          z-index: 16; }
+          body main .tabs .panels > div.settings:not(.hidden) .sliders div.input {
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.25); }
+            body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"] {
+              flex: 0 1 auto;
+              height: 2px;
+              width: 50%;
+              background: rgba(39, 117, 35, 0.25);
+              -webkit-appearance: none; }
+              body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"]:focus {
+                outline: none; }
+              body main .tabs .panels > div.settings:not(.hidden) .sliders div.input input[type="range"]:hover {
+                cursor: pointer; }
         body main .tabs .panels > div.profile:not(.hidden) > div {
           height: 100%; }
           body main .tabs .panels > div.profile:not(.hidden) > div.userProfile:not(.logged) #logout {
@@ -512,6 +528,15 @@ body {
           overflow-y: scroll; }
           body main .tabs .panels > div.about:not(.hidden) .text p {
             height: auto; }
+        body main .tabs .panels > div.about:not(.hidden) a {
+          text-decoration: underline; }
+          body main .tabs .panels > div.about:not(.hidden) a:hover {
+            cursor: pointer;
+            color: #18e753; }
+        body main .tabs .panels > div.about:not(.hidden) .email {
+          user-select: text;
+          -webkit-user-select: text;
+          -moz-user-select: text; }
 
 div.display {
   position: fixed;
