@@ -35,8 +35,8 @@ var keys = ['speed','duration'];
 //   'speed'   : 30 // Pixel movements per second
 // }
 var setup = {
-  'speed'   : 30, // Pixel movements per second
-  'duration'   : 30, // Pixel movements per second
+  'speed'   : 15, // Pixel movements per second
+  'duration'   : 3, // Pixel movements per second
 }
 // ==========================================
 // Convert server response to a more convenient format
@@ -274,8 +274,8 @@ function applyForce(i,j,id,fps) {
   else if (forces[id].type === 3) { // Vortex
     var length = vectorLength([localX, localY]);
     var angle = relativeAngle([localX, localY]);
-    // var angularMove = 6.28/360*value*speed/fps/length;
-    var angularMove = 6.28/360*value*speed/fps;
+    var angularMove = 6.28/360*value*speed/fps/length;
+    // var angularMove = 6.28/360*value*speed/fps;
     var endAngle = angle + angularMove;
     var endVersor = angToVersor(endAngle);
     var x = endVersor[0]*length;
@@ -393,7 +393,7 @@ function simulate() {
 function restore() { //POSSIBLY OBSOLETE
 // Restore initial position of pixels
   window.clearTimeout(timeoutId); //stop animation
-  
+
   var x,y;
   if (pixels!==undefined) {
     for (var i = 0; i < pixels.length; i++) {
@@ -430,6 +430,7 @@ function loosePixels() {
 // or backwards (dir=-1).
 
 function play(dir, fps) {
+  window.clearTimeout(timeoutId); //stop animation
   var delay = 1000/fps;
   var skip = 60/fps; // 60-> 1, 30 -> etc.
   // var iterations = position.length;
