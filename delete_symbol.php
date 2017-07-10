@@ -20,7 +20,7 @@ $user_name = $_SESSION['user_name'];
 $current_symbol = $_POST['current_symbol'];
 
 $query = "SELECT * FROM symbols WHERE
-          symbol_code='$current_symbol'";
+          symbol_code COLLATE latin1_general_cs ='$current_symbol'";
 $result = mysqli_query($dbc, $query);
 if (!$result) {die('ERROR: ' . mysqli_error($dbc));}
 $data = mysqli_fetch_all($result, MYSQLI_ASSOC);

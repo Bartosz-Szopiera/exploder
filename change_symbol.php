@@ -23,7 +23,7 @@ $coordsX = $_POST['coordsX'];
 $coordsY = $_POST['coordsY'];
 
 $query = "SELECT * FROM symbols WHERE
-          symbol_code='$current_symbol'";
+          symbol_code COLLATE latin1_general_cs ='$current_symbol'";
 if (!$result = mysqli_query($dbc,$query)) {
   die('Error: ' . mysqli_error($dbc));
 }
