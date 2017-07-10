@@ -273,7 +273,7 @@ function loadSettings(target) {
 // Load symbol to editor grid from the table
 function loadSymbol(target) {
   resetEditor();
-  var symbolCode = target.children[2].innerHTML;
+  var symbolCode = target.children[2].textContent;
   var coords = coordinates[symbolCode];
   var symbolWidth = widths[symbolCode];
   var symbolHeight = textHeight(coords);
