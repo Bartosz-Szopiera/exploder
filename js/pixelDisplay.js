@@ -74,13 +74,18 @@ function adaptServerData() {
 function evaluateInputText() {
   target = document.querySelector('#textInput');
   var text = target.value;
+  // Deal with apostrophes
+  do {
+    text = text.replace("'","<aps>")
+  } while (text.indexOf("'") !== -1);
+
   readyInput = [];
   for (var i = 0; i < text.length; i++) {
     var symbol = text[i];
     // '<' indicate code for special symbol
     // unless escaped with '<' itself
-    var special;
-    if (symbol == '<') { //Special symbol case
+    var special = '';
+    if (symbol === '<') { //Special symbol case
       var codeStart = i;
       var codeEnd = text.indexOf('>',codeStart);
       var code = text.substring(codeStart + 1,codeEnd);
