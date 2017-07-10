@@ -394,6 +394,7 @@ body {
       display: flex;
       flex-flow: column nowrap;
       height: auto;
+      max-height: 100%;
     }
     & .tableWrapper .tableHeader th {
       border-bottom: 1px solid $consoleGreen;
