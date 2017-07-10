@@ -13,7 +13,7 @@ var coeX = [];
 var coordinates = {}; // Object for all symbols coordinates
 var widths = {}; // Object for all symbols widths
 var readyInput = []; // List of symbols to display
-var symbolSpacing = 0.25;
+var symbolSpacing = 0.75;
 var localData = {
   'settings'  : null,
   'forces' : null,
@@ -107,6 +107,8 @@ function evaluateInputText() {
     }
     else if (index == -1) { //Invalid input case
       var msg = (code == 'undefined' ? symbol : code);
+      var text = 'Unrecognized symbol/code: '+ msg +'.';
+      inputAlert(text);
       return console.log('Unrecognized symbol/code: '+ msg +'.');
     }
   }
