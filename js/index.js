@@ -200,6 +200,7 @@ function loadSettings(target) {
   if (event.type === 'mouseenter') {
     // Load settings from table to the form inputs
     var index = parseInt(target.children[0].innerHTML);
+
     for (var i = 0; i < inputs.length; i++) {
       // inputs[i].value = parseFloat(settings[index][i + 2]);
       inputs[i].value = parseFloat(settings[index][i + 3]);
@@ -232,6 +233,8 @@ function loadSettings(target) {
       setup[keys[i]] = value; // Set setup variable
       setupBuffer[i] = value; // Store into buffer
     }
+    // Settings Id
+    document.querySelector('#settingsId').value = settings[index][0];
     // Set settings name in text input fields
     var currentSettings = document.querySelector('#currentSettings');
     currentSettings.value = target.children[2].innerHTML;
