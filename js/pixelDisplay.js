@@ -71,9 +71,12 @@ function adaptServerData() {
 }
 // ========================================
 // Scan text for known codenames of symbols
-function evaluateInputText() {
-  target = document.querySelector('#textInput');
-  var text = target.value;
+function evaluateInputText(text) {
+  console.log('evaluate');
+  if (text === undefined) {
+    target = document.querySelector('#textInput');
+    var text = target.value;
+  }
   // Deal with apostrophes
   do {
     text = text.replace("'","<aps>")
@@ -125,6 +128,7 @@ function evaluateInputText() {
 // coordinates.
 // text = readyInput
 function createBatch(text) {
+  console.log('make batch');
   batch = []; //Clear batch
   var textLen = 0;
   for (var i = 0; i < text.length; i++) { //Each symbol
@@ -187,6 +191,7 @@ function textWidth(array) {
 }
 // ==========================================
 function layout(el,shift_x,shift_y) {
+  console.log('layout');
 // Create pixels for given element based on 'el'
 // and move them all to proper location defined
 // in global coordinates (.display = 0,0).
@@ -479,4 +484,22 @@ function render(delay,dir,z,lastFrame) {
 
   z ++;
   timeoutId = setTimeout(render,delay,  delay,dir,z,lastFrame);
+}
+// ========================================
+// Play the sequence according to selected
+// text, settings and play direction.
+var sequenceTexts = [];
+var sequenceSettings = [];
+var sequenceDirs = [];
+
+
+//
+
+function playSequence(argument) {
+
+  for (var i = 0; i < sequenceTexts.length; i++) {
+    var text = sequenceTexts[i];
+    evaluateInputText(text); //Now text is on the display
+  }
+
 }
