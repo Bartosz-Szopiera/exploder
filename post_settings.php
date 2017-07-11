@@ -12,7 +12,8 @@ if (!session_id()) {
   session_start();
 }
 if (!isset($_SESSION['logged'])) {
-  die('Please log-in or create a new account.');
+  $response['success'] = false;
+  $response['msg'] = 'You are not logged-in.';
 }
 
 $post = json_decode(file_get_contents('php://input'), true);
