@@ -16,7 +16,6 @@ if (!isset($_SESSION['logged'])) {
   $response['msg'] = 'You are not logged-in.';
 }
 
-$current_settings = $_POST['current_settings'];
 $settings_id = $_POST['settings_id'];
 $user_name = $_SESSION['user_name'];
 
