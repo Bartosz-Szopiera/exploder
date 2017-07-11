@@ -145,9 +145,22 @@ function changeSettings() {
       return console.log(text)
   }
 
+  var current_settings = document.querySelector('#currentSettings').value;
+  var settings_name = document.querySelector('#settingsName').value;
+  var settings_id = document.querySelector('#settingsId').value;
+  if (settings_name === '') console.log('Settings name is missing.');
+  var postData = {
+    'current_settings'  : current_settings,
+    'settings_name'     : settings_name,
+    'settings'  : setup,
+    'forces'    : forces,
+    'settings_id' : settings_id,
+  }
+
   var text = "Do you really want to change current settings?";
   showAlert(text, function(){
-    ajaxRequest('POST','settingsForm','change_settings.php', getData);
+    ajaxRequest('POST', postData, 'change_settings.php', getData);
+    // ajaxRequest('POST','settingsForm','change_settings.php', getData);
   });
 }
 // ========================================
