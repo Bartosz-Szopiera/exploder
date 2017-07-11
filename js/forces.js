@@ -269,6 +269,9 @@ function createForce(event, forceSettings) {
         'type'      : type,
       }
     });
+    if (forces[forceIndex].value < 0) {
+      valueElement.classList.add('negative');
+    }
     if (type !== 1) modifyType(type, force, forceIndex)
   }
   // Add force to the list in the force settings panel
