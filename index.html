@@ -41,7 +41,7 @@
             <div class="explosion">
               <div class="input">
                 <label for="currentSettings">Settings to edit</label>
-                <input id="currentSettings" form="settingsForm" type="text" name="current_settings" placeholder="New Settings">
+                <input id="currentSettings" disabled form="settingsForm" type="text" name="current_settings" placeholder="New Settings">
               </div>
               <div class="input">
                 <label for="settingsName">Settings name</label>
@@ -56,6 +56,7 @@
               <div class="input submit">
                 <button form="settingsForm" formaction="javascript:deleteSettings()">Delete Current</button>
               </div>
+              <input id="settingsId" form="settingsForm" type="text" hidden name="settings_id" value="">
               <form id="settingsForm"></form>
             </div>
             <div class="sliders settingsForm">
