@@ -13,14 +13,15 @@ if (!session_id()) {
 }
 if (!isset($_SESSION['logged'])) {
   $response['success'] = false;
-  $response['msg'] = '';
+  $response['msg'] = 'You are not logged-in.';
 }
 
 $current_settings = $_POST['current_settings'];
+$settings_id = $_POST['settings_id'];
 $user_name = $_SESSION['user_name'];
 
 $query = "SELECT * FROM settings WHERE
-          settings_name='$current_settings'";
+          _id = '$settings_id'";
 if (!$result = mysqli_query($dbc,$query)) {
   die('Error: ' . mysqli_error($dbc));
 }
@@ -31,15 +32,21 @@ if (count($data) != 1) {
   $response['msg'] = 'No such settings exist.';
   die (json_encode($response));
 }
-// ---Check if user own given settings
+// ---Check if user owns given settings
 if ($data[0]['user_name'] != $user_name) {
   $response['success'] = false;
   $response['msg'] = 'You have no permission to edit those settings.';
   die (json_encode($response));
 }
+// Deleted related forces
+$query = "DELETE FROM forces WHERE
+          _id='$settings_id'";
+if (!$result = mysqli_query($dbc,$query)) {
+  die('Error: ' . mysqli_error($dbc));
+}
 // ---Delete old current settings
 $query = "DELETE FROM settings WHERE
-          settings_name='$current_settings'";
+          _id='$settings_id'";
 if (!$result = mysqli_query($dbc,$query)) {
   die('Error: ' . mysqli_error($dbc));
 }

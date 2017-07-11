@@ -1,10 +1,10 @@
 <?php
 header('Content-type: application/json');
 // ---Distinguish parent script from includes
-if (isset($script_name)) $child_script = true;
+if (isset($script_name)) $parent_script = false;
 else {
   $script_name = $_SERVER['PHP_SELF'];
-  $child_script = false;
+  $parent_script = true;
 }
 // ---
 require_once('mysqli_connect.php');
@@ -16,12 +16,27 @@ if (!isset($_SESSION['logged'])) {
   $response['msg'] = 'You are not logged-in.';
 }
 
-$current_settings = $_POST['current_settings'];
-$user_name = $_SESSION['user_name'];
+$post = json_decode(file_get_contents('php://input'), true);
+
+if (!isset($_SESSION['user_name'],
+          $post['settings_name'],
+          $post['settings'],
+          $post['forces'])) {
+  die('Form data incomplete.');
+}
+
+// $current_settings = $_POST['current_settings'];
+// $user_name = $_SESSION['user_name'];
 // $settings_name = $_POST['settings_name'];
 
+$user_name = $_SESSION['user_name'];
+$settings_name = $post['settings_name'];
+$speed = $post['settings']['speed'];
+$duration = $post['settings']['duration'];
+$settings_id = $post['settings_id'];
+
 $query = "SELECT * FROM settings WHERE
-          settings_name='$current_settings'";
+          _id='$settings_id'";
 if (!$result = mysqli_query($dbc,$query)) {
   die('Error: ' . mysqli_error($dbc));
 }
@@ -38,15 +53,59 @@ if ($data[0]['user_name'] != $user_name) {
   $response['msg'] = 'You have no permission to edit those settings.';
   die (json_encode($response));
 }
-// ---Delete old current settings
-$query = "DELETE FROM settings WHERE
-          settings_name='$current_settings'";
+
+// Insert general settings
+
+$query = "UPDATE settings SET
+          settings_name = '$settings_name',
+          _speed = '$speed',
+          _duration = '$duration'
+          WHERE _id='$settings_id'";
+if (!$result = mysqli_query($dbc, $query)) {
+  die("Error: " . mysqli_error($dbc));
+}
+
+// Delete old forces settings
+
+$query = "DELETE FROM forces WHERE
+          _id='$settings_id'";
 if (!$result = mysqli_query($dbc,$query)) {
   die('Error: ' . mysqli_error($dbc));
 }
 
+// Insert new forces settings
+
+$id = $settings_id;
+$forces = $post['forces'];
+
+for ($i=0; $i < count($forces); $i++) {
+  $key = array_keys($forces)[$i];
+  // $position = $forces[$key]['position'];
+  $positionX = $forces[$key]['position'][0];
+  $positionY = $forces[$key]['position'][1];
+  $value = $forces[$key]['value'];
+  $rad1 = $forces[$key]['rad1'];
+  $rad2 = $forces[$key]['rad2'];
+  $rad3 = $forces[$key]['rad3'];
+  $type = $forces[$key]['type'];
+  $query = "INSERT INTO forces (_id, _positionX, _positionY, _value,
+            _rad1, _rad2, _rad3, _type)
+            VALUES ('$id', '$positionX', '$positionY', '$value',
+            '$rad1', '$rad2', '$rad3', '$type')";
+  if (!$result = mysqli_query($dbc, $query)){
+    die("Error: " . mysqli_error($dbc));
+  }
+}
+
+// ---Delete old current settings
+// $query = "DELETE FROM settings WHERE
+//           settings_name='$current_settings'";
+// if (!$result = mysqli_query($dbc,$query)) {
+//   die('Error: ' . mysqli_error($dbc));
+// }
+
 // Add new settings
-require_once('post_settings.php');
+// require_once('post_settings.php');
 
 if ($parent_script) {
   $response['success'] = true;
