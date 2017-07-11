@@ -228,20 +228,23 @@ function loadSettings(target) {
     for (var i = 0; i < inputs.length; i++) {
       // var value = parseFloat(settings[index][i + 2]);
       var value = parseFloat(settings[index][i + 3]);
-      inputs[i].value = value;
-      setup[keys[i]] = value;
-      setupBuffer[i] = value;
+      inputs[i].value = value; // Set settingsForm value
+      setup[keys[i]] = value; // Set setup variable
+      setupBuffer[i] = value; // Store into buffer
     }
+    // Set settings name in text input fields
     var currentSettings = document.querySelector('#currentSettings');
     currentSettings.value = target.children[2].innerHTML;
     var settingsName = document.querySelector('#settingsName');
     settingsName.value = target.children[2].innerHTML;
     // Remove hidden forces and 'untemporary' temporary
     for (var i = 0; i < forceWrapper.children.length; i++) {
+      // !!!Elements are being deleted, list length variable!!!
       var force = forceWrapper.children[i];
       if (force.classList.contains('hidden')) {
         var id = force.dataset.forceIndex;
         removeForce('',id,force);
+        i --;
       }
       else {
         force.classList.remove('temporary');
