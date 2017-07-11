@@ -72,7 +72,6 @@ function adaptServerData() {
 // ========================================
 // Scan text for known codenames of symbols
 function evaluateInputText(text) {
-  console.log('evaluate');
   if (text === undefined) {
     target = document.querySelector('#textInput');
     var text = target.value;
@@ -128,12 +127,11 @@ function evaluateInputText(text) {
 // coordinates.
 // text = readyInput
 function createBatch(text) {
-  console.log('make batch');
   batch = []; //Clear batch
   var textLen = 0;
   for (var i = 0; i < text.length; i++) { //Each symbol
     if (text[i] === ' ') { // Spot space
-      textLen += (1 - symbolSpacing);
+      textLen += (3 - symbolSpacing);
       continue;
     }
     var coords = [];
@@ -191,7 +189,6 @@ function textWidth(array) {
 }
 // ==========================================
 function layout(el,shift_x,shift_y) {
-  console.log('layout');
 // Create pixels for given element based on 'el'
 // and move them all to proper location defined
 // in global coordinates (.display = 0,0).
@@ -454,6 +451,7 @@ function loosePixels() {
 // or backwards (dir=-1).
 
 function play(dir, fps) {
+  // showPixels();
   window.clearTimeout(timeoutId); //stop animation
   var delay = 1000/fps;
   var skip = 60/fps; // 60-> 1, 30 -> etc.
@@ -465,6 +463,7 @@ function play(dir, fps) {
   preparePixels();
 
   setTimeout(function(){
+    showPixels();
     render(delay,dir,z,lastFrame);
   },500,delay,dir,z,lastFrame);
 }
@@ -472,7 +471,14 @@ function play(dir, fps) {
 var timeoutId; // Id of current setTimout
 
 function render(delay,dir,z,lastFrame) {
-  if (z === lastFrame) return loosePixels()
+  if (z === lastFrame) {
+    if (seqIterator !== null) {
+      seqIterator ++;
+      setTimeout(function(){playSequence('render')}, 6*pixels.length);
+    }
+    loosePixels()
+    return
+  }
   var currentFrame = dir === 1 ? z : (lastFrame - 1 - z);
   // console.log('currentFrame: ' + currentFrame);
   for (var i = 0; i < pixels.length; i++) {
@@ -486,20 +492,71 @@ function render(delay,dir,z,lastFrame) {
   timeoutId = setTimeout(render,delay,  delay,dir,z,lastFrame);
 }
 // ========================================
-// Play the sequence according to selected
-// text, settings and play direction.
-var sequenceTexts = [];
-var sequenceSettings = [];
-var sequenceDirs = [];
+// Prepare sequencePositions
+var sequenceTexts = []; // Array of texts to animate
+var sequenceSettings = []; // Array of settings IDs  to apply
+var sequencePositions = [];
 
-
-//
-
-function playSequence(argument) {
-
+function simulateSequence() {
+  sequencePositions = [];
   for (var i = 0; i < sequenceTexts.length; i++) {
     var text = sequenceTexts[i];
-    evaluateInputText(text); //Now text is on the display
+    // Display new text on screen
+    evaluateInputText(text);
+    // Load settings
+    var rowIndex = sequenceSettings[i];
+    var settingsId = localData.settings[rowIndex][0];
+    // Load proper settings to the form inputs
+    var inputs = document.querySelectorAll('.settingsForm.sliders input');
+    for (var j = 0; j < inputs.length; j++) {
+      inputs[j].value = parseInt(localData.settings[rowIndex][j + 3]);
+    }
+    // Get forces settings
+    var settingsId = localData.settings[rowIndex][0];
+    // Remove any existing forces
+    while (forceWrapper.children.length !== 0 ) {
+      var force = forceWrapper.children[0];
+      var forceIndex = force.dataset.forceIndex;
+      removeForce('',forceIndex,force);
+    }
+    // Search for forces settings with matching id and spawn them
+    for (var j = 0; j < localData.forces.length; j++) {
+      if (localData.forces[j][0] === settingsId) {
+        // Remove (slice) column with id
+        var forceSettings = localData.forces[j].slice(1);
+        // Create force
+        createForce('', forceSettings);
+      }
+    }
+    // Compute position of each pixel at each frame
+    simulate();
+    // Append recorded positions to the aggregate array
+    sequencePositions.push([]);
+    Array.prototype.push.apply(sequencePositions[i], position);
+  }
+  evaluateInputText('');
+}
+// ========================================
+// Play sequencePositions
+var seqIterator = null; // Iterator of sequence parts
+var sequenceDirs = []; // Array of directions for each stage
+
+function playSequence(caller) {
+  if (seqIterator === sequenceTexts.length) {
+    seqIterator = null;
+    return
+  }
+  else if (seqIterator === null || caller !== 'render') {
+    window.clearTimeout(timeoutId); //stop animation
+    seqIterator = 0;
   }
 
+  var k = seqIterator;
+
+  // Display new text on screen
+  hidePixels();
+  evaluateInputText(sequenceTexts[k]);
+  position = sequencePositions[k];
+
+  play(sequenceDirs[k],60); // Play computed positions
 }
