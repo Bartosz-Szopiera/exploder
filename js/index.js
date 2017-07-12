@@ -6,6 +6,7 @@ addListeners();
 isLogged();
 panelsObserver();
 windowListeners();
+displayWelcome();
 // ========================================
 // Show or hide tabs acoording to which one
 // was clicked
@@ -356,8 +357,10 @@ function buildGrid(width,height) {
   var cellsInRow = Math.floor(width/cellWidth);
   var cellsInColumn = Math.floor(height/cellWidth);
   base.style.top = (cellsInColumn - 2) * pixelWidth + 'px';
-  cellsWrapper.style.maxWidth = cellsInRow * cellWidth + 'px';
-  cellsWrapper.style.maxHeight = cellsInColumn * cellWidth + 'px';
+  // cellsWrapper.style.maxWidth = cellsInRow * cellWidth + 'px';
+  // cellsWrapper.style.maxHeight = cellsInColumn * cellWidth + 'px';
+  cellsWrapper.style.width = cellsInRow * cellWidth + 'px';
+  cellsWrapper.style.height = cellsInColumn * cellWidth + 'px';
   for (var i = 1; i < cellsInRow*cellsInColumn; i++) {
     cellsWrapper.appendChild(cell.cloneNode());
   }
@@ -373,6 +376,17 @@ function showGrid() {
     showPixels();
     grid.classList.add('hidden');
   }
+}
+// ========================================
+function adjustCellsWrapper() {
+  var cell = document.querySelector('.cell');
+  var pixelMargin = parseFloat(getComputedStyle(cell).margin);
+  var pixelWidth = parseFloat(getComputedStyle(cell).height) + pixelMargin*2;
+  var columns = 28;
+  var rows = 14;
+  var cellsWrapper = document.querySelector('.cellsWrapper');
+  cellsWrapper.style.width = pixelWidth * columns + 'px';
+  cellsWrapper.style.height = pixelWidth * rows + 'px';
 }
 // ========================================
 function selectCell(target) {
@@ -425,15 +439,23 @@ function loadFromEditor() {
   var activeCells = document.querySelectorAll('.cell.active');
   var base = document.querySelector('.base');
   var grid = document.querySelector('.grid');
-  var gridHeight = grid.offsetHeight - 2; // 2 - grid border
+  var gridBorder = parseFloat(getComputedStyle(grid).borderWidth);
+  // var gridHeight = parseFloat(getComputedStyle(grid).height) - gridBorder*2;
+  var gridHeight = grid.offsetHeight - gridBorder*2;
+  var cell = document.querySelector('.cell');
+  var pixelMargin = parseFloat(getComputedStyle(cell).margin);
+  var pixelWidth = parseFloat(getComputedStyle(cell).height) + pixelMargin*2;
   var baseY = Math.abs(base.offsetTop + pixelWidth - gridHeight);
-
   for (var i = 0; i < activeCells.length; i++) {
-    var cellY = activeCells[i].offsetTop - 1; // 1 - Cell margin
+    var cellY = activeCells[i].offsetTop - pixelMargin;
     newSymbolY[i] = (cellY - baseY)/pixelWidth;
-    var cellX = (activeCells[i].offsetLeft - 1)/pixelWidth;
+    newSymbolY[i] = Math.round((cellY - baseY)/pixelWidth);
+    var cellX = (activeCells[i].offsetLeft - pixelMargin)/pixelWidth;
     newSymbolX[i] = cellX;
+    newSymbolX[i] = Math.round(cellX);
   }
+  console.log('X: ' + newSymbolX);
+  console.log('Y: ' + newSymbolY);
   // Normalize X coordinates
   var cacheX = [];
   cacheX.push.apply(cacheX, newSymbolX);
@@ -492,6 +514,7 @@ function windowListeners() {
     adjustDisplay();
     adjustDBWindow();
     adjustPanelHeight();
+    adjustCellsWrapper();
     displayX = display.offsetLeft;
   });
 }
@@ -608,3 +631,9 @@ function adjustHelp() {
   else        help.classList.add('fullScreen');
 }
 // ========================================
+function displayWelcome() {
+  var input = document.querySelector('#textInput');
+  var welcome = '<smiley>';
+  input.value = welcome;
+  evaluateInputText(welcome);
+}
