@@ -506,11 +506,16 @@ function simulateSequence() {
     // Load settings
     var rowIndex = sequenceSettings[i];
     var settingsId = localData.settings[rowIndex][0];
+    // Load proper settings to the setup
+
     // Load proper settings to the form inputs
     var inputs = document.querySelectorAll('.settingsForm.sliders input');
     for (var j = 0; j < inputs.length; j++) {
-      inputs[j].value = parseInt(localData.settings[rowIndex][j + 3]);
+      var value = parseInt(localData.settings[rowIndex][j + 3]);
+      setup[Object.keys(setup)[j]] = value;
+      inputs[j].value = value;
     }
+
     // Get forces settings
     var settingsId = localData.settings[rowIndex][0];
     // Remove any existing forces
