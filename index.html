@@ -298,8 +298,17 @@
       <!-- <div class="centerLine debuggingStuff"></div> -->
       </div>
       <div id="help" class="fullScreen">
+        <div id="demo" class="">
+          <div class="close" onclick="this.parentNode.parentNode.classList.remove('showDemo')"></div>
+          <div id="player"></div>
+          <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/CoJq8skvAMg" frameborder="0" allowfullscreen></iframe> -->
+        </div>
         <div class="openHelp" onclick="this.parentNode.classList.toggle('hidden')">INFO</div>
         <p>To show or hide this text click 'INFO' in right-top of the screen.</p>
+        <br>
+        <p>If you are on a mobile device or you don't want (or like) to read instructions you can watch short presentation.</p>
+        <br>
+        <div class="demoButton" onclick="this.parentNode.classList.add('showDemo')">WATCH DEMO</div>
         <br>
         <p>This application allows you to create short simulations of particles movements under acting forces.</p>
         <ul>
@@ -359,4 +368,38 @@
   <script type="text/javascript" src="js/ajax.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
   <script type="text/javascript" src="js/onload.js"></script>
+  <script>
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '315',
+          width: '560',
+          videoId: 'CoJq8skvAMg',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+      function onPlayerReady(event) {}
+      function onPlayerStateChange(event) {}
+
+      // Add event to the button hiding the demo iframe
+      // to pause also the player.
+      (function() {
+        var button = document.querySelector('#demo .close')
+        button.addEventListener('click', function(){
+          player.pauseVideo();
+        })
+      })();
+    </script>
 </html>
